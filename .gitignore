@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+
+# Official data and generated artifacts are kept out of Git.
+data/train/
+data/test/
+weights/
+outputs/
+

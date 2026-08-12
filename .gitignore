@@ -9,3 +9,8 @@ data/test/
 weights/
 outputs/
 logs/
+
+# The compact final evaluator checkpoint is intentionally versioned.
+!weights/
+weights/*
+!weights/final.pt

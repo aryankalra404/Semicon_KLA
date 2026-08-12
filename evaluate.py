@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import time
 from pathlib import Path
@@ -29,6 +30,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--json-output", type=Path)
+    parser.add_argument("--per-image-output", type=Path)
+    parser.add_argument("--lpips", action="store_true", help="Compute LPIPS (requires lpips)")
     return parser.parse_args()
 
 
@@ -43,14 +46,22 @@ def main() -> None:
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.workers)
     device = choose_device(args.device)
     model = None
+    lpips_model = None
     if args.method == "model":
         if args.weights is None:
             raise SystemExit("--weights is required when --method=model")
         model = load_model(args.weights, device)
+    if args.lpips:
+        try:
+            import lpips
+        except ImportError as error:
+            raise SystemExit("Install the optional 'lpips' package to use --lpips") from error
+        lpips_model = lpips.LPIPS(net="alex").to(device).eval()
 
-    psnr_values, ssim_values, elapsed, images = [], [], 0.0, 0
+    psnr_values, ssim_values, lpips_values, rows = [], [], [], []
+    elapsed, images = 0.0, 0
     with torch.inference_mode():
-        for lr, gt, _ in loader:
+        for lr, gt, batch_names in loader:
             lr, gt = lr.to(device), gt.to(device)
             if device.type == "cuda":
                 torch.cuda.synchronize()
@@ -63,8 +74,28 @@ def main() -> None:
                 torch.cuda.synchronize()
             elapsed += time.perf_counter() - started
             images += lr.shape[0]
-            psnr_values.extend(psnr(prediction, gt).cpu().tolist())
-            ssim_values.extend(ssim(prediction, gt).cpu().tolist())
+            batch_psnr = psnr(prediction, gt).cpu().tolist()
+            batch_ssim = ssim(prediction, gt).cpu().tolist()
+            if lpips_model is not None:
+                pred_rgb = prediction.repeat(1, 3, 1, 1) * 2.0 - 1.0
+                gt_rgb = gt.repeat(1, 3, 1, 1) * 2.0 - 1.0
+                batch_lpips = lpips_model(pred_rgb, gt_rgb, normalize=False).flatten().cpu().tolist()
+            else:
+                batch_lpips = [None] * len(batch_names)
+            psnr_values.extend(batch_psnr)
+            ssim_values.extend(batch_ssim)
+            lpips_values.extend(value for value in batch_lpips if value is not None)
+            rows.extend(
+                {
+                    "filename": name,
+                    "psnr": p,
+                    "ssim": s,
+                    "lpips": perceptual,
+                }
+                for name, p, s, perceptual in zip(
+                    batch_names, batch_psnr, batch_ssim, batch_lpips, strict=True
+                )
+            )
 
     psnr_mean, psnr_ci = mean_and_ci95(psnr_values)
     ssim_mean, ssim_ci = mean_and_ci95(ssim_values)
@@ -78,11 +109,21 @@ def main() -> None:
         "ssim_ci95": ssim_ci,
         "milliseconds_per_image": 1000 * elapsed / images,
     }
+    if lpips_values:
+        lpips_mean, lpips_ci = mean_and_ci95(lpips_values)
+        result["lpips"] = lpips_mean
+        result["lpips_ci95"] = lpips_ci
     rendered = json.dumps(result, indent=2)
     print(rendered)
     if args.json_output:
         args.json_output.parent.mkdir(parents=True, exist_ok=True)
         args.json_output.write_text(rendered + "\n")
+    if args.per_image_output:
+        args.per_image_output.parent.mkdir(parents=True, exist_ok=True)
+        with args.per_image_output.open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=("filename", "psnr", "ssim", "lpips"))
+            writer.writeheader()
+            writer.writerows(rows)
 
 
 if __name__ == "__main__":

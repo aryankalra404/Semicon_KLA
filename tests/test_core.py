@@ -33,6 +33,13 @@ class DatasetTests(unittest.TestCase):
             lr, gt, name = dataset[0]
             self.assertEqual((lr.shape, gt.shape, name), ((1, 8, 8), (1, 16, 16), "sample.npy"))
 
+    def test_truncated_array_fails_to_load(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "broken.npy"
+            path.write_bytes(b"not a numpy array")
+            with self.assertRaises(ValueError):
+                np.load(path, allow_pickle=False)
+
     def test_synthetic_degradation_shape_and_range_freedom(self) -> None:
         gt = torch.rand(1, 32, 32)
         lr = synthetic_compound_degradation(gt)

@@ -1,0 +1,33 @@
+{
+  "validation_images": 320,
+  "bicubic": {
+    "psnr": 22.819181162118912,
+    "psnr_ci95": 0.3689059551342089,
+    "ssim": 0.5460261789150536,
+    "ssim_ci95": 0.020406567147112455
+  },
+  "v1": {
+    "psnr": 24.7892728805542,
+    "psnr_ci95": 0.4068368294645549,
+    "ssim": 0.691390028083697,
+    "ssim_ci95": 0.017634261984879288,
+    "milliseconds_per_image_rtx_a4000": 11.563578650009276
+  },
+  "v2": {
+    "checkpoint": "weights/final.pt",
+    "checkpoint_epoch": 24,
+    "psnr": 26.296219098567963,
+    "psnr_ci95": 0.43835680144266576,
+    "ssim": 0.7004095890559257,
+    "ssim_ci95": 0.017577425191902522,
+    "milliseconds_per_image_rtx_a4000": 11.562931225125794,
+    "parameters": 580609,
+    "checkpoint_sha256": "89223db798de64c675385102250ef8a5cdbad2cbf5f893a8d759e7eb2f56b798"
+  },
+  "v2_vs_bicubic": {
+    "psnr_wins": 319,
+    "ssim_wins": 275,
+    "mean_psnr_gain": 3.4770559281110764,
+    "mean_ssim_gain": 0.15438481089659034
+  }
+}

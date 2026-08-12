@@ -19,7 +19,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--weights", type=Path, default=Path("weights/best.pt"))
+    parser.add_argument("--weights", type=Path, default=Path("weights/final.pt"))
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--device", default="auto")

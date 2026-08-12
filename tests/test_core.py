@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from kla_restore.data import PairedNpyDataset, names_for_split
+from kla_restore.data import PairedNpyDataset, names_for_split, synthetic_compound_degradation
 from kla_restore.metrics import psnr, ssim
 from kla_restore.model import KLARestoreNet
 from kla_restore.runtime import choose_device
@@ -32,6 +32,12 @@ class DatasetTests(unittest.TestCase):
             dataset = PairedNpyDataset(root / "lr", root / "gt", ["sample.npy"])
             lr, gt, name = dataset[0]
             self.assertEqual((lr.shape, gt.shape, name), ((1, 8, 8), (1, 16, 16), "sample.npy"))
+
+    def test_synthetic_degradation_shape_and_range_freedom(self) -> None:
+        gt = torch.rand(1, 32, 32)
+        lr = synthetic_compound_degradation(gt)
+        self.assertEqual(lr.shape, (1, 16, 16))
+        self.assertTrue(torch.isfinite(lr).all())
 
 
 class ModelAndMetricTests(unittest.TestCase):

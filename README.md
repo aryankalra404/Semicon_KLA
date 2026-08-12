@@ -32,6 +32,7 @@ pip install -r requirements.txt
 
 ```bash
 python -m unittest discover -s tests -v
+python audit_data.py
 ```
 
 ## Bicubic baseline
@@ -57,10 +58,13 @@ python train.py --epochs 1 --batch-size 4 --workers 0 --width 16 --blocks 2 \
 Full starting configuration:
 
 ```bash
-python train.py --epochs 50 --batch-size 8 --width 48 --blocks 12
+python train.py --epochs 30 --batch-size 8 --width 48 --blocks 12 \
+  --synthetic-probability 0.2 --output-dir weights/v2
 ```
 
-The best validation-SSIM checkpoint is written to `weights/best.pt`.
+The trainer uses exponential moving-average weights and writes separate
+`best_psnr.pt`, `best_ssim.pt`, and `best_balanced.pt` checkpoints. The balanced
+score is `PSNR + 10*SSIM`.
 Interrupted runs can resume without discarding optimizer state:
 
 ```bash

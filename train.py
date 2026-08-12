@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import random
 import time
@@ -37,6 +38,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--resume", type=Path, help="Resume model and optimizer state")
+    parser.add_argument("--synthetic-probability", type=float, default=0.0)
+    parser.add_argument("--ema-decay", type=float, default=0.999)
+    parser.add_argument("--gradient-clip", type=float, default=1.0)
+    parser.add_argument("--skip-data-audit", action="store_true")
     return parser.parse_args()
 
 
@@ -80,11 +85,14 @@ def main() -> None:
         args.data_root / "GT",
         train_names,
         augment=True,
+        synthetic_probability=args.synthetic_probability,
+        audit=not args.skip_data_audit,
     )
     val_set = PairedNpyDataset(
         args.data_root / "NoisyLR",
         args.data_root / "GT",
         val_names,
+        audit=not args.skip_data_audit,
     )
     pin_memory = device.type == "cuda"
     train_loader = DataLoader(
@@ -104,12 +112,17 @@ def main() -> None:
     )
 
     model = KLARestoreNet(args.width, args.blocks).to(device)
+    ema_model = copy.deepcopy(model).eval()
+    for parameter in ema_model.parameters():
+        parameter.requires_grad_(False)
     loss_fn = RestorationLoss()
     optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     use_amp = device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
     best_ssim = -1.0
+    best_psnr = -1.0
+    best_balanced = -1.0
     history = []
     start_epoch = 1
 
@@ -121,13 +134,21 @@ def main() -> None:
                 f"Checkpoint architecture {checkpoint.get('model_config')} does not "
                 f"match requested architecture {expected_config}"
             )
-        model.load_state_dict(checkpoint["model"])
+        model.load_state_dict(checkpoint.get("train_model", checkpoint["model"]))
+        ema_model.load_state_dict(checkpoint.get("ema_model", checkpoint["model"]))
         if "optimizer" in checkpoint:
             optimizer.load_state_dict(checkpoint["optimizer"])
         if "scheduler" in checkpoint:
             scheduler.load_state_dict(checkpoint["scheduler"])
         start_epoch = int(checkpoint["epoch"]) + 1
         best_ssim = float(checkpoint.get("best_ssim", checkpoint["metrics"]["ssim"]))
+        best_psnr = float(checkpoint.get("best_psnr", checkpoint["metrics"]["psnr"]))
+        best_balanced = float(
+            checkpoint.get(
+                "best_balanced",
+                checkpoint["metrics"]["psnr"] + 10 * checkpoint["metrics"]["ssim"],
+            )
+        )
         history_path = args.output_dir / "history.json"
         if history_path.is_file():
             history = json.loads(history_path.read_text())
@@ -144,12 +165,19 @@ def main() -> None:
                 prediction = model(lr)
                 loss, _ = loss_fn(prediction, gt)
             scaler.scale(loss).backward()
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), args.gradient_clip)
             scaler.step(optimizer)
             scaler.update()
+            with torch.no_grad():
+                for ema_parameter, parameter in zip(
+                    ema_model.parameters(), model.parameters(), strict=True
+                ):
+                    ema_parameter.lerp_(parameter, 1.0 - args.ema_decay)
             running_loss += float(loss.detach()) * lr.shape[0]
         scheduler.step()
 
-        metrics = validate(model, val_loader, device)
+        metrics = validate(ema_model, val_loader, device)
         record = {
             "epoch": epoch,
             "train_loss": running_loss / len(train_set),
@@ -161,18 +189,31 @@ def main() -> None:
         print(json.dumps(record))
 
         checkpoint = {
-            "model": model.state_dict(),
+            "model": ema_model.state_dict(),
+            "train_model": model.state_dict(),
+            "ema_model": ema_model.state_dict(),
             "model_config": {"width": args.width, "blocks": args.blocks},
             "optimizer": optimizer.state_dict(),
             "scheduler": scheduler.state_dict(),
             "epoch": epoch,
             "metrics": metrics,
             "best_ssim": max(best_ssim, metrics["ssim"]),
+            "best_psnr": max(best_psnr, metrics["psnr"]),
+            "best_balanced": max(
+                best_balanced, metrics["psnr"] + 10 * metrics["ssim"]
+            ),
         }
         torch.save(checkpoint, args.output_dir / "last.pt")
         if metrics["ssim"] > best_ssim:
             best_ssim = metrics["ssim"]
-            torch.save(checkpoint, args.output_dir / "best.pt")
+            torch.save(checkpoint, args.output_dir / "best_ssim.pt")
+        if metrics["psnr"] > best_psnr:
+            best_psnr = metrics["psnr"]
+            torch.save(checkpoint, args.output_dir / "best_psnr.pt")
+        balanced = metrics["psnr"] + 10 * metrics["ssim"]
+        if balanced > best_balanced:
+            best_balanced = balanced
+            torch.save(checkpoint, args.output_dir / "best_balanced.pt")
         (args.output_dir / "history.json").write_text(json.dumps(history, indent=2))
 
 

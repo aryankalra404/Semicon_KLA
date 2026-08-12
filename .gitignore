@@ -8,4 +8,4 @@ data/train/
 data/test/
 weights/
 outputs/
-
+logs/

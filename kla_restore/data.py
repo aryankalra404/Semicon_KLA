@@ -8,6 +8,7 @@ from typing import Iterable, Sequence
 
 import numpy as np
 import torch
+from torch.nn import functional as F
 from torch.utils.data import Dataset
 
 
@@ -41,6 +42,31 @@ def validate_pairs(lr_dir: Path, gt_dir: Path, names: Iterable[str]) -> None:
         raise FileNotFoundError("Dataset validation failed: " + ", ".join(details))
 
 
+def audit_pairs(lr_dir: Path, gt_dir: Path, names: Iterable[str]) -> None:
+    """Fully read arrays before training so truncated transfers fail immediately."""
+    names = list(names)
+    validate_pairs(lr_dir, gt_dir, names)
+    problems: list[str] = []
+    for name in names:
+        for label, path, expected_shape in (
+            ("LR", lr_dir / name, (128, 128)),
+            ("GT", gt_dir / name, (256, 256)),
+        ):
+            try:
+                array = np.load(path, allow_pickle=False)
+                if array.shape != expected_shape:
+                    problems.append(f"{label} {path}: shape={array.shape}")
+                elif array.dtype != np.float32:
+                    problems.append(f"{label} {path}: dtype={array.dtype}")
+                elif not np.isfinite(array).all():
+                    problems.append(f"{label} {path}: contains non-finite values")
+            except Exception as error:
+                problems.append(f"{label} {path}: {type(error).__name__}: {error}")
+    if problems:
+        preview = "\n".join(problems[:20])
+        raise ValueError(f"Dataset audit found {len(problems)} problem(s):\n{preview}")
+
+
 def load_npy_tensor(path: Path) -> torch.Tensor:
     array = np.load(path, allow_pickle=False)
     if array.ndim != 2:
@@ -65,6 +91,30 @@ def paired_geometric_augmentation(
     return lr.contiguous(), gt.contiguous()
 
 
+def synthetic_compound_degradation(gt: torch.Tensor) -> torch.Tensor:
+    """Create a 2x LR input with blur plus additive and signal-dependent noise."""
+    image = gt.unsqueeze(0)
+    if random.random() < 0.5:
+        sigma = random.uniform(0.4, 1.2)
+        coordinates = torch.arange(5, dtype=image.dtype, device=image.device) - 2
+        kernel = torch.exp(-coordinates.square() / (2 * sigma * sigma))
+        kernel = kernel / kernel.sum()
+        window = torch.outer(kernel, kernel).view(1, 1, 5, 5)
+        image = F.conv2d(F.pad(image, (2, 2, 2, 2), mode="reflect"), window)
+    mode = random.choice(("area", "bicubic"))
+    kwargs = {} if mode == "area" else {"align_corners": False}
+    lr = F.interpolate(image, scale_factor=0.5, mode=mode, **kwargs)[0]
+
+    gain = random.uniform(0.92, 1.08)
+    offset = random.uniform(-0.02, 0.02)
+    gaussian_sigma = random.uniform(0.01, 0.07)
+    speckle_sigma = random.uniform(0.02, 0.12)
+    lr = lr * gain + offset
+    lr = lr + torch.randn_like(lr) * gaussian_sigma
+    lr = lr + lr.abs() * torch.randn_like(lr) * speckle_sigma
+    return lr.contiguous()
+
+
 class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
     """Load filename-paired low-resolution and ground-truth arrays."""
 
@@ -74,12 +124,19 @@ class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
         gt_dir: str | Path,
         names: Sequence[str],
         augment: bool = False,
+        synthetic_probability: float = 0.0,
+        audit: bool = False,
     ) -> None:
         self.lr_dir = Path(lr_dir)
         self.gt_dir = Path(gt_dir)
         self.names = list(names)
         self.augment = augment
+        if not 0.0 <= synthetic_probability <= 1.0:
+            raise ValueError("synthetic_probability must be in [0, 1]")
+        self.synthetic_probability = synthetic_probability
         validate_pairs(self.lr_dir, self.gt_dir, self.names)
+        if audit:
+            audit_pairs(self.lr_dir, self.gt_dir, self.names)
 
     def __len__(self) -> int:
         return len(self.names)
@@ -94,6 +151,8 @@ class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
             )
         if self.augment:
             lr, gt = paired_geometric_augmentation(lr, gt)
+            if random.random() < self.synthetic_probability:
+                lr = synthetic_compound_degradation(gt)
         return lr, gt, name
 
 

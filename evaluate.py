@@ -13,7 +13,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
-from kla_restore.data import PairedNpyDataset
+from kla_restore.data import PairedNpyDataset, names_for_split
 from kla_restore.metrics import mean_and_ci95, psnr, ssim
 from kla_restore.runtime import choose_device, load_model
 
@@ -22,6 +22,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-dir", type=Path, default=Path("data/test/NoisyLR"))
     parser.add_argument("--gt-dir", type=Path, default=Path("data/train/GT"))
+    parser.add_argument("--split", choices=("val", "all"), default="val")
     parser.add_argument("--method", choices=("bicubic", "model"), default="bicubic")
     parser.add_argument("--weights", type=Path)
     parser.add_argument("--batch-size", type=int, default=8)
@@ -33,7 +34,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    names = sorted(path.name for path in args.input_dir.glob("*.npy"))
+    names = (
+        names_for_split("val")
+        if args.split == "val"
+        else sorted(path.name for path in args.input_dir.glob("*.npy"))
+    )
     dataset = PairedNpyDataset(args.input_dir, args.gt_dir, names)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.workers)
     device = choose_device(args.device)
@@ -53,7 +58,7 @@ def main() -> None:
             if model is None:
                 prediction = F.interpolate(lr, scale_factor=2, mode="bicubic", align_corners=False).clamp(0, 1)
             else:
-                prediction = model(lr)
+                prediction = model(lr).clamp(0.0, 1.0)
             if device.type == "cuda":
                 torch.cuda.synchronize()
             elapsed += time.perf_counter() - started
@@ -82,4 +87,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

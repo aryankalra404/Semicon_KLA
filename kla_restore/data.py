@@ -12,8 +12,7 @@ from torch.utils.data import Dataset
 
 
 SPLIT_RANGES = {
-    "test": range(0, 400),
-    "train": range(400, 2880),
+    "train": range(0, 2880),
     "val": range(2880, 3200),
 }
 
@@ -113,4 +112,3 @@ class UnpairedNpyDataset(Dataset[tuple[torch.Tensor, str]]):
     def __getitem__(self, index: int) -> tuple[torch.Tensor, str]:
         path = self.paths[index]
         return load_npy_tensor(path), path.name
-

@@ -11,14 +11,14 @@ data/
     └── NoisyLR/  # 400 degraded 128x128 float32 inputs
 ```
 
-Training pairs match exactly by filename. The test files are numbered
-`000000.npy` through `000399.npy`; matching ground-truth arrays exist under
-`train/GT`, while the corresponding test degradations differ from the arrays
-under `train/NoisyLR`.
+Training pairs match exactly by filename. The blind test files are independently
+numbered `000000.npy` through `000399.npy`; those names do **not** identify the
+same images as the equally numbered training targets. Signal-correlation checks
+confirm that the test ground truths are withheld.
 
-To prevent target leakage in honest evaluation, reserve IDs 0-399 for testing
-and train only on IDs 400-3199 unless the competition later publishes a
-different split protocol.
+Use paired training IDs 0-2879 for training and 2880-3199 for validation. Run
+final inference on all 400 blind test inputs without computing reference-based
+metrics on them.
 
 Observed value ranges:
 

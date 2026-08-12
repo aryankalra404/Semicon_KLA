@@ -32,8 +32,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--width", type=int, default=48)
     parser.add_argument("--blocks", type=int, default=12)
     parser.add_argument("--workers", type=int, default=2)
+    parser.add_argument("--limit-train", type=int, help="Optional smoke-test sample limit")
+    parser.add_argument("--limit-val", type=int, help="Optional smoke-test sample limit")
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--device", default="auto")
+    parser.add_argument("--resume", type=Path, help="Resume model and optimizer state")
     return parser.parse_args()
 
 
@@ -51,7 +54,7 @@ def validate(model: KLARestoreNet, loader: DataLoader, device: torch.device) -> 
     psnr_values, ssim_values = [], []
     for lr, gt, _ in loader:
         lr, gt = lr.to(device), gt.to(device)
-        prediction = model(lr)
+        prediction = model(lr).clamp(0.0, 1.0)
         psnr_values.extend(psnr(prediction, gt).cpu().tolist())
         ssim_values.extend(ssim(prediction, gt).cpu().tolist())
     return {
@@ -66,16 +69,22 @@ def main() -> None:
     device = choose_device(args.device)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
+    train_names = names_for_split("train")
+    val_names = names_for_split("val")
+    if args.limit_train is not None:
+        train_names = train_names[: args.limit_train]
+    if args.limit_val is not None:
+        val_names = val_names[: args.limit_val]
     train_set = PairedNpyDataset(
         args.data_root / "NoisyLR",
         args.data_root / "GT",
-        names_for_split("train"),
+        train_names,
         augment=True,
     )
     val_set = PairedNpyDataset(
         args.data_root / "NoisyLR",
         args.data_root / "GT",
-        names_for_split("val"),
+        val_names,
     )
     pin_memory = device.type == "cuda"
     train_loader = DataLoader(
@@ -102,9 +111,29 @@ def main() -> None:
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
     best_ssim = -1.0
     history = []
+    start_epoch = 1
+
+    if args.resume:
+        checkpoint = torch.load(args.resume, map_location="cpu", weights_only=False)
+        expected_config = {"width": args.width, "blocks": args.blocks}
+        if checkpoint.get("model_config") != expected_config:
+            raise ValueError(
+                f"Checkpoint architecture {checkpoint.get('model_config')} does not "
+                f"match requested architecture {expected_config}"
+            )
+        model.load_state_dict(checkpoint["model"])
+        if "optimizer" in checkpoint:
+            optimizer.load_state_dict(checkpoint["optimizer"])
+        if "scheduler" in checkpoint:
+            scheduler.load_state_dict(checkpoint["scheduler"])
+        start_epoch = int(checkpoint["epoch"]) + 1
+        best_ssim = float(checkpoint.get("best_ssim", checkpoint["metrics"]["ssim"]))
+        history_path = args.output_dir / "history.json"
+        if history_path.is_file():
+            history = json.loads(history_path.read_text())
 
     print(f"device={device} train={len(train_set)} val={len(val_set)} parameters={parameter_count(model):,}")
-    for epoch in range(1, args.epochs + 1):
+    for epoch in range(start_epoch, args.epochs + 1):
         model.train()
         started = time.perf_counter()
         running_loss = 0.0
@@ -134,8 +163,11 @@ def main() -> None:
         checkpoint = {
             "model": model.state_dict(),
             "model_config": {"width": args.width, "blocks": args.blocks},
+            "optimizer": optimizer.state_dict(),
+            "scheduler": scheduler.state_dict(),
             "epoch": epoch,
             "metrics": metrics,
+            "best_ssim": max(best_ssim, metrics["ssim"]),
         }
         torch.save(checkpoint, args.output_dir / "last.pt")
         if metrics["ssim"] > best_ssim:
@@ -146,4 +178,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

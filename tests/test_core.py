@@ -10,16 +10,15 @@ import torch
 from kla_restore.data import PairedNpyDataset, names_for_split
 from kla_restore.metrics import psnr, ssim
 from kla_restore.model import KLARestoreNet
+from kla_restore.runtime import choose_device
 
 
 class SplitTests(unittest.TestCase):
     def test_splits_are_disjoint_and_complete(self) -> None:
-        train, val, test = (set(names_for_split(name)) for name in ("train", "val", "test"))
+        train, val = (set(names_for_split(name)) for name in ("train", "val"))
         self.assertFalse(train & val)
-        self.assertFalse(train & test)
-        self.assertFalse(val & test)
-        self.assertEqual(len(train | val | test), 3200)
-        self.assertEqual((len(train), len(val), len(test)), (2480, 320, 400))
+        self.assertEqual(len(train | val), 3200)
+        self.assertEqual((len(train), len(val)), (2880, 320))
 
 
 class DatasetTests(unittest.TestCase):
@@ -38,7 +37,8 @@ class DatasetTests(unittest.TestCase):
 class ModelAndMetricTests(unittest.TestCase):
     def test_model_doubles_resolution(self) -> None:
         model = KLARestoreNet(width=8, blocks=1)
-        output = model(torch.rand(2, 1, 12, 10))
+        inputs = torch.rand(2, 1, 12, 10)
+        output = model(inputs)
         self.assertEqual(output.shape, (2, 1, 24, 20))
         self.assertTrue(torch.all((0 <= output) & (output <= 1)))
 
@@ -47,7 +47,11 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertTrue(torch.all(psnr(image, image) > 100))
         self.assertTrue(torch.allclose(ssim(image, image), torch.ones(2), atol=1e-5))
 
+    def test_auto_device_is_usable(self) -> None:
+        device = choose_device("auto")
+        tensor = torch.ones(1).to(device)
+        self.assertEqual(tensor.device.type, device.type)
+
 
 if __name__ == "__main__":
     unittest.main()
-

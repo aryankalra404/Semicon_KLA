@@ -41,7 +41,7 @@ def main() -> None:
             if device.type == "cuda":
                 torch.cuda.synchronize()
             started = time.perf_counter()
-            outputs = model(inputs)
+            outputs = model(inputs).clamp(0.0, 1.0)
             if device.type == "cuda":
                 torch.cuda.synchronize()
             elapsed += time.perf_counter() - started
@@ -58,4 +58,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

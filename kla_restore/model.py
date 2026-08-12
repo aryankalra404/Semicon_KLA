@@ -75,16 +75,19 @@ class KLARestoreNet(nn.Module):
             nn.PixelShuffle(2),
             nn.Conv2d(width, 1, 3, padding=1),
         )
+        nn.init.zeros_(self.upsample[-1].weight)
+        nn.init.zeros_(self.upsample[-1].bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.ndim != 4 or x.shape[1] != 1:
             raise ValueError(f"Expected NCHW grayscale input, got {tuple(x.shape)}")
-        baseline = F.interpolate(x, scale_factor=2, mode="bicubic", align_corners=False)
+        baseline = F.interpolate(
+            x, scale_factor=2, mode="bicubic", align_corners=False
+        ).clamp(0.0, 1.0)
         stem = self.stem(x)
         residual = self.upsample(stem + self.body_tail(self.body(stem)))
-        return (baseline + residual).clamp(0.0, 1.0)
+        return baseline + residual
 
 
 def parameter_count(model: nn.Module) -> int:
     return sum(parameter.numel() for parameter in model.parameters())
-

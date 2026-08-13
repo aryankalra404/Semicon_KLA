@@ -185,6 +185,28 @@ confidence intervals and exact sign tests.
 ./run_gpu_matrix.sh v4a-ablation
 ```
 
+## Multi-scale frequency v4b experiment
+
+v4b tests whether explicitly separating image-frequency evidence improves the
+validated compact v2 trunk. A lightweight auxiliary branch receives the raw
+NoisyLR observation, two local high-pass residuals, a coarse low-pass view, and
+pooled trunk context. It predicts an LR feature correction before the existing
+PixelShuffle upsampler. The correction projection starts at exactly zero, so a
+v2 warm start gives bit-identical predictions before optimization.
+
+Run the matched experiment on the NVIDIA host:
+
+```bash
+./run_gpu_matrix.sh v4b-ablation
+```
+
+This trains an ordinary v2 control and v4b for five epochs from the same
+checkpoint with identical split, seed, DataLoader order, augmentation, loss,
+and learning rate. It then measures official validation PSNR/SSIM/LPIPS,
+six-scenario stress robustness, batch-1 latency/VRAM, and paired bootstrap and
+sign-test evidence. v4b is experimental and never replaces `weights/final.pt`
+unless it beats its matched control under the documented promotion gate.
+
 ## Evaluate a trained checkpoint
 
 ```bash

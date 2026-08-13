@@ -135,6 +135,46 @@ case "${1:-}" in
       --candidate outputs/experiments/ablation_v4a_per_image.csv \
       --output results/v4a_paired_ablation.json
     ;;
+  v4b-ablation)
+    run_container bash -lc '
+      python -u train.py --variant v2 --initialize-from weights/final.pt \
+        --epochs 5 --batch-size 8 --workers 4 --width 48 --blocks 12 \
+        --learning-rate 3e-5 --synthetic-probability 0.2 \
+        --synthetic-policy randomized --ema-decay 0.995 --gradient-clip 1.0 \
+        --seed 2026 --device cuda --output-dir weights/v4b_ablation/v2_control \
+        2>&1 | tee logs/train_v4b_ablation_v2_control.log &&
+      python -u train.py --variant v4b --initialize-from weights/final.pt \
+        --frequency-width 24 --frequency-blocks 2 \
+        --epochs 5 --batch-size 8 --workers 4 --width 48 --blocks 12 \
+        --learning-rate 3e-5 --synthetic-probability 0.2 \
+        --synthetic-policy randomized --ema-decay 0.995 --gradient-clip 1.0 \
+        --seed 2026 --device cuda --output-dir weights/v4b_ablation/v4b \
+        2>&1 | tee logs/train_v4b_ablation_v4b.log
+    '
+    for candidate in frozen_v2 v2_control v4b; do
+      case "$candidate" in
+        frozen_v2) checkpoint="weights/final.pt" ;;
+        v2_control) checkpoint="weights/v4b_ablation/v2_control/best_balanced.pt" ;;
+        v4b) checkpoint="weights/v4b_ablation/v4b/best_balanced.pt" ;;
+      esac
+      run_container python evaluate.py --method model --split val \
+        --input-dir data/train/NoisyLR --gt-dir data/train/GT \
+        --weights "$checkpoint" --batch-size 8 --device cuda --lpips \
+        --json-output "outputs/experiments/v4b_${candidate}.json" \
+        --per-image-output "outputs/experiments/v4b_${candidate}_per_image.csv"
+      run_container python evaluate_stress.py --weights "$checkpoint" \
+        --device cuda \
+        --json-output "outputs/experiments/v4b_${candidate}_stress.json"
+      run_container python benchmark.py --weights "$checkpoint" --batch-size 1 \
+        --device cuda \
+        --json-output "outputs/experiments/v4b_${candidate}_benchmark.json"
+    done
+    run_container python compare_paired.py \
+      --baseline outputs/experiments/v4b_frozen_v2_per_image.csv \
+      --control outputs/experiments/v4b_v2_control_per_image.csv \
+      --candidate outputs/experiments/v4b_v4b_per_image.csv \
+      --output results/v4b_paired_ablation.json
+    ;;
   split3407)
     run_container bash -lc 'python -u train.py \
       --epochs 30 --batch-size 8 --workers 4 --width 48 --blocks 12 \
@@ -172,7 +212,7 @@ case "${1:-}" in
       2>&1 | tee logs/train_all_data.log'
     ;;
   *)
-    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|split3407|evaluate|all-data}" >&2
+    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|split3407|evaluate|all-data}" >&2
     exit 2
     ;;
 esac

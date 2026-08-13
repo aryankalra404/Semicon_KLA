@@ -161,12 +161,67 @@ class ConditionalNAFBlock(nn.Module):
         return x + self.ffn_project(features) * self.gamma
 
 
+class FrequencyMultiScaleBranch(nn.Module):
+    """Predict an LR feature correction from complementary frequency scales.
+
+    The branch sees deterministic image-frequency evidence alongside the
+    validated v2 trunk features. Its final projection is initialized to zero,
+    making v4b exactly identical to its v2 warm start before fine-tuning.
+    """
+
+    def __init__(self, trunk_width: int, branch_width: int, blocks: int) -> None:
+        super().__init__()
+        self.signal_stem = nn.Conv2d(4, branch_width, 3, padding=1)
+        self.trunk_projection = nn.Conv2d(trunk_width, branch_width, 1)
+        self.coarse_projection = nn.Sequential(
+            nn.Conv2d(trunk_width, branch_width, 1),
+            nn.Conv2d(
+                branch_width,
+                branch_width,
+                3,
+                padding=1,
+                groups=branch_width,
+            ),
+        )
+        self.body = nn.Sequential(*(NAFBlock(branch_width) for _ in range(blocks)))
+        self.project = nn.Conv2d(branch_width, trunk_width, 3, padding=1)
+        nn.init.zeros_(self.project.weight)
+        nn.init.zeros_(self.project.bias)
+
+    @staticmethod
+    def frequency_signals(x: torch.Tensor) -> torch.Tensor:
+        local = F.avg_pool2d(x, kernel_size=3, stride=1, padding=1)
+        broad = F.avg_pool2d(x, kernel_size=7, stride=1, padding=3)
+        coarse = F.interpolate(
+            F.avg_pool2d(x, kernel_size=4, stride=4),
+            size=x.shape[-2:],
+            mode="bilinear",
+            align_corners=False,
+        )
+        return torch.cat((x, x - local, x - broad, coarse), dim=1)
+
+    def forward(self, x: torch.Tensor, trunk: torch.Tensor) -> torch.Tensor:
+        coarse = F.interpolate(
+            F.avg_pool2d(trunk, kernel_size=2, stride=2),
+            size=trunk.shape[-2:],
+            mode="bilinear",
+            align_corners=False,
+        )
+        features = (
+            self.signal_stem(self.frequency_signals(x))
+            + self.trunk_projection(trunk)
+            + self.coarse_projection(coarse)
+        )
+        return self.project(self.body(features))
+
+
 class KLARestoreNet(nn.Module):
     """Restore a single-channel input to twice its spatial resolution.
 
     ``variant="v2"`` preserves the original architecture and state-dict names.
     ``variant="v3"`` adds degradation conditioning and an HR refinement stage.
     ``variant="v4a"`` preserves v2 except for a range-aware four-channel stem.
+    ``variant="v4b"`` adds a zero-initialized multi-scale frequency branch.
     """
 
     def __init__(
@@ -179,15 +234,21 @@ class KLARestoreNet(nn.Module):
         hr_width: int = 48,
         hr_blocks: int = 2,
         degradation_conditioning: bool = True,
+        frequency_width: int = 24,
+        frequency_blocks: int = 2,
     ) -> None:
         super().__init__()
         if width < 8 or blocks < 1:
             raise ValueError("width must be >= 8 and blocks must be >= 1")
-        if variant not in {"v2", "v3", "v4a"}:
-            raise ValueError("variant must be 'v2', 'v3', or 'v4a'")
+        if variant not in {"v2", "v3", "v4a", "v4b"}:
+            raise ValueError("variant must be 'v2', 'v3', 'v4a', or 'v4b'")
         if variant == "v3" and (condition_dim < 4 or hr_width < 8 or hr_blocks < 0):
             raise ValueError(
                 "v3 requires condition_dim >= 4, hr_width >= 8, hr_blocks >= 0"
+            )
+        if variant == "v4b" and (frequency_width < 8 or frequency_blocks < 1):
+            raise ValueError(
+                "v4b requires frequency_width >= 8 and frequency_blocks >= 1"
             )
         self.width = width
         self.blocks = blocks
@@ -196,9 +257,15 @@ class KLARestoreNet(nn.Module):
         if variant == "v4a":
             self.range_stem = nn.Conv2d(3, width, 3, padding=1, bias=False)
             nn.init.zeros_(self.range_stem.weight)
-        if variant in {"v2", "v4a"}:
+        if variant in {"v2", "v4a", "v4b"}:
             self.body = nn.Sequential(*(NAFBlock(width) for _ in range(blocks)))
             self.body_tail = nn.Conv2d(width, width, 3, padding=1)
+            if variant == "v4b":
+                self.frequency_width = frequency_width
+                self.frequency_blocks = frequency_blocks
+                self.frequency_branch = FrequencyMultiScaleBranch(
+                    width, frequency_width, frequency_blocks
+                )
             self.upsample = nn.Sequential(
                 nn.Conv2d(width, 4 * width, 3, padding=1),
                 nn.PixelShuffle(2),
@@ -244,8 +311,11 @@ class KLARestoreNet(nn.Module):
         stem = self.stem(x)
         if self.variant == "v4a":
             stem = stem + self.range_stem(range_aware_input(x)[:, 1:])
-        if self.variant in {"v2", "v4a"}:
-            residual = self.upsample(stem + self.body_tail(self.body(stem)))
+        if self.variant in {"v2", "v4a", "v4b"}:
+            features = stem + self.body_tail(self.body(stem))
+            if self.variant == "v4b":
+                features = features + self.frequency_branch(x, features)
+            residual = self.upsample(features)
             return baseline + residual
 
         condition = (
@@ -278,6 +348,11 @@ def model_config(model: KLARestoreNet) -> dict[str, int | str | bool]:
             hr_blocks=model.hr_blocks,
             degradation_conditioning=model.degradation_conditioning,
         )
+    if model.variant == "v4b":
+        config.update(
+            frequency_width=model.frequency_width,
+            frequency_blocks=model.frequency_blocks,
+        )
     return config
 
 
@@ -293,6 +368,8 @@ def build_model(config: dict[str, object] | None = None) -> KLARestoreNet:
         hr_width=int(config.get("hr_width", 48)),
         hr_blocks=int(config.get("hr_blocks", 2)),
         degradation_conditioning=bool(config.get("degradation_conditioning", True)),
+        frequency_width=int(config.get("frequency_width", 24)),
+        frequency_blocks=int(config.get("frequency_blocks", 2)),
     )
 
 
@@ -337,6 +414,28 @@ def initialize_v4a_from_v2(
             target_state[name] = value
         else:
             raise ValueError(f"Cannot transfer v2 tensor {name}")
+        copied += 1
+        copied_parameters += value.numel()
+    target.load_state_dict(target_state, strict=True)
+    return copied, copied_parameters
+
+
+def initialize_v4b_from_v2(
+    target: KLARestoreNet, source_state: dict[str, torch.Tensor]
+) -> tuple[int, int]:
+    """Warm-start v4b exactly from v2 with a zero-output frequency branch."""
+    if target.variant != "v4b":
+        raise ValueError("Warm-start target must be a v4b model")
+    target_state = target.state_dict()
+    target_state["frequency_branch.project.weight"].zero_()
+    target_state["frequency_branch.project.bias"].zero_()
+
+    copied = 0
+    copied_parameters = 0
+    for name, value in source_state.items():
+        if name not in target_state or target_state[name].shape != value.shape:
+            raise ValueError(f"Cannot transfer v2 tensor {name}")
+        target_state[name] = value
         copied += 1
         copied_parameters += value.numel()
     target.load_state_dict(target_state, strict=True)

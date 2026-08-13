@@ -23,6 +23,7 @@ from kla_restore.model import (
     build_model,
     initialize_v3_from_v2,
     initialize_v4a_from_v2,
+    initialize_v4b_from_v2,
     model_config,
     range_aware_input,
 )
@@ -169,6 +170,10 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertEqual(model_config(build_model(model_config(v3))), model_config(v3))
         v4a = KLARestoreNet(8, 1, variant="v4a")
         self.assertEqual(model_config(build_model(model_config(v4a))), model_config(v4a))
+        v4b = KLARestoreNet(
+            8, 1, variant="v4b", frequency_width=8, frequency_blocks=1
+        )
+        self.assertEqual(model_config(build_model(model_config(v4b))), model_config(v4b))
 
     def test_v3_warm_start_exactly_preserves_v2_output(self) -> None:
         torch.manual_seed(3)
@@ -199,6 +204,45 @@ class ModelAndMetricTests(unittest.TestCase):
         inputs = torch.randn(2, 1, 12, 10)
         self.assertTrue(torch.equal(v2(inputs), v4a(inputs)))
         self.assertTrue(torch.count_nonzero(v4a.range_stem.weight) == 0)
+
+    def test_v4b_warm_start_exactly_preserves_v2_output(self) -> None:
+        torch.manual_seed(7)
+        v2 = KLARestoreNet(width=8, blocks=2)
+        torch.nn.init.normal_(v2.upsample[-1].weight, std=0.02)
+        torch.nn.init.normal_(v2.upsample[-1].bias, std=0.02)
+        v4b = KLARestoreNet(
+            width=8,
+            blocks=2,
+            variant="v4b",
+            frequency_width=8,
+            frequency_blocks=1,
+        )
+        copied, parameters = initialize_v4b_from_v2(v4b, v2.state_dict())
+        self.assertEqual(copied, len(v2.state_dict()))
+        self.assertEqual(parameters, sum(x.numel() for x in v2.state_dict().values()))
+        inputs = torch.randn(2, 1, 12, 12)
+        self.assertTrue(torch.equal(v2(inputs), v4b(inputs)))
+        self.assertTrue(
+            torch.count_nonzero(v4b.frequency_branch.project.weight) == 0
+        )
+
+    def test_v4b_branch_learns_after_zero_initialized_projection(self) -> None:
+        model = KLARestoreNet(
+            width=8,
+            blocks=1,
+            variant="v4b",
+            frequency_width=8,
+            frequency_blocks=1,
+        )
+        # Production v4b is always warm-started from a trained v2 whose output
+        # projection is nonzero; reproduce that contract in this isolated test.
+        torch.nn.init.normal_(model.upsample[-1].weight, std=0.02)
+        inputs = torch.rand(2, 1, 12, 12)
+        target = torch.rand(2, 1, 24, 24)
+        model(inputs).sub(target).square().mean().backward()
+        gradient = model.frequency_branch.project.weight.grad
+        self.assertIsNotNone(gradient)
+        self.assertGreater(float(gradient.abs().sum()), 0.0)
 
     def test_data_consistency_is_lower_for_matching_projection(self) -> None:
         high = torch.rand(2, 1, 24, 20)

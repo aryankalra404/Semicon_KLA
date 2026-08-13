@@ -28,6 +28,7 @@ from kla_restore.model import (
     build_model,
     initialize_v3_from_v2,
     initialize_v4a_from_v2,
+    initialize_v4b_from_v2,
     model_config,
     parameter_count,
 )
@@ -44,10 +45,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--width", type=int, default=48)
     parser.add_argument("--blocks", type=int, default=12)
-    parser.add_argument("--variant", choices=("v2", "v3", "v4a"), default="v2")
+    parser.add_argument(
+        "--variant", choices=("v2", "v3", "v4a", "v4b"), default="v2"
+    )
     parser.add_argument("--condition-dim", type=int, default=32)
     parser.add_argument("--hr-width", type=int, default=48)
     parser.add_argument("--hr-blocks", type=int, default=2)
+    parser.add_argument("--frequency-width", type=int, default=24)
+    parser.add_argument("--frequency-blocks", type=int, default=2)
     parser.add_argument("--disable-degradation-conditioning", action="store_true")
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--limit-train", type=int, help="Optional smoke-test sample limit")
@@ -68,7 +73,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--initialize-from",
         type=Path,
-        help="Initialize v2, v3, or v4a from a v2 inference/training checkpoint",
+        help="Initialize v2, v3, v4a, or v4b from a v2 checkpoint",
     )
     parser.add_argument("--synthetic-probability", type=float, default=0.0)
     parser.add_argument(
@@ -177,6 +182,8 @@ def main() -> None:
         hr_width=args.hr_width,
         hr_blocks=args.hr_blocks,
         degradation_conditioning=not args.disable_degradation_conditioning,
+        frequency_width=args.frequency_width,
+        frequency_blocks=args.frequency_blocks,
     ).to(device)
     if args.initialize_from:
         source = torch.load(args.initialize_from, map_location="cpu", weights_only=False)
@@ -196,11 +203,12 @@ def main() -> None:
             copied_tensors = len(source["model"])
             copied_parameters = sum(value.numel() for value in source["model"].values())
         else:
-            initializer = (
-                initialize_v3_from_v2
-                if args.variant == "v3"
-                else initialize_v4a_from_v2
-            )
+            initializers = {
+                "v3": initialize_v3_from_v2,
+                "v4a": initialize_v4a_from_v2,
+                "v4b": initialize_v4b_from_v2,
+            }
+            initializer = initializers[args.variant]
             copied_tensors, copied_parameters = initializer(model, source["model"])
         source_parameters = sum(value.numel() for value in source["model"].values())
         if copied_parameters != source_parameters:

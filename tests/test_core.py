@@ -7,8 +7,15 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from kla_restore.data import PairedNpyDataset, names_for_split, synthetic_compound_degradation
+from kla_restore.data import (
+    PairedNpyDataset,
+    all_pair_names,
+    deterministic_split_names,
+    names_for_split,
+    synthetic_compound_degradation,
+)
 from kla_restore.losses import RestorationLoss, low_frequency_data_consistency
+from kla_restore.ensemble import restore, transform_indices
 from kla_restore.metrics import psnr, ssim
 from kla_restore.model import (
     KLARestoreNet,
@@ -25,6 +32,16 @@ class SplitTests(unittest.TestCase):
         self.assertFalse(train & val)
         self.assertEqual(len(train | val), 3200)
         self.assertEqual((len(train), len(val)), (2880, 320))
+
+    def test_seeded_splits_are_reproducible_and_disjoint(self) -> None:
+        first_train, first_val = deterministic_split_names(3407)
+        second_train, second_val = deterministic_split_names(3407)
+        other_train, other_val = deterministic_split_names(8119)
+        self.assertEqual((first_train, first_val), (second_train, second_val))
+        self.assertNotEqual(first_val, other_val)
+        self.assertFalse(set(first_train) & set(first_val))
+        self.assertEqual(set(first_train) | set(first_val), set(all_pair_names()))
+        self.assertEqual((len(first_train), len(first_val)), (2880, 320))
 
 
 class DatasetTests(unittest.TestCase):
@@ -55,6 +72,26 @@ class DatasetTests(unittest.TestCase):
 
 
 class ModelAndMetricTests(unittest.TestCase):
+    def test_self_ensemble_inverts_geometric_transforms(self) -> None:
+        identity = torch.nn.Identity()
+        image = torch.arange(2 * 3 * 5 * 7, dtype=torch.float32).reshape(2, 3, 5, 7)
+        for mode, count in (("x1", 1), ("x4", 4), ("x8", 8)):
+            self.assertEqual(len(transform_indices(mode)), count)
+            self.assertTrue(torch.equal(restore([identity], image, mode), image))
+
+    def test_checkpoint_ensemble_averages_predictions(self) -> None:
+        class Add(torch.nn.Module):
+            def __init__(self, value: float) -> None:
+                super().__init__()
+                self.value = value
+
+            def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+                return inputs + self.value
+
+        inputs = torch.zeros(1, 1, 5, 7)
+        output = restore([Add(1.0), Add(3.0)], inputs)
+        self.assertTrue(torch.equal(output, torch.full_like(inputs, 2.0)))
+
     def test_model_doubles_resolution(self) -> None:
         model = KLARestoreNet(width=8, blocks=1)
         inputs = torch.rand(2, 1, 12, 10)

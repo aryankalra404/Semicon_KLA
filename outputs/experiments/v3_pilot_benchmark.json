@@ -1,0 +1,14 @@
+{
+  "weights": "weights/v3_pilot/best_balanced.pt",
+  "device": "cuda",
+  "batch_size": 1,
+  "warmup": 30,
+  "runs": 200,
+  "milliseconds_per_image": {
+    "mean": 20.13287607998791,
+    "p50": 20.12747600019793,
+    "p95": 20.21656784818333
+  },
+  "parameters": 763641,
+  "peak_vram_mib": 146.470703125
+}

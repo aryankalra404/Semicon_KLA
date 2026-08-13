@@ -15,7 +15,12 @@ import torch
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 
-from kla_restore.data import PairedNpyDataset, names_for_split
+from kla_restore.data import (
+    PairedNpyDataset,
+    all_pair_names,
+    deterministic_split_names,
+    names_for_split,
+)
 from kla_restore.losses import RestorationLoss
 from kla_restore.metrics import psnr, ssim
 from kla_restore.model import (
@@ -47,6 +52,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit-train", type=int, help="Optional smoke-test sample limit")
     parser.add_argument("--limit-val", type=int, help="Optional smoke-test sample limit")
     parser.add_argument("--seed", type=int, default=2026)
+    parser.add_argument(
+        "--split-seed",
+        type=int,
+        help="Use a reproducible random 90/10 split instead of fixed IDs",
+    )
+    parser.add_argument(
+        "--train-all",
+        action="store_true",
+        help="Train on all 3,200 pairs after configuration selection; validation is disabled",
+    )
     parser.add_argument("--device", default="auto")
     parser.add_argument("--resume", type=Path, help="Resume model and optimizer state")
     parser.add_argument(
@@ -59,6 +74,9 @@ def parse_args() -> argparse.Namespace:
         "--synthetic-policy", choices=("fixed", "randomized"), default="fixed"
     )
     parser.add_argument("--consistency-weight", type=float, default=0.0)
+    parser.add_argument("--pixel-weight", type=float, default=0.7)
+    parser.add_argument("--ssim-weight", type=float, default=0.2)
+    parser.add_argument("--edge-weight", type=float, default=0.1)
     parser.add_argument("--ema-decay", type=float, default=0.999)
     parser.add_argument("--gradient-clip", type=float, default=1.0)
     parser.add_argument("--skip-data-audit", action="store_true")
@@ -96,8 +114,14 @@ def main() -> None:
     device = choose_device(args.device)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
-    train_names = names_for_split("train")
-    val_names = names_for_split("val")
+    if args.train_all:
+        train_names = all_pair_names()
+        val_names: list[str] = []
+    elif args.split_seed is not None:
+        train_names, val_names = deterministic_split_names(args.split_seed)
+    else:
+        train_names = names_for_split("train")
+        val_names = names_for_split("val")
     if args.limit_train is not None:
         train_names = train_names[: args.limit_train]
     if args.limit_val is not None:
@@ -111,11 +135,15 @@ def main() -> None:
         synthetic_policy=args.synthetic_policy,
         audit=not args.skip_data_audit,
     )
-    val_set = PairedNpyDataset(
-        args.data_root / "NoisyLR",
-        args.data_root / "GT",
-        val_names,
-        audit=not args.skip_data_audit,
+    val_set = (
+        PairedNpyDataset(
+            args.data_root / "NoisyLR",
+            args.data_root / "GT",
+            val_names,
+            audit=not args.skip_data_audit,
+        )
+        if val_names
+        else None
     )
     pin_memory = device.type == "cuda"
     train_loader = DataLoader(
@@ -126,12 +154,16 @@ def main() -> None:
         pin_memory=pin_memory,
         persistent_workers=args.workers > 0,
     )
-    val_loader = DataLoader(
-        val_set,
-        batch_size=args.batch_size,
-        num_workers=args.workers,
-        pin_memory=pin_memory,
-        persistent_workers=args.workers > 0,
+    val_loader = (
+        DataLoader(
+            val_set,
+            batch_size=args.batch_size,
+            num_workers=args.workers,
+            pin_memory=pin_memory,
+            persistent_workers=args.workers > 0,
+        )
+        if val_set is not None
+        else None
     )
 
     model = KLARestoreNet(
@@ -175,7 +207,12 @@ def main() -> None:
     ema_model = copy.deepcopy(model).eval()
     for parameter in ema_model.parameters():
         parameter.requires_grad_(False)
-    loss_fn = RestorationLoss(consistency_weight=args.consistency_weight)
+    loss_fn = RestorationLoss(
+        pixel_weight=args.pixel_weight,
+        ssim_weight=args.ssim_weight,
+        edge_weight=args.edge_weight,
+        consistency_weight=args.consistency_weight,
+    )
     optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     use_amp = device.type == "cuda"
@@ -214,7 +251,11 @@ def main() -> None:
         if history_path.is_file():
             history = json.loads(history_path.read_text())
 
-    print(f"device={device} train={len(train_set)} val={len(val_set)} parameters={parameter_count(model):,}")
+    print(
+        f"device={device} train={len(train_set)} "
+        f"val={len(val_set) if val_set is not None else 0} "
+        f"parameters={parameter_count(model):,}"
+    )
     for epoch in range(start_epoch, args.epochs + 1):
         model.train()
         started = time.perf_counter()
@@ -241,7 +282,11 @@ def main() -> None:
                 running_parts[name] = running_parts.get(name, 0.0) + value * lr.shape[0]
         scheduler.step()
 
-        metrics = validate(ema_model, val_loader, device)
+        metrics = (
+            validate(ema_model, val_loader, device)
+            if val_loader is not None
+            else {"psnr": float("nan"), "ssim": float("nan")}
+        )
         record = {
             "epoch": epoch,
             "train_loss": running_loss / len(train_set),
@@ -267,6 +312,14 @@ def main() -> None:
                 "ema_decay": args.ema_decay,
                 "gradient_clip": args.gradient_clip,
                 "seed": args.seed,
+                "split_seed": args.split_seed,
+                "train_all": args.train_all,
+                "loss_weights": {
+                    "pixel": args.pixel_weight,
+                    "ssim": args.ssim_weight,
+                    "edge": args.edge_weight,
+                    "consistency": args.consistency_weight,
+                },
                 "initialized_from": (
                     str(args.initialize_from) if args.initialize_from else None
                 ),
@@ -282,6 +335,12 @@ def main() -> None:
             ),
         }
         torch.save(checkpoint, args.output_dir / "last.pt")
+        if val_loader is None:
+            torch.save(checkpoint, args.output_dir / "final_all_data.pt")
+            (args.output_dir / "history.json").write_text(
+                json.dumps(history, indent=2)
+            )
+            continue
         if metrics["ssim"] > best_ssim:
             best_ssim = metrics["ssim"]
             torch.save(checkpoint, args.output_dir / "best_ssim.pt")

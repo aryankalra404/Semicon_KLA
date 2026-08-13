@@ -7,9 +7,10 @@ KLA challenge**. It maps noisy `128x128` grayscale NumPy arrays to clean
 ## Results
 
 On the fixed 320-image validation split, the compact 580,609-parameter final
-model achieves **26.2962 dB PSNR**, **0.7004 SSIM**, and **11.56 ms/image** on
-an NVIDIA RTX A4000. It improves over bicubic by +3.4771 dB and +0.1544 SSIM
-on average. Full metrics, confidence intervals, and failure analysis are in
+model achieves **26.2962 dB PSNR**, **0.7004 SSIM**, **0.3738 LPIPS**, and
+**11.22 ms/image batch-1 p50 latency** on an NVIDIA RTX A4000. It improves over
+bicubic by +3.4771 dB and +0.1544 SSIM on average. Full metrics, confidence
+intervals, and failure analysis are in
 [`results/`](results/README.md).
 
 ![Validation learning curves](figures/v2_learning_curves.png)
@@ -37,6 +38,14 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+For the exact NGC image, CUDA/container metadata and clean Docker command, see
+[`ENVIRONMENT.md`](ENVIRONMENT.md).
+
+The bounded GPU experiment runner is `run_gpu_matrix.sh`; it builds the local
+`kla-restorenet:latest` image from the pinned NVIDIA NGC base image on first
+use. It deliberately separates challenger training from promotion so an
+experiment cannot silently replace the frozen submission checkpoint.
 
 ## Verify the project
 
@@ -174,6 +183,21 @@ python inference.py \
 Outputs retain the original filenames and are saved as `256x256` float32
 `.npy` arrays in `[0, 1]`.
 
+Optional accuracy experiments use the same evaluator contract:
+
+```bash
+# Geometric test-time self-ensemble
+python inference.py --input-dir /path/to/NoisyLR --output-dir /path/to/restored \
+  --self-ensemble x4
+
+# Output-average multiple compatible checkpoints
+python inference.py --input-dir /path/to/NoisyLR --output-dir /path/to/restored \
+  --weights weights/model_a.pt weights/model_b.pt
+```
+
+The default remains the fastest single-checkpoint `x1` path. Accuracy modes are
+promoted only when their measured gain justifies additional H100 inference.
+
 The repository includes the compact inference-only `weights/final.pt` model.
 It contains no optimizer state and loads with the same standalone inference
 command used by the benchmark team.
@@ -186,7 +210,13 @@ and validates output filenames, shapes, dtype, finiteness, and range:
 
 ```bash
 python validate_submission.py --device auto
+python make_output_manifest.py
+python submission_audit.py
 ```
+
+The final Phase 1 dry-run sequence is in
+[`SUBMISSION_CHECKLIST.md`](SUBMISSION_CHECKLIST.md), and the optional demo has
+a timed script in [`DEMO_SCRIPT.md`](DEMO_SCRIPT.md).
 
 For a reproducible NVIDIA environment:
 

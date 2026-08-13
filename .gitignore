@@ -10,6 +10,15 @@ weights/
 outputs/
 logs/
 
+# KLA explicitly requires restored blind-test outputs and reported evidence.
+!outputs/
+outputs/*
+!outputs/restored/
+!outputs/restored/*.npy
+!outputs/experiments/
+!outputs/experiments/*.json
+!outputs/output_manifest.json
+
 # The compact final evaluator checkpoint is intentionally versioned.
 !weights/
 weights/*

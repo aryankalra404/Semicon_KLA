@@ -18,6 +18,19 @@ SPLIT_RANGES = {
 }
 
 
+def deterministic_split_names(
+    seed: int, val_fraction: float = 0.1
+) -> tuple[list[str], list[str]]:
+    """Return a reproducible random split over the 3,200 paired filenames."""
+    if not 0.0 < val_fraction < 1.0:
+        raise ValueError("val_fraction must be between 0 and 1")
+    names = [sample_name(index) for index in range(3200)]
+    generator = random.Random(seed)
+    generator.shuffle(names)
+    val_size = round(len(names) * val_fraction)
+    return sorted(names[val_size:]), sorted(names[:val_size])
+
+
 def sample_name(index: int) -> str:
     return f"{index:06d}.npy"
 
@@ -28,6 +41,10 @@ def names_for_split(split: str) -> list[str]:
         choices = ", ".join(sorted(SPLIT_RANGES))
         raise ValueError(f"Unknown split {split!r}; expected one of: {choices}")
     return [sample_name(index) for index in SPLIT_RANGES[split]]
+
+
+def all_pair_names() -> list[str]:
+    return [sample_name(index) for index in range(3200)]
 
 
 def validate_pairs(lr_dir: Path, gt_dir: Path, names: Iterable[str]) -> None:

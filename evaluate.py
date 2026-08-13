@@ -15,6 +15,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from kla_restore.data import PairedNpyDataset, names_for_split
+from kla_restore.ensemble import restore
 from kla_restore.metrics import mean_and_ci95, psnr, ssim
 from kla_restore.runtime import choose_device, load_model
 
@@ -25,7 +26,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gt-dir", type=Path, default=Path("data/train/GT"))
     parser.add_argument("--split", choices=("val", "all"), default="val")
     parser.add_argument("--method", choices=("bicubic", "model"), default="bicubic")
-    parser.add_argument("--weights", type=Path)
+    parser.add_argument(
+        "--weights", type=Path, nargs="+", help="One or more model checkpoints"
+    )
+    parser.add_argument(
+        "--self-ensemble", choices=("x1", "x4", "x8"), default="x1"
+    )
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--device", default="auto")
@@ -45,12 +51,12 @@ def main() -> None:
     dataset = PairedNpyDataset(args.input_dir, args.gt_dir, names)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.workers)
     device = choose_device(args.device)
-    model = None
+    models = None
     lpips_model = None
     if args.method == "model":
         if args.weights is None:
             raise SystemExit("--weights is required when --method=model")
-        model = load_model(args.weights, device)
+        models = [load_model(weights, device) for weights in args.weights]
     if args.lpips:
         try:
             import lpips
@@ -66,10 +72,10 @@ def main() -> None:
             if device.type == "cuda":
                 torch.cuda.synchronize()
             started = time.perf_counter()
-            if model is None:
+            if models is None:
                 prediction = F.interpolate(lr, scale_factor=2, mode="bicubic", align_corners=False).clamp(0, 1)
             else:
-                prediction = model(lr).clamp(0.0, 1.0)
+                prediction = restore(models, lr, args.self_ensemble).clamp(0.0, 1.0)
             if device.type == "cuda":
                 torch.cuda.synchronize()
             elapsed += time.perf_counter() - started
@@ -108,6 +114,8 @@ def main() -> None:
         "ssim": ssim_mean,
         "ssim_ci95": ssim_ci,
         "milliseconds_per_image": 1000 * elapsed / images,
+        "self_ensemble": args.self_ensemble,
+        "models": len(models) if models is not None else 0,
     }
     if lpips_values:
         lpips_mean, lpips_ci = mean_and_ci95(lpips_values)

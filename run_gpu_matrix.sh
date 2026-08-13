@@ -133,6 +133,7 @@ case "${1:-}" in
       --baseline outputs/experiments/ablation_frozen_v2_per_image.csv \
       --control outputs/experiments/ablation_v2_control_per_image.csv \
       --candidate outputs/experiments/ablation_v4a_per_image.csv \
+      --candidate-name v4a \
       --output results/v4a_paired_ablation.json
     ;;
   v4b-ablation)
@@ -173,6 +174,7 @@ case "${1:-}" in
       --baseline outputs/experiments/v4b_frozen_v2_per_image.csv \
       --control outputs/experiments/v4b_v2_control_per_image.csv \
       --candidate outputs/experiments/v4b_v4b_per_image.csv \
+      --candidate-name v4b \
       --output results/v4b_paired_ablation.json
     ;;
   split3407)

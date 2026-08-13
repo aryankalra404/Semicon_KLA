@@ -22,6 +22,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--candidate", type=Path, required=True)
     parser.add_argument("--bootstrap-runs", type=int, default=20_000)
     parser.add_argument("--seed", type=int, default=260813)
+    parser.add_argument(
+        "--candidate-name",
+        default="candidate",
+        help="Label used for the experimental model in comparison keys",
+    )
     parser.add_argument("--output", type=Path)
     return parser.parse_args()
 
@@ -103,6 +108,9 @@ def main() -> None:
     baseline = read_rows(args.baseline)
     control = read_rows(args.control)
     candidate = read_rows(args.candidate)
+    candidate_name = args.candidate_name.strip().replace(" ", "_")
+    if not candidate_name:
+        raise SystemExit("--candidate-name must not be empty")
     rng = np.random.default_rng(args.seed)
     result = {
         "images": len(baseline),
@@ -112,10 +120,10 @@ def main() -> None:
             "control_vs_frozen_v2": compare(
                 baseline, control, args.bootstrap_runs, rng
             ),
-            "v4a_vs_frozen_v2": compare(
+            f"{candidate_name}_vs_frozen_v2": compare(
                 baseline, candidate, args.bootstrap_runs, rng
             ),
-            "v4a_vs_matched_v2_control": compare(
+            f"{candidate_name}_vs_matched_v2_control": compare(
                 control, candidate, args.bootstrap_runs, rng
             ),
         },

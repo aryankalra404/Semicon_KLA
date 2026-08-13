@@ -1,4 +1,4 @@
-"""A compact NAF-style network for joint denoising and 2x restoration."""
+"""Compact NAF-style networks for blind denoising and 2x restoration."""
 
 from __future__ import annotations
 
@@ -58,25 +58,159 @@ class NAFBlock(nn.Module):
         return x + self.ffn_project(features) * self.gamma
 
 
-class KLARestoreNet(nn.Module):
-    """Restore a single-channel input to twice its spatial resolution."""
+class DegradationEncoder(nn.Module):
+    """Encode image-level degradation evidence without estimating a kernel."""
 
-    def __init__(self, width: int = 48, blocks: int = 12) -> None:
+    def __init__(self, condition_dim: int = 32) -> None:
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 16, 3, stride=2, padding=1),
+            nn.SiLU(inplace=True),
+            nn.Conv2d(16, 24, 3, stride=2, padding=1),
+            nn.SiLU(inplace=True),
+            nn.Conv2d(24, 32, 3, stride=2, padding=1),
+            nn.SiLU(inplace=True),
+            nn.AdaptiveAvgPool2d(1),
+        )
+        # Four robust global statistics complement the learned local evidence.
+        self.project = nn.Sequential(
+            nn.Linear(32 + 4, 64),
+            nn.SiLU(inplace=True),
+            nn.Linear(64, condition_dim),
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        mean = x.mean(dim=(-2, -1), keepdim=True)
+        std = x.var(dim=(-2, -1), keepdim=True, unbiased=False).add(1e-6).sqrt()
+        normalized = ((x - mean) / std).clamp(-6.0, 6.0)
+        learned = self.features(normalized).flatten(1)
+        grad_x = (x[..., :, 1:] - x[..., :, :-1]).abs().mean(dim=(-2, -1))
+        grad_y = (x[..., 1:, :] - x[..., :-1, :]).abs().mean(dim=(-2, -1))
+        outside = ((x < 0.0) | (x > 1.0)).float().mean(dim=(-2, -1))
+        statistics = torch.cat(
+            (mean.flatten(1), std.log().flatten(1), grad_x + grad_y, outside), dim=1
+        )
+        return self.project(torch.cat((learned, statistics), dim=1))
+
+
+class ConditionalNAFBlock(nn.Module):
+    """NAF block modulated by an implicit degradation representation."""
+
+    def __init__(self, channels: int, condition_dim: int, expansion: int = 2) -> None:
+        super().__init__()
+        hidden = channels * expansion
+        self.norm1 = LayerNorm2d(channels)
+        self.modulation1 = nn.Linear(condition_dim, 2 * channels)
+        self.expand = nn.Conv2d(channels, hidden * 2, 1)
+        self.depthwise = nn.Conv2d(
+            hidden * 2, hidden * 2, 3, padding=1, groups=hidden * 2
+        )
+        self.gate = SimpleGate()
+        self.attention = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(hidden, hidden, 1),
+        )
+        self.project = nn.Conv2d(hidden, channels, 1)
+        self.beta = nn.Parameter(torch.zeros(1, channels, 1, 1))
+
+        self.norm2 = LayerNorm2d(channels)
+        self.modulation2 = nn.Linear(condition_dim, 2 * channels)
+        self.ffn_expand = nn.Conv2d(channels, hidden * 2, 1)
+        self.ffn_project = nn.Conv2d(hidden, channels, 1)
+        self.gamma = nn.Parameter(torch.zeros(1, channels, 1, 1))
+        # Start exactly as an unconditioned NAF block and learn conditioning safely.
+        nn.init.zeros_(self.modulation1.weight)
+        nn.init.zeros_(self.modulation1.bias)
+        nn.init.zeros_(self.modulation2.weight)
+        nn.init.zeros_(self.modulation2.bias)
+
+    @staticmethod
+    def modulate(
+        features: torch.Tensor, projection: nn.Linear, condition: torch.Tensor
+    ) -> torch.Tensor:
+        scale, shift = projection(condition).chunk(2, dim=1)
+        return features * (1.0 + scale[:, :, None, None]) + shift[:, :, None, None]
+
+    def forward(self, x: torch.Tensor, condition: torch.Tensor) -> torch.Tensor:
+        normalized = self.modulate(self.norm1(x), self.modulation1, condition)
+        features = self.gate(self.depthwise(self.expand(normalized)))
+        features = features * self.attention(features)
+        x = x + self.project(features) * self.beta
+
+        normalized = self.modulate(self.norm2(x), self.modulation2, condition)
+        features = self.gate(self.ffn_expand(normalized))
+        return x + self.ffn_project(features) * self.gamma
+
+
+class KLARestoreNet(nn.Module):
+    """Restore a single-channel input to twice its spatial resolution.
+
+    ``variant="v2"`` preserves the original architecture and state-dict names.
+    ``variant="v3"`` adds degradation conditioning and an HR refinement stage.
+    """
+
+    def __init__(
+        self,
+        width: int = 48,
+        blocks: int = 12,
+        *,
+        variant: str = "v2",
+        condition_dim: int = 32,
+        hr_width: int = 48,
+        hr_blocks: int = 2,
+        degradation_conditioning: bool = True,
+    ) -> None:
         super().__init__()
         if width < 8 or blocks < 1:
             raise ValueError("width must be >= 8 and blocks must be >= 1")
+        if variant not in {"v2", "v3"}:
+            raise ValueError("variant must be 'v2' or 'v3'")
+        if variant == "v3" and (condition_dim < 4 or hr_width < 8 or hr_blocks < 0):
+            raise ValueError(
+                "v3 requires condition_dim >= 4, hr_width >= 8, hr_blocks >= 0"
+            )
         self.width = width
         self.blocks = blocks
+        self.variant = variant
         self.stem = nn.Conv2d(1, width, 3, padding=1)
-        self.body = nn.Sequential(*(NAFBlock(width) for _ in range(blocks)))
-        self.body_tail = nn.Conv2d(width, width, 3, padding=1)
-        self.upsample = nn.Sequential(
-            nn.Conv2d(width, 4 * width, 3, padding=1),
-            nn.PixelShuffle(2),
-            nn.Conv2d(width, 1, 3, padding=1),
-        )
-        nn.init.zeros_(self.upsample[-1].weight)
-        nn.init.zeros_(self.upsample[-1].bias)
+        if variant == "v2":
+            self.body = nn.Sequential(*(NAFBlock(width) for _ in range(blocks)))
+            self.body_tail = nn.Conv2d(width, width, 3, padding=1)
+            self.upsample = nn.Sequential(
+                nn.Conv2d(width, 4 * width, 3, padding=1),
+                nn.PixelShuffle(2),
+                nn.Conv2d(width, 1, 3, padding=1),
+            )
+            nn.init.zeros_(self.upsample[-1].weight)
+            nn.init.zeros_(self.upsample[-1].bias)
+        else:
+            self.condition_dim = condition_dim
+            self.hr_width = hr_width
+            self.hr_blocks = hr_blocks
+            self.degradation_conditioning = degradation_conditioning
+            if degradation_conditioning:
+                self.degradation_encoder = DegradationEncoder(condition_dim)
+                self.body = nn.ModuleList(
+                    ConditionalNAFBlock(width, condition_dim) for _ in range(blocks)
+                )
+            else:
+                self.body = nn.ModuleList(NAFBlock(width) for _ in range(blocks))
+            self.body_tail = nn.Conv2d(width, width, 3, padding=1)
+            self.upsample_features = nn.Sequential(
+                nn.Conv2d(width, 4 * hr_width, 3, padding=1),
+                nn.PixelShuffle(2),
+            )
+            if degradation_conditioning:
+                self.hr_body = nn.ModuleList(
+                    ConditionalNAFBlock(hr_width, condition_dim) for _ in range(hr_blocks)
+                )
+            else:
+                self.hr_body = nn.ModuleList(
+                    NAFBlock(hr_width) for _ in range(hr_blocks)
+                )
+            self.output = nn.Conv2d(hr_width, 1, 3, padding=1)
+            nn.init.zeros_(self.output.weight)
+            nn.init.zeros_(self.output.bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.ndim != 4 or x.shape[1] != 1:
@@ -85,8 +219,81 @@ class KLARestoreNet(nn.Module):
             x, scale_factor=2, mode="bicubic", align_corners=False
         ).clamp(0.0, 1.0)
         stem = self.stem(x)
-        residual = self.upsample(stem + self.body_tail(self.body(stem)))
+        if self.variant == "v2":
+            residual = self.upsample(stem + self.body_tail(self.body(stem)))
+            return baseline + residual
+
+        condition = (
+            self.degradation_encoder(x) if self.degradation_conditioning else None
+        )
+        features = stem
+        for block in self.body:
+            features = (
+                block(features, condition) if condition is not None else block(features)
+            )
+        features = self.upsample_features(stem + self.body_tail(features))
+        for block in self.hr_body:
+            features = (
+                block(features, condition) if condition is not None else block(features)
+            )
+        residual = self.output(features)
         return baseline + residual
+
+
+def model_config(model: KLARestoreNet) -> dict[str, int | str | bool]:
+    config: dict[str, int | str | bool] = {
+        "variant": model.variant,
+        "width": model.width,
+        "blocks": model.blocks,
+    }
+    if model.variant == "v3":
+        config.update(
+            condition_dim=model.condition_dim,
+            hr_width=model.hr_width,
+            hr_blocks=model.hr_blocks,
+            degradation_conditioning=model.degradation_conditioning,
+        )
+    return config
+
+
+def build_model(config: dict[str, object] | None = None) -> KLARestoreNet:
+    """Build a model from either a legacy v2 or a complete v3 config."""
+    config = config or {}
+    variant = str(config.get("variant", "v2"))
+    return KLARestoreNet(
+        width=int(config.get("width", 48)),
+        blocks=int(config.get("blocks", 12)),
+        variant=variant,
+        condition_dim=int(config.get("condition_dim", 32)),
+        hr_width=int(config.get("hr_width", 48)),
+        hr_blocks=int(config.get("hr_blocks", 2)),
+        degradation_conditioning=bool(config.get("degradation_conditioning", True)),
+    )
+
+
+def initialize_v3_from_v2(
+    target: KLARestoreNet, source_state: dict[str, torch.Tensor]
+) -> tuple[int, int]:
+    """Warm-start v3 from v2, including its residual upsampler when compatible."""
+    if target.variant != "v3":
+        raise ValueError("Warm-start target must be a v3 model")
+    target_state = target.state_dict()
+    aliases = {
+        "upsample.0.weight": "upsample_features.0.weight",
+        "upsample.0.bias": "upsample_features.0.bias",
+        "upsample.2.weight": "output.weight",
+        "upsample.2.bias": "output.bias",
+    }
+    copied = 0
+    copied_parameters = 0
+    for source_name, value in source_state.items():
+        target_name = aliases.get(source_name, source_name)
+        if target_name in target_state and target_state[target_name].shape == value.shape:
+            target_state[target_name] = value
+            copied += 1
+            copied_parameters += value.numel()
+    target.load_state_dict(target_state, strict=True)
+    return copied, copied_parameters
 
 
 def parameter_count(model: nn.Module) -> int:

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import torch
 
-from .model import KLARestoreNet
+from .model import KLARestoreNet, build_model
 
 
 def mps_is_usable() -> bool:
@@ -43,9 +43,6 @@ def load_model(weights: str | Path, device: torch.device) -> KLARestoreNet:
     if "model" not in checkpoint:
         raise KeyError("Checkpoint does not contain a 'model' state dictionary")
     config = checkpoint.get("model_config", {})
-    model = KLARestoreNet(
-        width=int(config.get("width", 48)),
-        blocks=int(config.get("blocks", 12)),
-    )
+    model = build_model(config)
     model.load_state_dict(checkpoint["model"], strict=True)
     return model.to(device).eval()

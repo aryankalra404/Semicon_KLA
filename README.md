@@ -82,6 +82,69 @@ python train.py --epochs 50 --batch-size 8 --width 48 --blocks 12 \
   --resume weights/last.pt
 ```
 
+## Degradation-aware v3 experiment
+
+The optional v3 architecture keeps the validated v2 restoration trunk, then
+adds a small implicit degradation encoder and two high-resolution refinement
+blocks. Its synthetic branch independently gates and randomizes the order of
+blur/downsampling, Gaussian noise, speckle noise, and radiometric changes. A
+low-frequency data-consistency term encourages faithful LR structure without
+forcing the prediction to reproduce pixel-level noise.
+
+First measure the official paired-data distribution:
+
+```bash
+python analyze_degradations.py --split all
+```
+
+Run a short, warm-started GPU pilot from the committed v2 checkpoint:
+
+```bash
+python train.py \
+  --variant v3 \
+  --initialize-from weights/final.pt \
+  --epochs 5 \
+  --batch-size 8 \
+  --workers 4 \
+  --width 48 \
+  --blocks 12 \
+  --condition-dim 32 \
+  --hr-width 48 \
+  --hr-blocks 2 \
+  --learning-rate 5e-5 \
+  --synthetic-probability 0.25 \
+  --synthetic-policy randomized \
+  --consistency-weight 0.03 \
+  --device cuda \
+  --output-dir weights/v3_pilot
+```
+
+`--initialize-from` performs an exact architectural transfer: before the first
+optimization step, v3 produces the same output as v2. It fails fast if the
+width, block count, or HR feature width prevents complete transfer.
+
+Evaluate the pilot on the untouched official validation split and deterministic
+stress suite:
+
+```bash
+python evaluate.py --method model --split val \
+  --input-dir data/train/NoisyLR --gt-dir data/train/GT \
+  --weights weights/v3_pilot/best_balanced.pt --device cuda \
+  --lpips --per-image-output outputs/v3_pilot_per_image.csv \
+  --json-output outputs/v3_pilot_metrics.json
+
+python evaluate_stress.py \
+  --weights weights/final.pt --device cuda \
+  --json-output outputs/v2_stress.json
+python evaluate_stress.py \
+  --weights weights/v3_pilot/best_balanced.pt --device cuda \
+  --json-output outputs/v3_pilot_stress.json
+```
+
+Only promote v3 if it improves both official validation metrics, or materially
+improves LPIPS/stress robustness while losing no more than `0.10 dB` PSNR and
+`0.002` SSIM. The committed v2 checkpoint remains the fallback.
+
 ## Evaluate a trained checkpoint
 
 ```bash
@@ -132,4 +195,11 @@ docker build -t kla-restorenet .
 docker run --rm --gpus all \
   -v "$PWD/data":/workspace/project/data:ro \
   kla-restorenet python validate_submission.py --device cuda
+```
+
+For warmed batch-1 latency, tail latency, parameter count, and peak CUDA memory:
+
+```bash
+python benchmark.py --weights weights/final.pt --batch-size 1 --device cuda \
+  --json-output outputs/final_benchmark.json
 ```

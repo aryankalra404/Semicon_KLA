@@ -18,7 +18,13 @@ from torch.utils.data import DataLoader
 from kla_restore.data import PairedNpyDataset, names_for_split
 from kla_restore.losses import RestorationLoss
 from kla_restore.metrics import psnr, ssim
-from kla_restore.model import KLARestoreNet, parameter_count
+from kla_restore.model import (
+    KLARestoreNet,
+    build_model,
+    initialize_v3_from_v2,
+    model_config,
+    parameter_count,
+)
 from kla_restore.runtime import choose_device
 
 
@@ -32,13 +38,27 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--width", type=int, default=48)
     parser.add_argument("--blocks", type=int, default=12)
+    parser.add_argument("--variant", choices=("v2", "v3"), default="v2")
+    parser.add_argument("--condition-dim", type=int, default=32)
+    parser.add_argument("--hr-width", type=int, default=48)
+    parser.add_argument("--hr-blocks", type=int, default=2)
+    parser.add_argument("--disable-degradation-conditioning", action="store_true")
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--limit-train", type=int, help="Optional smoke-test sample limit")
     parser.add_argument("--limit-val", type=int, help="Optional smoke-test sample limit")
     parser.add_argument("--seed", type=int, default=2026)
     parser.add_argument("--device", default="auto")
     parser.add_argument("--resume", type=Path, help="Resume model and optimizer state")
+    parser.add_argument(
+        "--initialize-from",
+        type=Path,
+        help="Warm-start v3 from a v2 inference/training checkpoint",
+    )
     parser.add_argument("--synthetic-probability", type=float, default=0.0)
+    parser.add_argument(
+        "--synthetic-policy", choices=("fixed", "randomized"), default="fixed"
+    )
+    parser.add_argument("--consistency-weight", type=float, default=0.0)
     parser.add_argument("--ema-decay", type=float, default=0.999)
     parser.add_argument("--gradient-clip", type=float, default=1.0)
     parser.add_argument("--skip-data-audit", action="store_true")
@@ -70,6 +90,8 @@ def validate(model: KLARestoreNet, loader: DataLoader, device: torch.device) -> 
 
 def main() -> None:
     args = parse_args()
+    if args.resume and args.initialize_from:
+        raise SystemExit("Use only one of --resume and --initialize-from")
     set_seed(args.seed)
     device = choose_device(args.device)
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -86,6 +108,7 @@ def main() -> None:
         train_names,
         augment=True,
         synthetic_probability=args.synthetic_probability,
+        synthetic_policy=args.synthetic_policy,
         audit=not args.skip_data_audit,
     )
     val_set = PairedNpyDataset(
@@ -111,11 +134,48 @@ def main() -> None:
         persistent_workers=args.workers > 0,
     )
 
-    model = KLARestoreNet(args.width, args.blocks).to(device)
+    model = KLARestoreNet(
+        args.width,
+        args.blocks,
+        variant=args.variant,
+        condition_dim=args.condition_dim,
+        hr_width=args.hr_width,
+        hr_blocks=args.hr_blocks,
+        degradation_conditioning=not args.disable_degradation_conditioning,
+    ).to(device)
+    if args.initialize_from:
+        if args.variant != "v3":
+            raise SystemExit("--initialize-from is supported only for --variant v3")
+        source = torch.load(args.initialize_from, map_location="cpu", weights_only=False)
+        source_config = source.get("model_config", {})
+        if source_config.get("variant", "v2") != "v2":
+            raise ValueError("--initialize-from checkpoint must contain a v2 model")
+        if int(source_config.get("width", 48)) != args.width or int(
+            source_config.get("blocks", 12)
+        ) != args.blocks:
+            raise ValueError(
+                "--initialize-from width/blocks must match the requested v3 "
+                f"configuration; checkpoint={source_config}, "
+                f"requested width={args.width}/blocks={args.blocks}"
+            )
+        copied_tensors, copied_parameters = initialize_v3_from_v2(
+            model, source["model"]
+        )
+        source_parameters = sum(value.numel() for value in source["model"].values())
+        if copied_parameters != source_parameters:
+            raise ValueError(
+                "Warm-start did not copy the complete v2 model: "
+                f"copied {copied_parameters:,}/{source_parameters:,} parameters. "
+                "For exact transfer, set --hr-width equal to --width."
+            )
+        print(
+            f"initialized_from={args.initialize_from} tensors={copied_tensors} "
+            f"parameters={copied_parameters:,}"
+        )
     ema_model = copy.deepcopy(model).eval()
     for parameter in ema_model.parameters():
         parameter.requires_grad_(False)
-    loss_fn = RestorationLoss()
+    loss_fn = RestorationLoss(consistency_weight=args.consistency_weight)
     optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     use_amp = device.type == "cuda"
@@ -128,10 +188,11 @@ def main() -> None:
 
     if args.resume:
         checkpoint = torch.load(args.resume, map_location="cpu", weights_only=False)
-        expected_config = {"width": args.width, "blocks": args.blocks}
-        if checkpoint.get("model_config") != expected_config:
+        expected_config = model_config(model)
+        checkpoint_config = model_config(build_model(checkpoint.get("model_config")))
+        if checkpoint_config != expected_config:
             raise ValueError(
-                f"Checkpoint architecture {checkpoint.get('model_config')} does not "
+                f"Checkpoint architecture {checkpoint_config} does not "
                 f"match requested architecture {expected_config}"
             )
         model.load_state_dict(checkpoint.get("train_model", checkpoint["model"]))
@@ -158,12 +219,13 @@ def main() -> None:
         model.train()
         started = time.perf_counter()
         running_loss = 0.0
+        running_parts: dict[str, float] = {}
         for lr, gt, _ in train_loader:
             lr, gt = lr.to(device, non_blocking=True), gt.to(device, non_blocking=True)
             optimizer.zero_grad(set_to_none=True)
             with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=use_amp):
                 prediction = model(lr)
-                loss, _ = loss_fn(prediction, gt)
+                loss, parts = loss_fn(prediction, gt, lr)
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.gradient_clip)
@@ -175,12 +237,17 @@ def main() -> None:
                 ):
                     ema_parameter.lerp_(parameter, 1.0 - args.ema_decay)
             running_loss += float(loss.detach()) * lr.shape[0]
+            for name, value in parts.items():
+                running_parts[name] = running_parts.get(name, 0.0) + value * lr.shape[0]
         scheduler.step()
 
         metrics = validate(ema_model, val_loader, device)
         record = {
             "epoch": epoch,
             "train_loss": running_loss / len(train_set),
+            "train_parts": {
+                name: value / len(train_set) for name, value in running_parts.items()
+            },
             "val_psnr": metrics["psnr"],
             "val_ssim": metrics["ssim"],
             "seconds": time.perf_counter() - started,
@@ -192,7 +259,18 @@ def main() -> None:
             "model": ema_model.state_dict(),
             "train_model": model.state_dict(),
             "ema_model": ema_model.state_dict(),
-            "model_config": {"width": args.width, "blocks": args.blocks},
+            "model_config": model_config(model),
+            "training_config": {
+                "synthetic_probability": args.synthetic_probability,
+                "synthetic_policy": args.synthetic_policy,
+                "consistency_weight": args.consistency_weight,
+                "ema_decay": args.ema_decay,
+                "gradient_clip": args.gradient_clip,
+                "seed": args.seed,
+                "initialized_from": (
+                    str(args.initialize_from) if args.initialize_from else None
+                ),
+            },
             "optimizer": optimizer.state_dict(),
             "scheduler": scheduler.state_dict(),
             "epoch": epoch,

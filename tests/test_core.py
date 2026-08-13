@@ -8,8 +8,14 @@ import numpy as np
 import torch
 
 from kla_restore.data import PairedNpyDataset, names_for_split, synthetic_compound_degradation
+from kla_restore.losses import RestorationLoss, low_frequency_data_consistency
 from kla_restore.metrics import psnr, ssim
-from kla_restore.model import KLARestoreNet
+from kla_restore.model import (
+    KLARestoreNet,
+    build_model,
+    initialize_v3_from_v2,
+    model_config,
+)
 from kla_restore.runtime import choose_device
 
 
@@ -42,9 +48,10 @@ class DatasetTests(unittest.TestCase):
 
     def test_synthetic_degradation_shape_and_range_freedom(self) -> None:
         gt = torch.rand(1, 32, 32)
-        lr = synthetic_compound_degradation(gt)
-        self.assertEqual(lr.shape, (1, 16, 16))
-        self.assertTrue(torch.isfinite(lr).all())
+        for policy in ("fixed", "randomized"):
+            lr = synthetic_compound_degradation(gt, policy=policy)
+            self.assertEqual(lr.shape, (1, 16, 16))
+            self.assertTrue(torch.isfinite(lr).all())
 
 
 class ModelAndMetricTests(unittest.TestCase):
@@ -54,6 +61,58 @@ class ModelAndMetricTests(unittest.TestCase):
         output = model(inputs)
         self.assertEqual(output.shape, (2, 1, 24, 20))
         self.assertTrue(torch.all((0 <= output) & (output <= 1)))
+
+    def test_v3_model_doubles_resolution_and_backpropagates(self) -> None:
+        model = KLARestoreNet(
+            width=8, blocks=2, variant="v3", condition_dim=8, hr_width=8, hr_blocks=1
+        )
+        inputs = torch.rand(2, 1, 12, 10)
+        target = torch.rand(2, 1, 24, 20)
+        output = model(inputs)
+        self.assertEqual(output.shape, target.shape)
+        output.sub(target).square().mean().backward()
+        self.assertIsNotNone(model.output.weight.grad)
+        self.assertTrue(torch.isfinite(model.output.weight.grad).all())
+
+    def test_model_config_preserves_legacy_and_v3_variants(self) -> None:
+        legacy = build_model({"width": 8, "blocks": 1})
+        self.assertEqual(
+            model_config(legacy), {"variant": "v2", "width": 8, "blocks": 1}
+        )
+        v3 = KLARestoreNet(
+            8, 1, variant="v3", condition_dim=8, hr_width=8, hr_blocks=1
+        )
+        self.assertEqual(model_config(build_model(model_config(v3))), model_config(v3))
+
+    def test_v3_warm_start_exactly_preserves_v2_output(self) -> None:
+        torch.manual_seed(3)
+        v2 = KLARestoreNet(width=8, blocks=2)
+        torch.nn.init.normal_(v2.upsample[-1].weight, std=0.02)
+        torch.nn.init.normal_(v2.upsample[-1].bias, std=0.02)
+        v3 = KLARestoreNet(
+            width=8,
+            blocks=2,
+            variant="v3",
+            condition_dim=8,
+            hr_width=8,
+            hr_blocks=1,
+        )
+        initialize_v3_from_v2(v3, v2.state_dict())
+        inputs = torch.randn(2, 1, 12, 10)
+        self.assertTrue(torch.equal(v2(inputs), v3(inputs)))
+
+    def test_data_consistency_is_lower_for_matching_projection(self) -> None:
+        high = torch.rand(2, 1, 24, 20)
+        observation = torch.nn.functional.interpolate(high, size=(12, 10), mode="area")
+        matching = low_frequency_data_consistency(high, observation)
+        mismatching = low_frequency_data_consistency(1.0 - high, observation)
+        self.assertLess(float(matching), float(mismatching))
+
+    def test_consistency_loss_requires_observation(self) -> None:
+        loss = RestorationLoss(consistency_weight=0.05)
+        image = torch.rand(1, 1, 16, 16)
+        with self.assertRaises(ValueError):
+            loss(image, image)
 
     def test_identical_metrics(self) -> None:
         image = torch.rand(2, 1, 32, 32)

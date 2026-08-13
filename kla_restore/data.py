@@ -91,28 +91,77 @@ def paired_geometric_augmentation(
     return lr.contiguous(), gt.contiguous()
 
 
-def synthetic_compound_degradation(gt: torch.Tensor) -> torch.Tensor:
-    """Create a 2x LR input with blur plus additive and signal-dependent noise."""
-    image = gt.unsqueeze(0)
-    if random.random() < 0.5:
-        sigma = random.uniform(0.4, 1.2)
-        coordinates = torch.arange(5, dtype=image.dtype, device=image.device) - 2
-        kernel = torch.exp(-coordinates.square() / (2 * sigma * sigma))
-        kernel = kernel / kernel.sum()
-        window = torch.outer(kernel, kernel).view(1, 1, 5, 5)
-        image = F.conv2d(F.pad(image, (2, 2, 2, 2), mode="reflect"), window)
-    mode = random.choice(("area", "bicubic"))
-    kwargs = {} if mode == "area" else {"align_corners": False}
-    lr = F.interpolate(image, scale_factor=0.5, mode=mode, **kwargs)[0]
+def _gaussian_blur(image: torch.Tensor, sigma: float) -> torch.Tensor:
+    kernel_size = 5
+    coordinates = (
+        torch.arange(kernel_size, dtype=image.dtype, device=image.device)
+        - kernel_size // 2
+    )
+    kernel = torch.exp(-coordinates.square() / (2 * sigma * sigma))
+    kernel = kernel / kernel.sum()
+    window = torch.outer(kernel, kernel).view(1, 1, kernel_size, kernel_size)
+    return F.conv2d(F.pad(image, (2, 2, 2, 2), mode="reflect"), window)
 
-    gain = random.uniform(0.92, 1.08)
-    offset = random.uniform(-0.02, 0.02)
-    gaussian_sigma = random.uniform(0.01, 0.07)
-    speckle_sigma = random.uniform(0.02, 0.12)
-    lr = lr * gain + offset
-    lr = lr + torch.randn_like(lr) * gaussian_sigma
-    lr = lr + lr.abs() * torch.randn_like(lr) * speckle_sigma
-    return lr.contiguous()
+
+def _resize_half(image: torch.Tensor) -> torch.Tensor:
+    mode = random.choice(("area", "bilinear", "bicubic"))
+    kwargs = {} if mode == "area" else {"align_corners": False}
+    return F.interpolate(image, scale_factor=0.5, mode=mode, **kwargs)
+
+
+def synthetic_compound_degradation(
+    gt: torch.Tensor, *, policy: str = "randomized"
+) -> torch.Tensor:
+    """Create blind 2x LR observations from the three official degradations.
+
+    The randomized policy treats blur/downsampling, additive Gaussian noise,
+    and multiplicative speckle as independently gated operations and shuffles
+    their order. This includes compound cases as well as the important corner
+    cases in which only one degradation is prominent.
+    """
+    if policy not in {"fixed", "randomized"}:
+        raise ValueError("policy must be 'fixed' or 'randomized'")
+    image = gt.unsqueeze(0)
+    if policy == "fixed":
+        if random.random() < 0.5:
+            image = _gaussian_blur(image, random.uniform(0.4, 1.2))
+        image = _resize_half(image)
+        image = image * random.uniform(0.92, 1.08) + random.uniform(-0.02, 0.02)
+        image = image + torch.randn_like(image) * random.uniform(0.01, 0.07)
+        image = image + image.abs() * torch.randn_like(image) * random.uniform(
+            0.02, 0.12
+        )
+        return image[0].contiguous()
+
+    # Always resize exactly once; independently gate the other official
+    # degradations, then shuffle to prevent the model learning one fixed order.
+    operations = ["resize"]
+    if random.random() < 0.70:
+        operations.append("blur")
+    if random.random() < 0.85:
+        operations.append("gaussian")
+    if random.random() < 0.85:
+        operations.append("speckle")
+    if random.random() < 0.50:
+        operations.append("radiometric")
+    random.shuffle(operations)
+
+    for operation in operations:
+        if operation == "resize":
+            image = _resize_half(image)
+        elif operation == "blur":
+            image = _gaussian_blur(image, random.uniform(0.35, 1.35))
+        elif operation == "gaussian":
+            image = image + torch.randn_like(image) * random.uniform(0.01, 0.09)
+        elif operation == "speckle":
+            image = image + image.abs() * torch.randn_like(image) * random.uniform(
+                0.02, 0.16
+            )
+        else:
+            image = image * random.uniform(0.92, 1.04) + random.uniform(
+                -0.01, 0.045
+            )
+    return image[0].contiguous()
 
 
 class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
@@ -125,6 +174,7 @@ class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
         names: Sequence[str],
         augment: bool = False,
         synthetic_probability: float = 0.0,
+        synthetic_policy: str = "fixed",
         audit: bool = False,
     ) -> None:
         self.lr_dir = Path(lr_dir)
@@ -134,6 +184,9 @@ class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
         if not 0.0 <= synthetic_probability <= 1.0:
             raise ValueError("synthetic_probability must be in [0, 1]")
         self.synthetic_probability = synthetic_probability
+        if synthetic_policy not in {"fixed", "randomized"}:
+            raise ValueError("synthetic_policy must be 'fixed' or 'randomized'")
+        self.synthetic_policy = synthetic_policy
         validate_pairs(self.lr_dir, self.gt_dir, self.names)
         if audit:
             audit_pairs(self.lr_dir, self.gt_dir, self.names)
@@ -152,7 +205,7 @@ class PairedNpyDataset(Dataset[tuple[torch.Tensor, torch.Tensor, str]]):
         if self.augment:
             lr, gt = paired_geometric_augmentation(lr, gt)
             if random.random() < self.synthetic_probability:
-                lr = synthetic_compound_degradation(gt)
+                lr = synthetic_compound_degradation(gt, policy=self.synthetic_policy)
         return lr, gt, name
 
 

@@ -45,8 +45,19 @@ def main() -> None:
         root = Path(directory)
         inputs, outputs = root / "inputs", root / "outputs"
         inputs.mkdir()
+        expected_shapes = {}
         for source in source_paths:
+            array = np.load(source, allow_pickle=False)
+            expected_shapes[source.name] = (array.shape[0] * 2, array.shape[1] * 2)
             (inputs / source.name).write_bytes(source.read_bytes())
+        # Exercise KLA's second stated resolution pair in the same invocation.
+        large_name = "__contract_256.npy"
+        np.save(
+            inputs / large_name,
+            np.zeros((256, 256), dtype=np.float32),
+            allow_pickle=False,
+        )
+        expected_shapes[large_name] = (512, 512)
         subprocess.run(
             [
                 sys.executable, "inference.py", "--input-dir", str(inputs),
@@ -56,11 +67,11 @@ def main() -> None:
             check=True,
         )
         produced = sorted(outputs.glob("*.npy"))
-        if [path.name for path in produced] != [path.name for path in source_paths]:
+        if [path.name for path in produced] != sorted(expected_shapes):
             raise SystemExit("Inference did not preserve input filenames")
         for path in produced:
             array = np.load(path, allow_pickle=False)
-            if array.shape != (256, 256) or array.dtype != np.float32:
+            if array.shape != expected_shapes[path.name] or array.dtype != np.float32:
                 raise SystemExit(f"Invalid output {path}: {array.shape}/{array.dtype}")
             if not np.isfinite(array).all() or array.min() < 0 or array.max() > 1:
                 raise SystemExit(f"Invalid values in {path}")

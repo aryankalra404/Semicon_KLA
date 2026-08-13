@@ -1,8 +1,9 @@
 # Semicon KLA Image Restoration
 
 Reproducible AI restoration pipeline for the **SEMICON India Hackathon 2026
-KLA challenge**. It maps noisy `128x128` grayscale NumPy arrays to clean
-`256x256` outputs while preserving fine semiconductor structures.
+KLA challenge**. It maps noisy grayscale NumPy arrays to clean outputs at twice
+their spatial resolution (`128x128` to `256x256` and `256x256` to `512x512`)
+while preserving fine semiconductor structures.
 
 ## Results
 
@@ -233,8 +234,10 @@ python inference.py \
   --output-dir /path/to/restored
 ```
 
-Outputs retain the original filenames and are saved as `256x256` float32
-`.npy` arrays in `[0, 1]`.
+Outputs retain the original filenames and are saved as float32 `.npy` arrays in
+`[0, 1]` at exactly twice each input's height and width. Mixed 128x128 and
+256x256 input directories are grouped by shape automatically for efficient
+batched inference.
 
 Optional accuracy experiments use the same evaluator contract:
 

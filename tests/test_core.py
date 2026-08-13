@@ -132,6 +132,12 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertEqual(output.shape, (2, 1, 24, 20))
         self.assertTrue(torch.all((0 <= output) & (output <= 1)))
 
+    def test_model_supports_second_kla_resolution_pair(self) -> None:
+        model = KLARestoreNet(width=8, blocks=1)
+        inputs = torch.rand(1, 1, 256, 256)
+        output = model(inputs)
+        self.assertEqual(output.shape, (1, 1, 512, 512))
+
     def test_v3_model_doubles_resolution_and_backpropagates(self) -> None:
         model = KLARestoreNet(
             width=8, blocks=2, variant="v3", condition_dim=8, hr_width=8, hr_blocks=1

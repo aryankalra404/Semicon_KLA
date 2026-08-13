@@ -1,331 +1,118 @@
-# Semicon KLA Image Restoration
+# Semiconductor Image Restoration — KLA Track
 
-Reproducible AI restoration pipeline for the **SEMICON India Hackathon 2026
-KLA challenge**. It maps noisy grayscale NumPy arrays to clean outputs at twice
-their spatial resolution (`128x128` to `256x256` and `256x256` to `512x512`)
-while preserving fine semiconductor structures.
+Compact, reproducible restoration of degraded grayscale inspection images for
+the **SEMICON India Hackathon 2026 — KLA AI-Based Restoration of Degraded
+Images challenge**. The submitted model removes mixed Gaussian/speckle noise
+and performs 2× super-resolution in one forward pass.
 
-## Results
+## Submission contents
 
-On the fixed 320-image validation split, the compact 580,609-parameter final
-model achieves **26.3273 dB PSNR**, **0.7004 SSIM**, **0.3717 LPIPS**, and
-**11.34 ms/image batch-1 p50 latency** on an NVIDIA RTX A4000. Relative to
-bicubic, its mean gains are +3.5082 dB PSNR and +0.1543 SSIM. Full metrics, confidence
-intervals, and failure analysis are in
-[`results/`](results/README.md).
+| Hackathon requirement | Repository location | How to verify |
+|---|---|---|
+| **1. README and setup instructions** | [`README.md`](README.md) | Follow [Quick inference from a fresh clone](#quick-inference-from-a-fresh-clone). |
+| **2. Standalone evaluation script** | [`inference.py`](inference.py) | Accepts `--input-dir` and `--output-dir`, loads the submitted weights automatically, and needs no source edits or ground truth. |
+| **3. Training script** | [`train.py`](train.py) | Reproduces paired training from scratch; commands are in [Training reproduction](#training-reproduction). |
+| **4. Trained model weights** | [`weights/final.pt`](weights/final.pt) | Compact 2.3 MB inference checkpoint; SHA-256 is recorded below. |
+| **5. Restored test outputs** | [`outputs/restored/`](outputs/restored/) | Contains 400 restored float32 `.npy` files with the original test filenames. |
+| **6. Complete environment freeze** | [`requirements.txt`](requirements.txt) | Complete 221-entry `pip freeze` from the training container. Portable direct dependencies are in [`requirements.runtime.txt`](requirements.runtime.txt). |
 
-![Validation learning curves](figures/v2_learning_curves.png)
+> **Official evaluator entry point:** `inference.py`
 
-## Dataset
+## Quick inference from a fresh clone
 
-Place the official extracted release in this layout:
-
-```text
-data/train/GT/          # 000000.npy ... 003199.npy
-data/train/NoisyLR/     # paired training degradations
-data/test/NoisyLR/      # 000000.npy ... 000399.npy blind degradations
-```
-
-The blind test archive restarts its numbering at zero; its filenames do not map
-to equally numbered training targets. Training uses paired IDs 0-2879 and
-validation uses 2880-3199. The raw data is intentionally excluded from Git.
-
-## Environment
-
-Python 3.10-3.12 is recommended for CUDA environments.
+### Option A — Python environment
 
 ```bash
-python -m venv .venv
+git clone https://github.com/aryankalra404/Semicon_KLA.git
+cd Semicon_KLA
+
+python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.runtime.txt
-```
+python -m pip install --upgrade pip
+python -m pip install -r requirements.runtime.txt
 
-For the exact NGC image, CUDA/container metadata and clean Docker command, see
-[`ENVIRONMENT.md`](ENVIRONMENT.md).
-
-`requirements.txt` records the complete training-container `pip freeze`, as
-required for submission. Use `requirements.runtime.txt` for installation; the
-full NGC freeze contains image-bundled packages with container-local paths.
-
-The bounded GPU experiment runner is `run_gpu_matrix.sh`; it builds the local
-`kla-restorenet:latest` image from the pinned NVIDIA NGC base image on first
-use. It deliberately separates challenger training from promotion so an
-experiment cannot silently replace the frozen submission checkpoint.
-
-## Verify the project
-
-```bash
-python -m unittest discover -s tests -v
-python audit_data.py
-```
-
-## Robustness and reliability protocol
-
-The frozen submission checkpoint remains `weights/final.pt`. Robustness
-experiments are isolated and cannot replace it unless every fail-closed gate
-passes. The protocol adds four forms of evidence:
-
-- **Cluster-disjoint OOD proxy:** intensity, gradient, frequency and coarse
-  spatial descriptors cluster the original training partition; one complete
-  appearance cluster is withheld. This is explicitly a proxy because KLA does
-  not provide source labels.
-- **Degradation-order curriculum:** matched fixed-policy and randomized-order
-  models use the same cluster split. A separate low-learning-rate challenger
-  starts from the frozen final checkpoint.
-- **Defect-preservation probes:** controlled bright/dark dots, thin lines, line
-  breaks and notches are degraded in both orders. Contrast recovery, localized
-  response F1 and false-pattern rate are reported. These are synthetic probes,
-  not real defect labels.
-- **Reliability and scale:** geometric-consistency disagreement produces an
-  optional uncertainty heatmap, while both `128→256` and `256→512` contracts are
-  benchmarked for shape, range, latency and memory. Quality claims remain
-  limited to resolutions with paired GT.
-
-Run the bounded GPU stages independently:
-
-```bash
-nohup ./run_gpu_matrix.sh robustness-ood > logs/robustness_ood_driver.log 2>&1 < /dev/null &
-nohup ./run_gpu_matrix.sh robustness-candidate > logs/robustness_candidate_driver.log 2>&1 < /dev/null &
-# Run only after both training stages complete:
-nohup ./run_gpu_matrix.sh robustness-evaluate > logs/robustness_evaluate_driver.log 2>&1 < /dev/null &
-# Optional reliability maps for blind test inputs:
-nohup ./run_gpu_matrix.sh robustness-uncertainty > logs/robustness_uncertainty_driver.log 2>&1 < /dev/null &
-# Render figures after evaluation and uncertainty stages finish:
-./run_gpu_matrix.sh robustness-figures
-```
-
-`promote_robust_candidate.py` rejects the challenger unless official PSNR,
-SSIM, LPIPS and latency remain within strict limits and stress, both order
-scenarios, cluster-disjoint OOD metrics, defect F1 and false-pattern behavior
-all pass. OOD improvement is supplied by the matched cluster-split policy
-ablation; the ordinary-split challenger is never assigned a misleading OOD
-score. Rejected challengers remain documented ablations.
-
-## Bicubic baseline
-
-```bash
-python evaluate.py \
-  --method bicubic \
-  --split val \
-  --input-dir data/train/NoisyLR \
-  --gt-dir data/train/GT \
-  --json-output outputs/bicubic_metrics.json
-```
-
-## Train
-
-Run a one-epoch smoke test before committing GPU time:
-
-```bash
-python train.py --epochs 1 --batch-size 4 --workers 0 --width 16 --blocks 2 \
-  --limit-train 16 --limit-val 8 --output-dir weights/smoke
-```
-
-Full starting configuration:
-
-```bash
-python train.py --epochs 30 --batch-size 8 --width 48 --blocks 12 \
-  --synthetic-probability 0.2 --output-dir weights/v2
-```
-
-The trainer uses exponential moving-average weights and writes separate
-`best_psnr.pt`, `best_ssim.pt`, and `best_balanced.pt` checkpoints. The balanced
-score is `PSNR + 10*SSIM`.
-Interrupted runs can resume without discarding optimizer state:
-
-```bash
-python train.py --epochs 50 --batch-size 8 --width 48 --blocks 12 \
-  --resume weights/last.pt
-```
-
-## Degradation-aware v3 experiment
-
-The optional v3 architecture keeps the validated v2 restoration trunk, then
-adds a small implicit degradation encoder and two high-resolution refinement
-blocks. Its synthetic branch independently gates and randomizes the order of
-blur/downsampling, Gaussian noise, speckle noise, and radiometric changes. A
-low-frequency data-consistency term encourages faithful LR structure without
-forcing the prediction to reproduce pixel-level noise.
-
-First measure the official paired-data distribution:
-
-```bash
-python analyze_degradations.py --split all
-```
-
-Run a short, warm-started GPU pilot from the committed v2 checkpoint:
-
-```bash
-python train.py \
-  --variant v3 \
-  --initialize-from weights/final.pt \
-  --epochs 5 \
-  --batch-size 8 \
-  --workers 4 \
-  --width 48 \
-  --blocks 12 \
-  --condition-dim 32 \
-  --hr-width 48 \
-  --hr-blocks 2 \
-  --learning-rate 5e-5 \
-  --synthetic-probability 0.25 \
-  --synthetic-policy randomized \
-  --consistency-weight 0.03 \
-  --device cuda \
-  --output-dir weights/v3_pilot
-```
-
-`--initialize-from` performs an exact architectural transfer: before the first
-optimization step, v3 produces the same output as v2. It fails fast if the
-width, block count, or HR feature width prevents complete transfer.
-
-Evaluate the pilot on the untouched official validation split and deterministic
-stress suite:
-
-```bash
-python evaluate.py --method model --split val \
-  --input-dir data/train/NoisyLR --gt-dir data/train/GT \
-  --weights weights/v3_pilot/best_balanced.pt --device cuda \
-  --lpips --per-image-output outputs/v3_pilot_per_image.csv \
-  --json-output outputs/v3_pilot_metrics.json
-
-python evaluate_stress.py \
-  --weights weights/final.pt --device cuda \
-  --json-output outputs/v2_stress.json
-python evaluate_stress.py \
-  --weights weights/v3_pilot/best_balanced.pt --device cuda \
-  --json-output outputs/v3_pilot_stress.json
-```
-
-Only promote v3 if it improves both official validation metrics, or materially
-improves LPIPS/stress robustness while losing no more than `0.10 dB` PSNR and
-`0.002` SSIM. The committed v2 checkpoint remains the fallback.
-
-## Range-aware v4a experiment
-
-The isolated v4a experiment targets a KLA-specific observation: speckle noise
-can push NoisyLR intensities beyond the nominal ground-truth range. Its stem
-receives four deterministic channels: raw intensity, clipped intensity,
-positive overflow, and negative overflow. Raw measurements remain untouched.
-
-v4a otherwise preserves the compact v2 stem, trunk, and upsampler. Warm-starting
-copies the complete v2 model unchanged and initializes a separate three-channel
-auxiliary stem to zero, so the first prediction is exactly identical to v2.
-
-```bash
-./run_gpu_matrix.sh v4a-pilot
-./run_gpu_matrix.sh v4a-evaluate
-```
-
-The five-epoch pilot is a controlled architecture ablation: it uses the same
-split, loss, synthetic policy, and seed as v2, with a lower fine-tuning learning
-rate. It remains experimental until official validation, LPIPS, stress metrics,
-and batch-1 latency justify promotion.
-
-To separate the effect of extra fine-tuning from the range-aware representation,
-run the matched ablation. It retrains ordinary v2 and v4a from the same frozen
-checkpoint with an independently seeded, identical DataLoader order; then it
-evaluates frozen v2, the matched v2 control, and v4a with paired bootstrap
-confidence intervals and exact sign tests.
-
-```bash
-./run_gpu_matrix.sh v4a-ablation
-```
-
-## Multi-scale frequency v4b experiment
-
-v4b tests whether explicitly separating image-frequency evidence improves the
-validated compact v2 trunk. A lightweight auxiliary branch receives the raw
-NoisyLR observation, two local high-pass residuals, a coarse low-pass view, and
-pooled trunk context. It predicts an LR feature correction before the existing
-PixelShuffle upsampler. The correction projection starts at exactly zero, so a
-v2 warm start gives bit-identical predictions before optimization.
-
-Run the matched experiment on the NVIDIA host:
-
-```bash
-./run_gpu_matrix.sh v4b-ablation
-```
-
-This trains an ordinary v2 control and v4b for five epochs from the same
-checkpoint with identical split, seed, DataLoader order, augmentation, loss,
-and learning rate. It then measures official validation PSNR/SSIM/LPIPS,
-six-scenario stress robustness, batch-1 latency/VRAM, and paired bootstrap and
-sign-test evidence. v4b is experimental and never replaces `weights/final.pt`
-unless it beats its matched control under the documented promotion gate.
-
-The first staged pilot was rejected after its branch-only learning rate caused
-rapid validation collapse. Its checkpoints are not candidates. The corrected
-`v4b-v2` protocol starts in a fresh directory, freezes inherited v2 parameters
-for only two epochs at a `5e-6` branch learning rate, then unfreezes the network
-at `2e-6`/`5e-6` backbone/branch rates. A frozen v2 teacher adds a small output
-preservation loss, and the run aborts automatically if validation PSNR falls
-more than 0.10 dB below the reference. A filesystem lock refuses duplicate
-launches. The command evaluates the protected final v2 and challenger and never
-promotes automatically:
-
-```bash
-./run_gpu_matrix.sh v4b-v2
-```
-
-The challenger must meet the same PSNR/SSIM/LPIPS, stress, latency, and paired
-statistical gates before `weights/final.pt` can be changed.
-
-## Evaluate a trained checkpoint
-
-```bash
-python evaluate.py \
-  --method model \
-  --split val \
-  --weights weights/final.pt \
-  --input-dir data/train/NoisyLR \
-  --gt-dir data/train/GT \
-  --json-output outputs/model_metrics.json
-```
-
-Add `--lpips --per-image-output outputs/v2_per_image.csv` to compute the
-perceptual metric and save case-level results when the optional LPIPS dependency
-is installed.
-
-## Standalone inference
-
-This is the competition-facing command. Ground truth is not required.
-
-```bash
 python inference.py \
-  --input-dir /path/to/NoisyLR \
+  --input-dir /path/to/test/NoisyLR \
   --output-dir /path/to/restored
 ```
 
-Outputs retain the original filenames and are saved as float32 `.npy` arrays in
-`[0, 1]` at exactly twice each input's height and width. Mixed 128x128 and
-256x256 input directories are grouped by shape automatically for efficient
-batched inference.
+No manual edits are required. `inference.py` resolves the repository-relative
+checkpoint `weights/final.pt` automatically. The default `--device auto` uses
+CUDA when available and otherwise uses CPU.
 
-Optional accuracy experiments use the same evaluator contract:
+### Option B — Reproducible NVIDIA Docker environment
 
 ```bash
-# Geometric test-time self-ensemble
-python inference.py --input-dir /path/to/NoisyLR --output-dir /path/to/restored \
-  --self-ensemble x4
+git clone https://github.com/aryankalra404/Semicon_KLA.git
+cd Semicon_KLA
 
-# Output-average multiple compatible checkpoints
-python inference.py --input-dir /path/to/NoisyLR --output-dir /path/to/restored \
-  --weights weights/model_a.pt weights/model_b.pt
+docker build -t kla-restorenet .
+mkdir -p outputs/evaluator
+
+docker run --rm --gpus all \
+  --ipc=host \
+  --ulimit memlock=-1 \
+  --ulimit stack=67108864 \
+  -v "/absolute/path/to/test/NoisyLR":/inputs:ro \
+  -v "$PWD/outputs/evaluator":/outputs \
+  kla-restorenet \
+  python inference.py \
+    --input-dir /inputs \
+    --output-dir /outputs \
+    --device cuda \
+    --batch-size 8
 ```
 
-The default remains the fastest single-checkpoint `x1` path. Accuracy modes are
-promoted only when their measured gain justifies additional H100 inference.
+The Docker image is pinned to `nvcr.io/nvidia/pytorch:26.07-py3`. The precise
+image digest and reference environment are documented in
+[`ENVIRONMENT.md`](ENVIRONMENT.md).
 
-The repository includes the compact inference-only `weights/final.pt` model.
-It contains no optimizer state and loads with the same standalone inference
-command used by the benchmark team.
+## Evaluator contract
 
-## Submission audit
+```text
+python inference.py --input-dir INPUT_DIRECTORY --output-dir OUTPUT_DIRECTORY
+```
 
-With official test inputs present locally, this command checks the committed
-checkpoint hash and parameter count, runs standalone inference in a subprocess,
-and validates output filenames, shapes, dtype, finiteness, and range:
+- **Input:** a flat directory of grayscale `.npy` arrays. Both `128×128` and
+  `256×256` inputs are accepted, including mixed-size directories.
+- **Output:** one `.npy` file per input, retaining the original filename.
+- **Resolution:** exactly 2× the input dimensions (`128→256` or `256→512`).
+- **Format:** `float32`, finite values in `[0,1]`.
+- **Model loading:** `weights/final.pt` is used by default.
+- **Ground truth:** not required.
+- **Batching:** inputs are grouped by shape and processed efficiently.
+
+The complete command-line interface is available with:
+
+```bash
+python inference.py --help
+```
+
+## Fresh-clone verification
+
+The public repository was cloned into a new temporary directory, built without
+local project state, and run on the full 400-image blind input directory. The
+rehearsal completed successfully:
+
+```text
+restored=400 device=cuda models=1 self_ensemble=x1
+milliseconds_per_image=12.061 output_dir=/outputs
+```
+
+The committed output set was audited as follows:
+
+| Property | Verified value |
+|---|---:|
+| File count | 400 |
+| Filenames | `000000.npy`–`000399.npy` |
+| Shape | `256×256` |
+| Data type | `float32` |
+| Non-finite values | 0 |
+| Values outside `[0,1]` | 0 |
+| Output aggregate SHA-256 | `8d73c8edf48b4490f817283172b625a7a17e0d16463096996227007fc70b195c` |
+| `weights/final.pt` SHA-256 | `c1e67ad4400b1c899ef30a2bb6748a086c036661fef41932fbef548e5998bacd` |
+
+To repeat the repository checks when official inputs are available locally:
 
 ```bash
 python validate_submission.py --device auto
@@ -333,18 +120,238 @@ python make_output_manifest.py
 python submission_audit.py
 ```
 
-For a reproducible NVIDIA environment:
+## Measured results
 
-```bash
-docker build -t kla-restorenet .
-docker run --rm --gpus all \
-  -v "$PWD/data":/workspace/project/data:ro \
-  kla-restorenet python validate_submission.py --device cuda
+Metrics use a fixed, untouched 320-image paired validation partition. The 400
+blind test inputs have no public ground truth and were never used to calculate
+quality scores.
+
+| Method | PSNR ↑ | SSIM ↑ | LPIPS ↓ | RTX A4000 latency ↓ |
+|---|---:|---:|---:|---:|
+| Bicubic | 22.8192 dB | 0.5460 | — | 0.10 ms/image* |
+| Gaussian denoise + bicubic | 25.5339 dB | 0.6483 | — | classical diagnostic |
+| Frozen v2 checkpoint | 26.2962 dB | **0.7004** | 0.3738 | 11.35 ms/image |
+| **Submitted fine-tuned v2** | **26.3273 dB** | **0.7004** | **0.3717** | **11.34 ms/image** |
+
+`*` Bicubic latency was measured on CPU and is not directly hardware-comparable.
+Submitted-model latency is warmed batch-1 p50 on an NVIDIA RTX A4000; p95 is
+11.45 ms/image. The model has **580,609 parameters** and uses approximately
+**35.7 MiB peak allocated VRAM** in the benchmark.
+
+Relative to bicubic, the submitted model improves mean validation quality by
+**+3.5082 dB PSNR** and **+0.1543 SSIM**. Relative to the stronger Gaussian
+denoise + bicubic baseline, it improves PSNR by **+0.7934 dB** and SSIM by
+**+0.0521**, winning on 296/320 and 297/320 validation images respectively.
+
+![Representative validation comparison](figures/presentation_representative.png)
+
+Full confidence intervals, paired tests, stress results, and failure analysis
+are reported in [`results/README.md`](results/README.md).
+
+## Method
+
+The submission uses a compact residual restoration network designed around the
+challenge's accuracy–latency trade-off:
+
+```text
+NoisyLR grayscale array
+        │
+        ▼
+3×3 convolutional feature stem
+        │
+        ▼
+12 residual restoration blocks (48 channels)
+        │
+        ├──────── global residual connection ────────┐
+        ▼                                             │
+3×3 convolution → 4-channel sub-pixel representation │
+        │                                             │
+        ▼                                             │
+PixelShuffle ×2 ◄─────────────────────────────────────┘
+        │
+        ▼
+Clamp to [0,1] → restored full-resolution output
 ```
 
-For warmed batch-1 latency, tail latency, parameter count, and peak CUDA memory:
+Training uses paired NoisyLR/GT arrays and a composite objective:
+
+```text
+0.7 × robust pixel loss + 0.2 × SSIM loss + 0.1 × edge loss
+```
+
+The raw degraded input is not clipped before the network, preserving meaningful
+out-of-range measurements produced by speckle noise. Synthetic augmentation
+adds mixed Gaussian noise, multiplicative speckle noise, blur, downsampling,
+and radiometric changes. EMA weights, gradient clipping, deterministic splits,
+data auditing, and fail-closed candidate promotion provide training hygiene.
+
+## Training reproduction
+
+### Expected dataset layout
+
+```text
+data/train/
+├── GT/
+│   ├── 000000.npy
+│   └── ...
+└── NoisyLR/
+    ├── 000000.npy
+    └── ...
+```
+
+Ground-truth and degraded training arrays must have matching filenames. Raw
+challenge data is intentionally excluded from Git.
+
+Audit the pairs before training:
 
 ```bash
-python benchmark.py --weights weights/final.pt --batch-size 1 --device cuda \
+python audit_data.py
+```
+
+### Stage 1 — train v2 from scratch
+
+```bash
+python train.py \
+  --data-root data/train \
+  --variant v2 \
+  --epochs 30 \
+  --batch-size 8 \
+  --workers 4 \
+  --width 48 \
+  --blocks 12 \
+  --learning-rate 1e-4 \
+  --synthetic-probability 0.2 \
+  --synthetic-policy fixed \
+  --ema-decay 0.999 \
+  --gradient-clip 1.0 \
+  --seed 2026 \
+  --device cuda \
+  --output-dir weights/v2
+```
+
+This experiment ran for 30 epochs. The best balanced base checkpoint was
+selected at **epoch 24**, rather than using the final epoch. Selection score:
+`PSNR + 10 × SSIM`.
+
+### Stage 2 — controlled low-learning-rate fine-tune
+
+```bash
+python train.py \
+  --data-root data/train \
+  --variant v2 \
+  --initialize-from weights/v2/best_balanced.pt \
+  --epochs 5 \
+  --batch-size 8 \
+  --workers 4 \
+  --width 48 \
+  --blocks 12 \
+  --learning-rate 5e-5 \
+  --synthetic-probability 0.2 \
+  --synthetic-policy fixed \
+  --ema-decay 0.995 \
+  --gradient-clip 1.0 \
+  --seed 2026 \
+  --device cuda \
+  --output-dir weights/v2_finetune
+```
+
+The fine-tuning experiment evaluated every epoch. **Fine-tuning epoch 1** had
+the best validation selection score and became the submitted checkpoint. This
+does not mean the network was trained from random initialization for one epoch:
+it was initialized from the fully trained v2 base. Continuing for more epochs
+did not improve the selection score.
+
+Export a compact inference-only checkpoint with:
+
+```bash
+python export_checkpoint.py \
+  --input weights/v2_finetune/best_balanced.pt \
+  --output weights/final.pt
+```
+
+Training creates `best_psnr.pt`, `best_ssim.pt`, `best_balanced.pt`, `last.pt`,
+and `history.json`. Interrupted runs can resume with `--resume PATH_TO_LAST_PT`.
+
+## Evaluation and benchmarking
+
+Evaluate a checkpoint on paired data:
+
+```bash
+python evaluate.py \
+  --method model \
+  --split val \
+  --input-dir data/train/NoisyLR \
+  --gt-dir data/train/GT \
+  --weights weights/final.pt \
+  --device cuda \
+  --lpips \
+  --json-output outputs/model_metrics.json
+```
+
+Measure warmed batch-1 latency, tail latency, parameters, and peak GPU memory:
+
+```bash
+python benchmark.py \
+  --weights weights/final.pt \
+  --batch-size 1 \
+  --device cuda \
   --json-output outputs/final_benchmark.json
 ```
+
+Run the automated tests:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+## Robustness evidence and honest boundaries
+
+The repository includes deterministic stress evaluation, degradation-order
+experiments, appearance-cluster OOD proxies, defect-preservation probes, and
+geometric disagreement maps. Experimental challengers are isolated from the
+submitted checkpoint and can replace it only if every promotion gate passes.
+
+- The official validation split measures paired restoration quality.
+- The appearance-cluster split is an **OOD proxy**, not a claim about private
+  KLA source identities.
+- Synthetic defect probes test localized response preservation but are not
+  labeled production defects.
+- The `256→512` execution contract is tested for shape, range, speed, and
+  memory; reported paired PSNR/SSIM/LPIPS correspond to the evaluated paired
+  validation resolution.
+- The known failure mode is over-smoothing stochastic high-frequency texture
+  whose discarded detail cannot be uniquely reconstructed.
+
+Useful evidence:
+
+- [`results/README.md`](results/README.md) — complete measured results
+- [`figures/presentation_representative_detailed.png`](figures/presentation_representative_detailed.png) — representative result with detail crops
+- [`figures/limitation_oversmoothing_002994.png`](figures/limitation_oversmoothing_002994.png) — retained failure case
+- [`REFERENCES.md`](REFERENCES.md) — research and implementation references
+- [`ENVIRONMENT.md`](ENVIRONMENT.md) — exact container and hardware metadata
+
+## Repository structure
+
+```text
+Semicon_KLA/
+├── inference.py              # official standalone evaluator entry point
+├── train.py                  # paired training and fine-tuning
+├── evaluate.py               # PSNR, SSIM and optional LPIPS evaluation
+├── benchmark.py              # latency, VRAM and parameter benchmarking
+├── validate_submission.py    # end-to-end inference contract test
+├── kla_restore/              # model, data, loss, metric and runtime modules
+├── weights/final.pt          # submitted inference checkpoint
+├── outputs/restored/         # 400 committed blind-test restorations
+├── requirements.txt          # complete training-container pip freeze
+├── requirements.runtime.txt  # portable direct dependencies
+├── Dockerfile                # pinned reproducible evaluator image
+├── results/                  # metrics and statistical evidence
+└── figures/                  # result and failure-analysis figures
+```
+
+## License and references
+
+Repository-authored code is released under [`LICENSE`](LICENSE). The NVIDIA NGC
+base image and third-party packages retain their respective licenses. Research
+papers, metrics, and implementation sources are listed in
+[`REFERENCES.md`](REFERENCES.md).

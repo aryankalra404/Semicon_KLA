@@ -1,0 +1,258 @@
+
+=============
+== PyTorch ==
+=============
+
+NVIDIA Release 26.07 (build 373437298)
+PyTorch Version 2.13.0a0+9186a08
+Container image Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+Copyright (c) 2014-2024 Facebook Inc.
+Copyright (c) 2011-2014 Idiap Research Institute (Ronan Collobert)
+Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
+Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
+Copyright (c) 2011-2013 NYU                      (Clement Farabet)
+Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
+Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+Copyright (c) 2015      Google Inc.
+Copyright (c) 2015      Yangqing Jia
+Copyright (c) 2013-2016 The Caffe contributors
+All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+and the Product-Specific Terms for NVIDIA AI Products
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+
+ERROR: The NVIDIA Driver is present, but CUDA failed to initialize.  GPU functionality will not be available.
+   [[ Unable to initialize CUDA driver (error ???) ]]
+
+Failed to detect NVIDIA driver version.
+
+NOTE: The SHMEM allocation limit is set to the default of 64MB.  This may be
+   insufficient for PyTorch.  NVIDIA recommends the use of the following flags:
+   docker run --gpus all --ipc=host --ulimit memlock=-1 --ulimit stack=67108864 ...
+
+absl-py==2.5.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+annotated-types==0.8.0
+antlr4-python3-runtime==4.9.3
+anyio==4.14.2
+apache-tvm-ffi==0.1.12
+apex @ file:///opt/pytorch/apex/dist/apex-0.1-cp312-cp312-linux_x86_64.whl#sha256=d885734c020c96878346f876cbe1ff03b7d852c6e08347337fdefa4ae7df284a
+argon2-cffi==25.1.0
+argon2-cffi-bindings==25.1.0
+arrow==1.4.0
+asttokens==3.0.2
+astunparse==1.6.3
+async-lru==2.3.0
+attrs==26.1.0
+babel==2.18.0
+beautifulsoup4==4.15.0
+black==26.5.1
+bleach==6.4.0
+certifi==2026.7.22
+cffi==2.1.0
+charset-normalizer==3.4.9
+click==8.4.2
+cmake==3.31.6
+comm==0.2.3
+contourpy==1.3.3
+cuda-bindings==13.3.1
+cuda-core==1.0.1
+cuda-pathfinder==1.6.0
+cuda-python==13.3.1
+cuda-tile==1.4.0
+cycler==0.12.1
+Cython==3.2.9
+datasets==5.0.0
+debugpy==1.8.21
+decorator==5.3.1
+defusedxml==0.7.1
+dill==0.4.1
+dllist==2.0.0
+docstring_parser==0.18.0
+einops==0.8.2
+executing==2.2.1
+fastjsonschema==2.21.2
+filelock==3.32.0
+flash_attn @ file:///opt/transfer/flash_attn-2.7.4.post1%2Bgit5231d95fe1.54157505-cp312-cp312-linux_x86_64.whl#sha256=b54ac6f8ec11911b7a11573dfe9dda536ace52240b676aac8073a76fbde4ceb3
+fonttools==4.63.0
+fqdn==1.5.1
+frozenlist==1.8.0
+fsspec==2026.4.0
+gast==0.7.0
+grpcio==1.83.0
+grpcio-tools==1.83.0
+h11==0.16.0
+hf-xet==1.5.2
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.24.0
+idna==3.18
+importlib_metadata==9.0.0
+intel-openmp==2021.4.0
+ipykernel==7.3.0
+ipython==9.15.0
+ipython_pygments_lexers==1.1.1
+isoduration==20.11.0
+isort==8.0.1
+jedi==0.20.0
+Jinja2==3.1.6
+json5==0.15.0
+jsonpointer==3.1.1
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+jupyter-events==0.12.1
+jupyter-lsp==2.3.1
+jupyter_builder==1.1.1
+jupyter_client==8.9.1
+jupyter_core==5.9.1
+jupyter_server==2.20.0
+jupyter_server_terminals==0.5.4
+jupyterlab==4.6.2
+jupyterlab_code_formatter==3.0.3
+jupyterlab_pygments==0.3.0
+jupyterlab_server==2.28.0
+jupyterlab_tensorboard_pro @ file:///builder/jupyterlab_tensorboard_pro-4.0.0-py2.py3-none-any.whl#sha256=27759736e9fc44c581c24439a34f9c95879f65280e6db1e3b17ed66c4e15e5c2
+jupytext==1.19.5
+kiwisolver==1.5.0
+lark==1.3.1
+libcst==1.8.6
+llvmlite==0.46.0
+lpips==0.1.4
+makefun==1.16.0
+Markdown==3.10.2
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+matplotlib==3.11.1
+matplotlib-inline==0.2.2
+mdit-py-plugins==0.6.1
+mdurl==0.1.2
+mistune==3.3.4
+mkl==2021.1.1
+mkl-devel==2021.1.1
+mkl-include==2021.1.1
+ml_dtypes==0.5.4
+mpmath==1.3.0
+multidict==6.7.1
+multiprocess==0.70.19
+mypy_extensions==1.1.0
+nbclient==0.11.0
+nbconvert==7.17.1
+nbformat==5.10.4
+nest-asyncio2==1.7.2
+networkx==3.6.1
+ninja==1.13.0
+notebook==7.6.1
+notebook_shim==0.2.4
+numba==0.64.0
+numpy==2.1.0
+nvdlfw_inspect==0.2.2
+nvidia-cutlass-dsl==4.5.2
+nvidia-cutlass-dsl-libs-base==4.5.2
+nvidia-cutlass-dsl-libs-cu13==4.5.2
+nvidia-dali-cuda130==2.2.0
+nvidia-libnvcomp-cu13==5.2.0.13
+nvidia-ml-py==13.610.43
+nvidia-modelopt @ file:///tmp/modelopt/nvidia_modelopt-0.44.0-py3-none-any.whl#sha256=9b54a853dfda161db97a0dfce4d7c24269d1d19966b5e2026094186af897f74d
+nvidia-nvimgcodec-cu13==0.8.0.1422
+nvidia-nvjpeg==13.2.1.68
+nvidia-nvjpeg2k-cu13==0.11.0.51
+nvidia-nvtiff-cu13==0.8.0.82
+nvidia-resiliency-ext @ file:///tmp/nvrx/nvidia_resiliency_ext-0.6.0-cp312-cp312-manylinux_2_39_x86_64.whl#sha256=7d5ac6567841aef0173af3bcc0c2044971d2b225918028b99af6e4eb7e6e2f5d
+nvtx==0.2.15
+omegaconf==2.3.1
+onnx @ file:///opt/pytorch/pytorch/third_party/onnx
+onnx-ir==0.2.1
+onnxscript==0.7.1
+optree==0.19.1
+packaging==26.2
+pandas==3.0.5
+pandocfilters==1.5.1
+parso==0.8.7
+pathspec==1.1.1
+pexpect==4.9.0
+pillow==12.3.0
+platformdirs==4.11.0
+polygraphy==0.50.3
+prometheus_client==0.26.0
+prompt_toolkit==3.0.52
+propcache==0.5.2
+protobuf==7.35.1
+psutil==7.2.2
+ptyprocess==0.7.0
+PuLP==3.3.2
+pure_eval==0.2.3
+pyarrow==25.0.0
+pybind11==3.0.4
+pycocotools @ git+https://github.com/nvidia/cocoapi.git@08350a157b41f0755a536441b5abec89ab934c5b#subdirectory=PythonAPI
+pycparser==3.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.17.2
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+python-json-logger==4.1.0
+python_hostlist==2.3.0
+pytokens==0.4.1
+PyYAML==6.0.1
+pyzmq==27.1.0
+referencing==0.37.0
+regex==2026.7.19
+requests==2.34.2
+rfc3339-validator==0.1.4
+rfc3986-validator==0.1.1
+rfc3987-syntax==1.1.0
+rich==15.0.0
+rpds-py==2026.6.3
+safetensors==0.8.0
+scipy==1.18.0
+Send2Trash==2.1.0
+sentry-sdk==2.66.1
+setuptools==81.0.0
+six==1.16.0
+soupsieve==2.9.1
+stack-data==0.6.3
+sympy==1.14.0
+tabulate==0.10.0
+tbb==2021.13.1
+tensorboard==2.20.0
+tensorboard-data-server==0.7.2
+tensorrt @ file:///workspace/TensorRT-11.1.0.106/python/tensorrt-11.1.0.106-cp312-none-linux_x86_64.whl#sha256=823e4d267e4c11d299da0b0557c9f6e51f98304be8ed4f028d879fa87b92aa67
+terminado==0.18.1
+tinycss2==1.5.1
+tokenizers==0.23.1
+torch @ file:///opt/transfer/torch-2.13.0a0%2B9186a08b2c.nv26.7.59513937-cp312-cp312-linux_x86_64.whl#sha256=3b87e537f2566e79016389911dfacb8d58fc316b0c26eb2f074c4e4818bd7364
+torch_tensorrt @ file:///opt/pytorch/torch_tensorrt/dist/torch_tensorrt-2.14.0a0-cp312-cp312-linux_x86_64.whl#sha256=9f1c5dd0f52342defdaf51e191ccde03c643b45260a2ea5ddbf28422cbc3d0d7
+torchao @ file:///opt/pytorch/ao
+torchdata==0.11.0
+torchtitan @ file:///opt/pytorch/torchtitan
+torchvision @ file:///opt/transfer/torchvision-0.28.0a0%2B85a1dccc.nv26.7.59513937-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=2e7eeb364228d7aaa6f0216fc9738a89af1ca5127dc2172201f6b4086abc4944
+tornado==6.5.7
+tqdm==4.69.1
+traitlets==5.15.1
+transformer_engine @ file:///workspace/TransformerEngine
+triton @ file:///tmp/dist/triton-3.7.1%2Bgitf797708c.nv26.7-cp312-cp312-linux_x86_64.whl#sha256=bfcf85b30c8c75f3e3f35208a19f7e78732a06467808cf8319721f6c4153f406
+triton_kernels @ file:///tmp/dist/triton_kernels-1.0.0%2Bgitf797708c.nv26.7-py3-none-any.whl#sha256=a6e1d414ebffeaca1c15b39ab3fb941c60bcad0c967d32003d49b55c32d2d424
+typeguard==4.5.2
+typing-inspection==0.4.2
+typing_extensions==4.16.0
+tyro==1.0.15
+tzdata==2026.3
+uri-template==1.3.0
+urllib3==2.7.0
+wandb==0.28.1
+wcwidth==0.8.2
+webcolors==25.10.0
+webencodings==0.5.1
+websocket-client==1.9.0
+Werkzeug==3.1.8
+wheel==0.47.0
+xxhash==3.8.1
+yarl==1.24.5
+zipp==4.1.0

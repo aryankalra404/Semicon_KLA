@@ -26,7 +26,7 @@
     "milliseconds_per_image_rtx_a4000_batch1_p95": 11.449733657354955,
     "peak_vram_mib": 35.69677734375,
     "parameters": 580609,
-    "checkpoint_sha256": "8f8f16ede607119d6b7768d2f3398b97a11ab0e32c11dc3c6cd6be57aeda3f51",
+    "checkpoint_sha256": "c1e67ad4400b1c899ef30a2bb6748a086c036661fef41932fbef548e5998bacd",
     "output_aggregate_sha256": "8d73c8edf48b4490f817283172b625a7a17e0d16463096996227007fc70b195c"
   },
   "v2_vs_bicubic": {

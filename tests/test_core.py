@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+import csv
 from pathlib import Path
 
 import numpy as np
@@ -26,6 +27,7 @@ from kla_restore.model import (
     range_aware_input,
 )
 from kla_restore.runtime import choose_device
+from compare_paired import compare, exact_sign_pvalue, read_rows
 
 
 class SplitTests(unittest.TestCase):
@@ -44,6 +46,34 @@ class SplitTests(unittest.TestCase):
         self.assertFalse(set(first_train) & set(first_val))
         self.assertEqual(set(first_train) | set(first_val), set(all_pair_names()))
         self.assertEqual((len(first_train), len(first_val)), (2880, 320))
+
+
+class PairedComparisonTests(unittest.TestCase):
+    def test_sign_test_is_symmetric(self) -> None:
+        self.assertEqual(exact_sign_pvalue(3, 1), exact_sign_pvalue(1, 3))
+        self.assertEqual(exact_sign_pvalue(0, 0), 1.0)
+
+    def test_csv_comparison_tracks_metric_direction(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = [Path(directory) / f"{name}.csv" for name in ("a", "b")]
+            rows = (
+                (("x.npy", 20.0, 0.5, 0.4), ("y.npy", 22.0, 0.6, 0.3)),
+                (("x.npy", 21.0, 0.6, 0.3), ("y.npy", 23.0, 0.7, 0.2)),
+            )
+            for path, values in zip(paths, rows, strict=True):
+                with path.open("w", newline="") as stream:
+                    writer = csv.writer(stream)
+                    writer.writerow(("filename", "psnr", "ssim", "lpips"))
+                    writer.writerows(values)
+            result = compare(
+                read_rows(paths[0]),
+                read_rows(paths[1]),
+                100,
+                np.random.default_rng(1),
+            )
+            self.assertEqual(result["psnr"]["wins"], 2)
+            self.assertEqual(result["ssim"]["wins"], 2)
+            self.assertEqual(result["lpips"]["wins"], 2)
 
 
 class DatasetTests(unittest.TestCase):

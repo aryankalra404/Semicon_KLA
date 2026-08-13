@@ -175,6 +175,16 @@ split, loss, synthetic policy, and seed as v2, with a lower fine-tuning learning
 rate. It remains experimental until official validation, LPIPS, stress metrics,
 and batch-1 latency justify promotion.
 
+To separate the effect of extra fine-tuning from the range-aware representation,
+run the matched ablation. It retrains ordinary v2 and v4a from the same frozen
+checkpoint with an independently seeded, identical DataLoader order; then it
+evaluates frozen v2, the matched v2 control, and v4a with paired bootstrap
+confidence intervals and exact sign tests.
+
+```bash
+./run_gpu_matrix.sh v4a-ablation
+```
+
 ## Evaluate a trained checkpoint
 
 ```bash

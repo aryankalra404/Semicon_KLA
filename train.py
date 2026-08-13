@@ -68,7 +68,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--initialize-from",
         type=Path,
-        help="Warm-start v3 or v4a from a v2 inference/training checkpoint",
+        help="Initialize v2, v3, or v4a from a v2 inference/training checkpoint",
     )
     parser.add_argument("--synthetic-probability", type=float, default=0.0)
     parser.add_argument(
@@ -147,6 +147,7 @@ def main() -> None:
         else None
     )
     pin_memory = device.type == "cuda"
+    data_generator = torch.Generator().manual_seed(args.seed)
     train_loader = DataLoader(
         train_set,
         batch_size=args.batch_size,
@@ -154,6 +155,7 @@ def main() -> None:
         num_workers=args.workers,
         pin_memory=pin_memory,
         persistent_workers=args.workers > 0,
+        generator=data_generator,
     )
     val_loader = (
         DataLoader(
@@ -177,10 +179,6 @@ def main() -> None:
         degradation_conditioning=not args.disable_degradation_conditioning,
     ).to(device)
     if args.initialize_from:
-        if args.variant not in {"v3", "v4a"}:
-            raise SystemExit(
-                "--initialize-from is supported only for --variant v3 or v4a"
-            )
         source = torch.load(args.initialize_from, map_location="cpu", weights_only=False)
         source_config = source.get("model_config", {})
         if source_config.get("variant", "v2") != "v2":
@@ -193,10 +191,17 @@ def main() -> None:
                 f"configuration; checkpoint={source_config}, "
                 f"requested width={args.width}/blocks={args.blocks}"
             )
-        initializer = (
-            initialize_v3_from_v2 if args.variant == "v3" else initialize_v4a_from_v2
-        )
-        copied_tensors, copied_parameters = initializer(model, source["model"])
+        if args.variant == "v2":
+            model.load_state_dict(source["model"], strict=True)
+            copied_tensors = len(source["model"])
+            copied_parameters = sum(value.numel() for value in source["model"].values())
+        else:
+            initializer = (
+                initialize_v3_from_v2
+                if args.variant == "v3"
+                else initialize_v4a_from_v2
+            )
+            copied_tensors, copied_parameters = initializer(model, source["model"])
         source_parameters = sum(value.numel() for value in source["model"].values())
         if copied_parameters != source_parameters:
             raise ValueError(
@@ -316,6 +321,7 @@ def main() -> None:
                 "ema_decay": args.ema_decay,
                 "gradient_clip": args.gradient_clip,
                 "seed": args.seed,
+                "data_order_seed": args.seed,
                 "split_seed": args.split_seed,
                 "train_all": args.train_all,
                 "loss_weights": {

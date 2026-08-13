@@ -29,7 +29,7 @@ from kla_restore.model import (
 )
 from kla_restore.runtime import choose_device
 from compare_paired import compare, exact_sign_pvalue, read_rows
-from train import set_v4b_stage, v4b_parameter_groups
+from train import set_v4b_stage, v4b_parameter_groups, validation_psnr_collapsed
 
 
 class SplitTests(unittest.TestCase):
@@ -48,6 +48,15 @@ class SplitTests(unittest.TestCase):
         self.assertFalse(set(first_train) & set(first_val))
         self.assertEqual(set(first_train) | set(first_val), set(all_pair_names()))
         self.assertEqual((len(first_train), len(first_val)), (2880, 320))
+
+
+class TrainingSafetyTests(unittest.TestCase):
+    def test_psnr_collapse_guard(self) -> None:
+        self.assertFalse(validation_psnr_collapsed(26.0, 26.3, 0.0))
+        self.assertFalse(validation_psnr_collapsed(26.2, 26.3, 0.1))
+        self.assertTrue(validation_psnr_collapsed(26.19, 26.3, 0.1))
+        with self.assertRaises(ValueError):
+            validation_psnr_collapsed(26.0, 26.3, -0.1)
 
 
 class PairedComparisonTests(unittest.TestCase):

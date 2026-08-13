@@ -12,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from torch.nn import functional as F
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 
@@ -108,6 +109,23 @@ def parse_args() -> argparse.Namespace:
         help="Stop after N validation epochs without balanced-score improvement; 0 disables",
     )
     parser.add_argument("--early-stopping-min-delta", type=float, default=0.0)
+    parser.add_argument(
+        "--preservation-weight",
+        type=float,
+        default=0.0,
+        help="L1 weight against a frozen reference model on the same observation",
+    )
+    parser.add_argument(
+        "--preservation-weights",
+        type=Path,
+        help="Frozen reference checkpoint used by --preservation-weight",
+    )
+    parser.add_argument(
+        "--collapse-guard-psnr-drop",
+        type=float,
+        default=0.0,
+        help="Abort if validation PSNR falls this far below the frozen reference",
+    )
     parser.add_argument("--skip-data-audit", action="store_true")
     return parser.parse_args()
 
@@ -143,6 +161,15 @@ def set_v4b_stage(model: KLARestoreNet, *, branch_only: bool) -> None:
         parameter.requires_grad_(True)
 
 
+def validation_psnr_collapsed(
+    observed_psnr: float, reference_psnr: float, allowed_drop: float
+) -> bool:
+    """Return whether an enabled PSNR guard has been crossed."""
+    if allowed_drop < 0:
+        raise ValueError("allowed_drop must be non-negative")
+    return allowed_drop > 0 and observed_psnr < reference_psnr - allowed_drop
+
+
 @torch.no_grad()
 def validate(model: KLARestoreNet, loader: DataLoader, device: torch.device) -> dict[str, float]:
     model.eval()
@@ -167,8 +194,16 @@ def main() -> None:
     staged_v4b = args.freeze_backbone_epochs > 0
     if staged_v4b and args.variant != "v4b":
         raise SystemExit("--freeze-backbone-epochs is supported only for v4b")
-    if args.early_stopping_min_delta < 0:
-        raise SystemExit("--early-stopping-min-delta must be non-negative")
+    if min(
+        args.early_stopping_min_delta,
+        args.preservation_weight,
+        args.collapse_guard_psnr_drop,
+    ) < 0:
+        raise SystemExit("early-stop, preservation, and collapse values must be non-negative")
+    if args.preservation_weight > 0 and args.preservation_weights is None:
+        raise SystemExit("--preservation-weight requires --preservation-weights")
+    if args.collapse_guard_psnr_drop > 0 and args.preservation_weights is None:
+        raise SystemExit("--collapse-guard-psnr-drop requires --preservation-weights")
     set_seed(args.seed)
     device = choose_device(args.device)
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -277,6 +312,17 @@ def main() -> None:
     ema_model = copy.deepcopy(model).eval()
     for parameter in ema_model.parameters():
         parameter.requires_grad_(False)
+    preservation_model = None
+    reference_metrics = None
+    if args.preservation_weights is not None:
+        reference_checkpoint = torch.load(
+            args.preservation_weights, map_location="cpu", weights_only=False
+        )
+        preservation_model = build_model(reference_checkpoint.get("model_config"))
+        preservation_model.load_state_dict(reference_checkpoint["model"], strict=True)
+        preservation_model = preservation_model.to(device).eval()
+        for parameter in preservation_model.parameters():
+            parameter.requires_grad_(False)
     loss_fn = RestorationLoss(
         pixel_weight=args.pixel_weight,
         ssim_weight=args.ssim_weight,
@@ -342,6 +388,10 @@ def main() -> None:
             checkpoint.get("epochs_without_improvement", 0)
         )
 
+    if preservation_model is not None and val_loader is not None:
+        reference_metrics = validate(preservation_model, val_loader, device)
+        print(json.dumps({"preservation_reference": reference_metrics}))
+
     print(
         f"device={device} train={len(train_set)} "
         f"val={len(val_set) if val_set is not None else 0} "
@@ -371,6 +421,12 @@ def main() -> None:
             with torch.autocast(device_type=device.type, dtype=torch.float16, enabled=use_amp):
                 prediction = model(lr)
                 loss, parts = loss_fn(prediction, gt, lr)
+                if preservation_model is not None and args.preservation_weight > 0:
+                    with torch.no_grad():
+                        reference_prediction = preservation_model(lr)
+                    preservation = F.l1_loss(prediction, reference_prediction)
+                    loss = loss + args.preservation_weight * preservation
+                    parts["preservation"] = float(preservation.detach())
             scaler.scale(loss).backward()
             scaler.unscale_(optimizer)
             torch.nn.utils.clip_grad_norm_(model.parameters(), args.gradient_clip)
@@ -459,6 +515,11 @@ def main() -> None:
                 "branch_learning_rate": branch_lr,
                 "early_stopping_patience": args.early_stopping_patience,
                 "early_stopping_min_delta": args.early_stopping_min_delta,
+                "preservation_weight": args.preservation_weight,
+                "preservation_weights": (
+                    str(args.preservation_weights) if args.preservation_weights else None
+                ),
+                "collapse_guard_psnr_drop": args.collapse_guard_psnr_drop,
             },
             "optimizer": optimizer.state_dict(),
             "scheduler": scheduler.state_dict() if scheduler is not None else None,
@@ -476,6 +537,25 @@ def main() -> None:
                 json.dumps(history, indent=2)
             )
             continue
+        if reference_metrics is not None and validation_psnr_collapsed(
+            metrics["psnr"],
+            reference_metrics["psnr"],
+            args.collapse_guard_psnr_drop,
+        ):
+            failure = {
+                "aborted": "validation_psnr_collapse",
+                "epoch": epoch,
+                "reference_psnr": reference_metrics["psnr"],
+                "observed_psnr": metrics["psnr"],
+                "allowed_drop": args.collapse_guard_psnr_drop,
+            }
+            (args.output_dir / "ABORTED.json").write_text(
+                json.dumps(failure, indent=2) + "\n"
+            )
+            (args.output_dir / "history.json").write_text(
+                json.dumps(history, indent=2)
+            )
+            raise SystemExit(json.dumps(failure))
         if improved_ssim:
             torch.save(checkpoint, args.output_dir / "best_ssim.pt")
         if improved_psnr:

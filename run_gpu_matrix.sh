@@ -23,6 +23,15 @@ run_container() {
     "$IMAGE" "$@"
 }
 
+acquire_run_lock() {
+  local lock_dir="$1"
+  if ! mkdir "$lock_dir" 2>/dev/null; then
+    echo "Another run owns lock $lock_dir; refusing duplicate launch." >&2
+    exit 3
+  fi
+  trap 'rmdir "$lock_dir" 2>/dev/null || true' EXIT INT TERM
+}
+
 mkdir -p weights/sweep outputs/experiments logs
 
 case "${1:-}" in
@@ -178,41 +187,48 @@ case "${1:-}" in
       --output results/v4b_paired_ablation.json
     ;;
   v4b-staged)
-    run_container bash -lc '
+    echo "v4b-staged is deprecated after an unstable pilot; use v4b-v2." >&2
+    exit 2
+    ;;
+  v4b-v2)
+    acquire_run_lock "$ROOT/.v4b_v2.lock"
+    run_container bash -lc 'set -o pipefail
       python -u train.py --variant v4b --initialize-from weights/final.pt \
         --frequency-width 24 --frequency-blocks 2 \
-        --epochs 15 --freeze-backbone-epochs 5 \
-        --backbone-learning-rate 5e-6 --branch-learning-rate 5e-5 \
+        --epochs 12 --freeze-backbone-epochs 2 \
+        --backbone-learning-rate 2e-6 --branch-learning-rate 5e-6 \
+        --preservation-weights weights/final.pt --preservation-weight 0.10 \
+        --collapse-guard-psnr-drop 0.10 \
         --early-stopping-patience 4 --early-stopping-min-delta 0.001 \
         --batch-size 8 --workers 4 --width 48 --blocks 12 \
         --synthetic-probability 0.2 --synthetic-policy randomized \
         --ema-decay 0.995 --gradient-clip 1.0 --seed 2026 --device cuda \
-        --output-dir weights/v4b_staged \
-        2>&1 | tee logs/train_v4b_staged.log
+        --output-dir weights/v4b_v2 \
+        2>&1 | tee logs/train_v4b_v2.log
     '
     for candidate in final_v2 staged_v4b; do
       case "$candidate" in
         final_v2) checkpoint="weights/final.pt" ;;
-        staged_v4b) checkpoint="weights/v4b_staged/best_balanced.pt" ;;
+        staged_v4b) checkpoint="weights/v4b_v2/best_balanced.pt" ;;
       esac
       run_container python evaluate.py --method model --split val \
         --input-dir data/train/NoisyLR --gt-dir data/train/GT \
         --weights "$checkpoint" --batch-size 8 --device cuda --lpips \
-        --json-output "outputs/experiments/staged_${candidate}.json" \
-        --per-image-output "outputs/experiments/staged_${candidate}_per_image.csv"
+        --json-output "outputs/experiments/v4b_v2_${candidate}.json" \
+        --per-image-output "outputs/experiments/v4b_v2_${candidate}_per_image.csv"
       run_container python evaluate_stress.py --weights "$checkpoint" \
         --device cuda \
-        --json-output "outputs/experiments/staged_${candidate}_stress.json"
+        --json-output "outputs/experiments/v4b_v2_${candidate}_stress.json"
       run_container python benchmark.py --weights "$checkpoint" --batch-size 1 \
         --device cuda \
-        --json-output "outputs/experiments/staged_${candidate}_benchmark.json"
+        --json-output "outputs/experiments/v4b_v2_${candidate}_benchmark.json"
     done
     run_container python compare_paired.py \
-      --baseline outputs/experiments/staged_final_v2_per_image.csv \
-      --control outputs/experiments/staged_final_v2_per_image.csv \
-      --candidate outputs/experiments/staged_staged_v4b_per_image.csv \
-      --candidate-name staged_v4b \
-      --output results/v4b_staged_vs_final.json
+      --baseline outputs/experiments/v4b_v2_final_v2_per_image.csv \
+      --control outputs/experiments/v4b_v2_final_v2_per_image.csv \
+      --candidate outputs/experiments/v4b_v2_staged_v4b_per_image.csv \
+      --candidate-name v4b_v2 \
+      --output results/v4b_v2_vs_final.json
     ;;
   split3407)
     run_container bash -lc 'python -u train.py \
@@ -251,7 +267,7 @@ case "${1:-}" in
       2>&1 | tee logs/train_all_data.log'
     ;;
   *)
-    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|v4b-staged|split3407|evaluate|all-data}" >&2
+    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|v4b-v2|split3407|evaluate|all-data}" >&2
     exit 2
     ;;
 esac

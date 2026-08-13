@@ -214,10 +214,6 @@ python make_output_manifest.py
 python submission_audit.py
 ```
 
-The final Phase 1 dry-run sequence is in
-[`SUBMISSION_CHECKLIST.md`](SUBMISSION_CHECKLIST.md), and the optional demo has
-a timed script in [`DEMO_SCRIPT.md`](DEMO_SCRIPT.md).
-
 For a reproducible NVIDIA environment:
 
 ```bash

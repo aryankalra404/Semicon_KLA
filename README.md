@@ -1,26 +1,55 @@
-# Semiconductor Image Restoration — KLA Track
+# Semiconductor Image Restoration for the KLA Track
 
-Compact, reproducible restoration of degraded grayscale inspection images for
-the **SEMICON India Hackathon 2026 — KLA AI-Based Restoration of Degraded
-Images challenge**. The submitted model removes mixed Gaussian/speckle noise
-and performs 2× super-resolution in one forward pass.
+An efficient PyTorch model for restoring degraded grayscale inspection images.
+The network removes mixed Gaussian and speckle noise while performing 2x
+super-resolution in a single forward pass.
 
-## Submission contents
+Developed for the **SEMICON India Hackathon 2026, KLA AI-Based Restoration of
+Degraded Images challenge**.
 
-| Hackathon requirement | Repository location | How to verify |
-|---|---|---|
-| **1. README and setup instructions** | [`README.md`](README.md) | Follow [Quick inference from a fresh clone](#quick-inference-from-a-fresh-clone). |
-| **2. Standalone evaluation script** | [`inference.py`](inference.py) | Accepts `--input-dir` and `--output-dir`, loads the submitted weights automatically, and needs no source edits or ground truth. |
-| **3. Training script** | [`train.py`](train.py) | Reproduces paired training from scratch; commands are in [Training reproduction](#training-reproduction). |
-| **4. Trained model weights** | [`weights/final.pt`](weights/final.pt) | Compact 2.3 MB inference checkpoint; SHA-256 is recorded below. |
-| **5. Restored test outputs** | [`outputs/restored/`](outputs/restored/) | Contains 400 restored float32 `.npy` files with the original test filenames. |
-| **6. Complete environment freeze** | [`requirements.txt`](requirements.txt) | Complete 221-entry `pip freeze` from the training container. Portable direct dependencies are in [`requirements.runtime.txt`](requirements.runtime.txt). |
+## Results at a glance
 
-> **Official evaluator entry point:** `inference.py`
+Evaluation was performed on a fixed 320-image paired validation split. The
+submitted checkpoint was selected using validation data only. The 400 provided
+test inputs have no public ground truth and were not used to calculate these
+quality metrics.
 
-## Quick inference from a fresh clone
+| Model | PSNR | SSIM | LPIPS | Latency |
+|---|---:|---:|---:|---:|
+| Bicubic interpolation | 22.8192 dB | 0.5460 | N/A | 0.10 ms/image on CPU |
+| Gaussian denoising with bicubic interpolation | 25.5339 dB | 0.6483 | N/A | Diagnostic baseline |
+| Base restoration model | 26.2962 dB | **0.7004** | 0.3738 | 11.35 ms/image |
+| **Submitted model** | **26.3273 dB** | **0.7004** | **0.3717** | **11.34 ms/image** |
 
-### Option A — Python environment
+The submitted model contains **580,609 parameters** and used approximately
+**35.7 MiB of peak allocated VRAM** during benchmarking. Its warmed batch-size
+1 latency on an NVIDIA RTX A4000 was 11.34 ms at p50 and 11.45 ms at p95.
+
+Compared with bicubic interpolation, it improves mean validation quality by
+3.5082 dB PSNR and 0.1543 SSIM. Compared with Gaussian denoising followed by
+bicubic interpolation, it improves PSNR by 0.7934 dB and SSIM by 0.0521.
+
+![Representative validation comparison](figures/presentation_representative.png)
+
+This is a representative validation example selected with a deterministic
+procedure. Aggregate results, confidence intervals, paired tests, stress tests,
+and failure analysis are available in [results/README.md](results/README.md).
+
+## Repository contents
+
+| File or directory | Purpose |
+|---|---|
+| [`inference.py`](inference.py) | Standalone evaluation script that accepts input and output directory paths |
+| [`train.py`](train.py) | Paired training and fine-tuning script |
+| [`weights/final.pt`](weights/final.pt) | Final 2.3 MB inference checkpoint |
+| [`outputs/restored/`](outputs/restored/) | 400 restored test arrays with original filenames |
+| [`requirements.txt`](requirements.txt) | Complete package freeze from the training container |
+| [`requirements.runtime.txt`](requirements.runtime.txt) | Minimal portable inference dependencies |
+| [`Dockerfile`](Dockerfile) | Reproducible NVIDIA evaluation environment |
+
+## Setup and inference
+
+### Python environment
 
 ```bash
 git clone https://github.com/aryankalra404/Semicon_KLA.git
@@ -36,17 +65,17 @@ python inference.py \
   --output-dir /path/to/restored
 ```
 
-No manual edits are required. `inference.py` resolves the repository-relative
-checkpoint `weights/final.pt` automatically. The default `--device auto` uses
-CUDA when available and otherwise uses CPU.
+No source edits are required. The script loads `weights/final.pt` by default.
+Device selection is automatic: CUDA is used when available, otherwise
+inference runs on CPU.
 
-### Option B — Reproducible NVIDIA Docker environment
+### NVIDIA Docker
 
 ```bash
 git clone https://github.com/aryankalra404/Semicon_KLA.git
 cd Semicon_KLA
 
-docker build -t kla-restorenet .
+docker build -t kla-restoration .
 mkdir -p outputs/evaluator
 
 docker run --rm --gpus all \
@@ -55,7 +84,7 @@ docker run --rm --gpus all \
   --ulimit stack=67108864 \
   -v "/absolute/path/to/test/NoisyLR":/inputs:ro \
   -v "$PWD/outputs/evaluator":/outputs \
-  kla-restorenet \
+  kla-restoration \
   python inference.py \
     --input-dir /inputs \
     --output-dir /outputs \
@@ -63,152 +92,104 @@ docker run --rm --gpus all \
     --batch-size 8
 ```
 
-The Docker image is pinned to `nvcr.io/nvidia/pytorch:26.07-py3`. The precise
-image digest and reference environment are documented in
-[`ENVIRONMENT.md`](ENVIRONMENT.md).
+The container uses `nvcr.io/nvidia/pytorch:26.07-py3`. The image digest,
+software versions, and hardware details are recorded in
+[ENVIRONMENT.md](ENVIRONMENT.md).
 
-## Evaluator contract
+### Inference interface
 
 ```text
 python inference.py --input-dir INPUT_DIRECTORY --output-dir OUTPUT_DIRECTORY
 ```
 
-- **Input:** a flat directory of grayscale `.npy` arrays. Both `128×128` and
-  `256×256` inputs are accepted, including mixed-size directories.
-- **Output:** one `.npy` file per input, retaining the original filename.
-- **Resolution:** exactly 2× the input dimensions (`128→256` or `256→512`).
-- **Format:** `float32`, finite values in `[0,1]`.
-- **Model loading:** `weights/final.pt` is used by default.
-- **Ground truth:** not required.
-- **Batching:** inputs are grouped by shape and processed efficiently.
+The evaluator:
 
-The complete command-line interface is available with:
+- reads a flat directory of grayscale `.npy` arrays;
+- accepts `128x128` and `256x256` inputs, including mixed-size directories;
+- writes one restored `.npy` array for every input using the same filename;
+- produces an output with twice the input height and width;
+- saves finite `float32` values in the `[0,1]` range;
+- groups inputs by shape for efficient batching;
+- does not require ground-truth images.
 
-```bash
-python inference.py --help
-```
+Run `python inference.py --help` to view all command-line options.
 
-## Fresh-clone verification
+## Approach
 
-The public repository was cloned into a new temporary directory, built without
-local project state, and run on the full 400-image blind input directory. The
-rehearsal completed successfully:
+The model is a compact residual convolutional network designed for restoration
+quality and low inference cost.
 
 ```text
-restored=400 device=cuda models=1 self_ensemble=x1
-milliseconds_per_image=12.061 output_dir=/outputs
+Degraded grayscale image
+          |
+          v
+3x3 convolutional feature stem
+          |
+          v
+12 residual restoration blocks, 48 channels
+          |                              Degraded input
+          v                                    |
+3x3 convolution to four sub-pixel channels     |
+          |                                    v
+          v                              Bicubic upsample
+PixelShuffle 2x                               |
+          |                                    |
+          +-------------- add -----------------+
+                         |
+                         v
+          Restored full-resolution image in [0,1]
 ```
 
-The committed output set was audited as follows:
+The raw degraded array is passed to the network without clipping. This retains
+out-of-range intensities introduced by speckle noise. The final output is
+clamped to the valid ground-truth range.
 
-| Property | Verified value |
-|---|---:|
-| File count | 400 |
-| Filenames | `000000.npy`–`000399.npy` |
-| Shape | `256×256` |
-| Data type | `float32` |
-| Non-finite values | 0 |
-| Values outside `[0,1]` | 0 |
-| Output aggregate SHA-256 | `8d73c8edf48b4490f817283172b625a7a17e0d16463096996227007fc70b195c` |
-| `weights/final.pt` SHA-256 | `c1e67ad4400b1c899ef30a2bb6748a086c036661fef41932fbef548e5998bacd` |
-
-To repeat the repository checks when official inputs are available locally:
-
-```bash
-python validate_submission.py --device auto
-python make_output_manifest.py
-python submission_audit.py
-```
-
-## Measured results
-
-Metrics use a fixed, untouched 320-image paired validation partition. The 400
-blind test inputs have no public ground truth and were never used to calculate
-quality scores.
-
-| Method | PSNR ↑ | SSIM ↑ | LPIPS ↓ | RTX A4000 latency ↓ |
-|---|---:|---:|---:|---:|
-| Bicubic | 22.8192 dB | 0.5460 | — | 0.10 ms/image* |
-| Gaussian denoise + bicubic | 25.5339 dB | 0.6483 | — | classical diagnostic |
-| Frozen v2 checkpoint | 26.2962 dB | **0.7004** | 0.3738 | 11.35 ms/image |
-| **Submitted fine-tuned v2** | **26.3273 dB** | **0.7004** | **0.3717** | **11.34 ms/image** |
-
-`*` Bicubic latency was measured on CPU and is not directly hardware-comparable.
-Submitted-model latency is warmed batch-1 p50 on an NVIDIA RTX A4000; p95 is
-11.45 ms/image. The model has **580,609 parameters** and uses approximately
-**35.7 MiB peak allocated VRAM** in the benchmark.
-
-Relative to bicubic, the submitted model improves mean validation quality by
-**+3.5082 dB PSNR** and **+0.1543 SSIM**. Relative to the stronger Gaussian
-denoise + bicubic baseline, it improves PSNR by **+0.7934 dB** and SSIM by
-**+0.0521**, winning on 296/320 and 297/320 validation images respectively.
-
-![Representative validation comparison](figures/presentation_representative.png)
-
-Full confidence intervals, paired tests, stress results, and failure analysis
-are reported in [`results/README.md`](results/README.md).
-
-## Method
-
-The submission uses a compact residual restoration network designed around the
-challenge's accuracy–latency trade-off:
+Training uses paired NoisyLR and ground-truth arrays with the following loss:
 
 ```text
-NoisyLR grayscale array
-        │
-        ▼
-3×3 convolutional feature stem
-        │
-        ▼
-12 residual restoration blocks (48 channels)
-        │
-        ├──────── global residual connection ────────┐
-        ▼                                             │
-3×3 convolution → 4-channel sub-pixel representation │
-        │                                             │
-        ▼                                             │
-PixelShuffle ×2 ◄─────────────────────────────────────┘
-        │
-        ▼
-Clamp to [0,1] → restored full-resolution output
+0.7 * robust pixel loss + 0.2 * SSIM loss + 0.1 * edge loss
 ```
 
-Training uses paired NoisyLR/GT arrays and a composite objective:
+The pixel term promotes accurate intensity recovery, the SSIM term preserves
+local structure, and the edge term discourages excessive smoothing. Training
+also uses exponential moving average weights, gradient clipping, deterministic
+splits, and data integrity checks.
 
-```text
-0.7 × robust pixel loss + 0.2 × SSIM loss + 0.1 × edge loss
-```
+Synthetic augmentation combines:
 
-The raw degraded input is not clipped before the network, preserving meaningful
-out-of-range measurements produced by speckle noise. Synthetic augmentation
-adds mixed Gaussian noise, multiplicative speckle noise, blur, downsampling,
-and radiometric changes. EMA weights, gradient clipping, deterministic splits,
-data auditing, and fail-closed candidate promotion provide training hygiene.
+- additive Gaussian noise;
+- multiplicative speckle noise;
+- Gaussian blur;
+- spatial downsampling;
+- radiometric variation.
 
-## Training reproduction
+These transformations supplement the paired challenge data and expose the
+network to mixed degradation conditions.
 
-### Expected dataset layout
+## Training
+
+### Dataset layout
 
 ```text
 data/train/
-├── GT/
-│   ├── 000000.npy
-│   └── ...
-└── NoisyLR/
-    ├── 000000.npy
-    └── ...
+|-- GT/
+|   |-- 000000.npy
+|   `-- ...
+`-- NoisyLR/
+    |-- 000000.npy
+    `-- ...
 ```
 
-Ground-truth and degraded training arrays must have matching filenames. Raw
-challenge data is intentionally excluded from Git.
+Files in `GT` and `NoisyLR` must use matching names. Raw challenge data is not
+included in the repository.
 
-Audit the pairs before training:
+Audit all pairs before training:
 
 ```bash
 python audit_data.py
 ```
 
-### Stage 1 — train v2 from scratch
+### Base training
 
 ```bash
 python train.py \
@@ -229,11 +210,10 @@ python train.py \
   --output-dir weights/v2
 ```
 
-This experiment ran for 30 epochs. The best balanced base checkpoint was
-selected at **epoch 24**, rather than using the final epoch. Selection score:
-`PSNR + 10 × SSIM`.
+The base experiment ran for 30 epochs. The checkpoint from epoch 24 achieved
+the strongest balanced validation score and was retained for fine-tuning.
 
-### Stage 2 — controlled low-learning-rate fine-tune
+### Controlled fine-tuning
 
 ```bash
 python train.py \
@@ -255,13 +235,12 @@ python train.py \
   --output-dir weights/v2_finetune
 ```
 
-The fine-tuning experiment evaluated every epoch. **Fine-tuning epoch 1** had
-the best validation selection score and became the submitted checkpoint. This
-does not mean the network was trained from random initialization for one epoch:
-it was initialized from the fully trained v2 base. Continuing for more epochs
-did not improve the selection score.
+Each fine-tuning epoch was evaluated separately. Epoch 1 produced the best
+validation score and became the submitted checkpoint. It was initialized from
+the fully trained base model; it was not trained from random initialization for
+one epoch. Additional fine-tuning epochs did not improve model selection.
 
-Export a compact inference-only checkpoint with:
+Export the selected model as a compact inference checkpoint:
 
 ```bash
 python export_checkpoint.py \
@@ -269,12 +248,19 @@ python export_checkpoint.py \
   --output weights/final.pt
 ```
 
-Training creates `best_psnr.pt`, `best_ssim.pt`, `best_balanced.pt`, `last.pt`,
-and `history.json`. Interrupted runs can resume with `--resume PATH_TO_LAST_PT`.
+Training writes `best_psnr.pt`, `best_ssim.pt`, `best_balanced.pt`, `last.pt`,
+and `history.json`. An interrupted run can resume with `--resume CHECKPOINT`.
+
+### Training curves
+
+![Validation PSNR and SSIM across base training](figures/v2_learning_curves.png)
+
+The curves show rapid early improvement followed by convergence. Checkpoint
+selection used measured validation quality rather than the final epoch.
 
 ## Evaluation and benchmarking
 
-Evaluate a checkpoint on paired data:
+Evaluate PSNR, SSIM, and LPIPS on paired data:
 
 ```bash
 python evaluate.py \
@@ -288,7 +274,7 @@ python evaluate.py \
   --json-output outputs/model_metrics.json
 ```
 
-Measure warmed batch-1 latency, tail latency, parameters, and peak GPU memory:
+Measure warmed latency, tail latency, parameter count, and peak GPU memory:
 
 ```bash
 python benchmark.py \
@@ -304,54 +290,82 @@ Run the automated tests:
 python -m unittest discover -s tests -v
 ```
 
-## Robustness evidence and honest boundaries
+## Reproducibility checks
 
-The repository includes deterministic stress evaluation, degradation-order
-experiments, appearance-cluster OOD proxies, defect-preservation probes, and
-geometric disagreement maps. Experimental challengers are isolated from the
-submitted checkpoint and can replace it only if every promotion gate passes.
+The repository was cloned into a clean temporary directory, built as a new
+Docker image, and run on all 400 test inputs. The clean-clone rehearsal
+completed successfully:
 
-- The official validation split measures paired restoration quality.
-- The appearance-cluster split is an **OOD proxy**, not a claim about private
-  KLA source identities.
-- Synthetic defect probes test localized response preservation but are not
-  labeled production defects.
-- The `256→512` execution contract is tested for shape, range, speed, and
-  memory; reported paired PSNR/SSIM/LPIPS correspond to the evaluated paired
-  validation resolution.
-- The known failure mode is over-smoothing stochastic high-frequency texture
-  whose discarded detail cannot be uniquely reconstructed.
+```text
+restored=400 device=cuda models=1 self_ensemble=x1
+milliseconds_per_image=12.061 output_dir=/outputs
+```
 
-Useful evidence:
+The committed submission artifacts were audited with the following results:
 
-- [`results/README.md`](results/README.md) — complete measured results
-- [`figures/presentation_representative_detailed.png`](figures/presentation_representative_detailed.png) — representative result with detail crops
-- [`figures/limitation_oversmoothing_002994.png`](figures/limitation_oversmoothing_002994.png) — retained failure case
-- [`REFERENCES.md`](REFERENCES.md) — research and implementation references
-- [`ENVIRONMENT.md`](ENVIRONMENT.md) — exact container and hardware metadata
+| Property | Verified value |
+|---|---:|
+| Restored files | 400 |
+| Filename range | `000000.npy` to `000399.npy` |
+| Output shape | `256x256` |
+| Data type | `float32` |
+| Non-finite values | 0 |
+| Values outside `[0,1]` | 0 |
+| Output aggregate SHA-256 | `8d73c8edf48b4490f817283172b625a7a17e0d16463096996227007fc70b195c` |
+| Checkpoint SHA-256 | `c1e67ad4400b1c899ef30a2bb6748a086c036661fef41932fbef548e5998bacd` |
 
-## Repository structure
+Repeat the submission checks with:
+
+```bash
+python validate_submission.py --device auto
+python make_output_manifest.py
+python submission_audit.py
+```
+
+## Robustness and limitations
+
+The repository includes deterministic stress tests, degradation-order tests,
+an appearance-cluster OOD proxy, localized defect-preservation probes, and
+geometric disagreement maps. Experimental checkpoints are kept separate from
+the submitted model and are promoted only when all predefined quality and
+latency checks pass.
+
+The appearance-cluster experiment is an OOD proxy and is not presented as a
+measurement of private KLA source identities. Synthetic defect probes measure
+localized response preservation but do not represent labeled production
+defects. The known failure mode is smoothing of stochastic high-frequency
+texture when the discarded detail cannot be uniquely reconstructed.
+
+Detailed evidence is available in:
+
+- [results/README.md](results/README.md), complete metrics and statistical tests;
+- [presentation_representative_detailed.png](figures/presentation_representative_detailed.png), detail-crop comparison;
+- [limitation_oversmoothing_002994.png](figures/limitation_oversmoothing_002994.png), documented failure case;
+- [REFERENCES.md](REFERENCES.md), research and implementation references;
+- [ENVIRONMENT.md](ENVIRONMENT.md), container and hardware metadata.
+
+## Project structure
 
 ```text
 Semicon_KLA/
-├── inference.py              # official standalone evaluator entry point
-├── train.py                  # paired training and fine-tuning
-├── evaluate.py               # PSNR, SSIM and optional LPIPS evaluation
-├── benchmark.py              # latency, VRAM and parameter benchmarking
-├── validate_submission.py    # end-to-end inference contract test
-├── kla_restore/              # model, data, loss, metric and runtime modules
-├── weights/final.pt          # submitted inference checkpoint
-├── outputs/restored/         # 400 committed blind-test restorations
-├── requirements.txt          # complete training-container pip freeze
-├── requirements.runtime.txt  # portable direct dependencies
-├── Dockerfile                # pinned reproducible evaluator image
-├── results/                  # metrics and statistical evidence
-└── figures/                  # result and failure-analysis figures
+|-- inference.py
+|-- train.py
+|-- evaluate.py
+|-- benchmark.py
+|-- validate_submission.py
+|-- kla_restore/
+|-- weights/final.pt
+|-- outputs/restored/
+|-- requirements.txt
+|-- requirements.runtime.txt
+|-- Dockerfile
+|-- results/
+`-- figures/
 ```
 
 ## License and references
 
-Repository-authored code is released under [`LICENSE`](LICENSE). The NVIDIA NGC
+Repository-authored code is released under [LICENSE](LICENSE). The NVIDIA NGC
 base image and third-party packages retain their respective licenses. Research
 papers, metrics, and implementation sources are listed in
-[`REFERENCES.md`](REFERENCES.md).
+[REFERENCES.md](REFERENCES.md).

@@ -16,7 +16,7 @@ import torch
 from kla_restore.runtime import choose_device, load_model
 
 
-EXPECTED_SHA256 = "89223db798de64c675385102250ef8a5cdbad2cbf5f893a8d759e7eb2f56b798"
+EXPECTED_SHA256 = "8f8f16ede607119d6b7768d2f3398b97a11ab0e32c11dc3c6cd6be57aeda3f51"
 
 
 def parse_args() -> argparse.Namespace:

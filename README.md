@@ -7,9 +7,9 @@ KLA challenge**. It maps noisy `128x128` grayscale NumPy arrays to clean
 ## Results
 
 On the fixed 320-image validation split, the compact 580,609-parameter final
-model achieves **26.2962 dB PSNR**, **0.7004 SSIM**, **0.3738 LPIPS**, and
-**11.22 ms/image batch-1 p50 latency** on an NVIDIA RTX A4000. It improves over
-bicubic by +3.4771 dB and +0.1544 SSIM on average. Full metrics, confidence
+model achieves **26.3273 dB PSNR**, **0.7004 SSIM**, **0.3717 LPIPS**, and
+**11.34 ms/image batch-1 p50 latency** on an NVIDIA RTX A4000. Relative to
+bicubic, its mean gains are +3.5082 dB PSNR and +0.1543 SSIM. Full metrics, confidence
 intervals, and failure analysis are in
 [`results/`](results/README.md).
 

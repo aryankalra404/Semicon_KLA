@@ -15,19 +15,34 @@
   },
   "v2": {
     "checkpoint": "weights/final.pt",
-    "checkpoint_epoch": 24,
-    "psnr": 26.296219098567963,
-    "psnr_ci95": 0.43835680144266576,
-    "ssim": 0.7004095890559257,
-    "ssim_ci95": 0.017577425191902522,
-    "milliseconds_per_image_rtx_a4000": 11.562931225125794,
+    "checkpoint_epoch": 1,
+    "psnr": 26.327339735627174,
+    "psnr_ci95": 0.44091469172572595,
+    "ssim": 0.7003672550898046,
+    "ssim_ci95": 0.01760398039201264,
+    "lpips": 0.37170166049618275,
+    "lpips_ci95": 0.020129123523819705,
+    "milliseconds_per_image_rtx_a4000_batch1_p50": 11.339179502101615,
+    "milliseconds_per_image_rtx_a4000_batch1_p95": 11.449733657354955,
+    "peak_vram_mib": 35.69677734375,
     "parameters": 580609,
-    "checkpoint_sha256": "89223db798de64c675385102250ef8a5cdbad2cbf5f893a8d759e7eb2f56b798"
+    "checkpoint_sha256": "8f8f16ede607119d6b7768d2f3398b97a11ab0e32c11dc3c6cd6be57aeda3f51",
+    "output_aggregate_sha256": "8d73c8edf48b4490f817283172b625a7a17e0d16463096996227007fc70b195c"
   },
   "v2_vs_bicubic": {
-    "psnr_wins": 319,
-    "ssim_wins": 275,
-    "mean_psnr_gain": 3.4770559281110764,
-    "mean_ssim_gain": 0.15438481089659034
+    "mean_psnr_gain": 3.508158573508262,
+    "mean_ssim_gain": 0.154341076174751
+  },
+  "fine_tune_vs_frozen_v2": {
+    "mean_psnr_gain": 0.031120637059211732,
+    "psnr_delta_ci95": [0.02482087306678295, 0.03776428282260895],
+    "psnr_wins": 237,
+    "psnr_sign_test_pvalue": 2.5761700186630853e-18,
+    "mean_ssim_gain": -0.00004233396612107754,
+    "ssim_delta_ci95": [-0.0004877885605674237, 0.00040977277210913485],
+    "mean_lpips_gain": -0.002093980764038861,
+    "lpips_delta_ci95": [-0.0029340338584734125, -0.00122969265736174],
+    "lpips_wins": 222,
+    "lpips_sign_test_pvalue": 3.3179000487145543e-12
   }
 }

@@ -6,2807 +6,2807 @@
     256
   ],
   "dtype": "float32",
-  "aggregate_sha256": "14ceebb75bf69b7df65c946bbeccace098f9df79d56df3e633edd5c87e48e0a1",
+  "aggregate_sha256": "8d73c8edf48b4490f817283172b625a7a17e0d16463096996227007fc70b195c",
   "files": [
     {
       "filename": "000000.npy",
-      "sha256": "7f1bd43cb213a0d0a204ac5da272bbecbd7f3c6c36e046c4e063478031828381",
+      "sha256": "333dc5c5eb3b9cf12be049472e2bcb91b8039a2ff4e4bee8bb3511f7689a3f1b",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.0025102286599576473,
       "max": 1.0
     },
     {
       "filename": "000001.npy",
-      "sha256": "128dd310e9272254a58d670d2065aad46c3b6746c2c31fe91de600cef0573777",
+      "sha256": "9b5e01ce2079d615d169779129dc2f9a2b3ac7fda63560727dd1711019d566fa",
       "bytes": 262272,
-      "min": 0.011250756680965424,
-      "max": 0.9986379146575928
+      "min": 0.006675242446362972,
+      "max": 1.0
     },
     {
       "filename": "000002.npy",
-      "sha256": "da32c436a6c3fb00757921707e8952fa79d6f53d39f63e153768a2d9f529ddcb",
+      "sha256": "30b2cd9cf7e52dea788fd03ec8025ad53c49dd4c3245f2c9c391526113e3b0ef",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000003.npy",
-      "sha256": "7048f077ab69718f085e9b5ad4e3028f281492805505b6c70ab0c5622ec7b4cf",
+      "sha256": "81497b911f877ba8c7e398821dff31ef935c356a9845168237f1cf89ee46372f",
       "bytes": 262272,
-      "min": 0.012009728699922562,
-      "max": 0.6350540518760681
+      "min": 0.004106487147510052,
+      "max": 0.7406319379806519
     },
     {
       "filename": "000004.npy",
-      "sha256": "1ed33d1f3b0d592321a9c58dc312f60509271f879b8828cea0a37521c07dd904",
+      "sha256": "407a0a8b0f299c307ca47b6657238b47f8e7898c07ef366b3e6056fa6821ee87",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000005.npy",
-      "sha256": "a0e66441c2c70ed80e748684d0acc37189cadc720b84cf18ffc5386857c5fbc1",
+      "sha256": "c4878810b576858fe5f4c7c0a1a809f1a314b0694ffc5424a30a129b7f39a5ef",
+      "bytes": 262272,
+      "min": 0.010967615060508251,
+      "max": 1.0
+    },
+    {
+      "filename": "000006.npy",
+      "sha256": "ffde901a5d4eba2cf7c54d8111249f2afc0b53f695adacf13140e99a58f74125",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
-      "filename": "000006.npy",
-      "sha256": "d2475f2023a468041490d7b39bfef35bb19ef963b6701487c77a5dc6851be673",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9895420074462891
-    },
-    {
       "filename": "000007.npy",
-      "sha256": "c03f78303081935704ad36d47e111632b2971e1a854c0f06a80b90ef2a82c015",
+      "sha256": "49d92dbb9f32de241617da54894bbd14a52135d23dcc878f24ccfb84a0dc524e",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9690756797790527
+      "max": 0.9681258201599121
     },
     {
       "filename": "000008.npy",
-      "sha256": "836d9d1f6bdeabcfa9557e8a360654406b65e0ab371cf54d8483d26bbf1a5e1f",
+      "sha256": "660a7ba047af8db79ca194e466e24f2579de8919df5e5b6b1daa29f09bcc16b5",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000009.npy",
-      "sha256": "1315287cf3a62ed40e03cb71cf437ebebbe8ab4711c0890878c88915a6f5abeb",
+      "sha256": "de534e84d1299e8588b7740a6efd30e68df58100e1fdc17069e56a202c868893",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9559725522994995
+      "min": 0.0017632294911891222,
+      "max": 1.0
     },
     {
       "filename": "000010.npy",
-      "sha256": "ad835b1bc5c8f1a5f9837f6d08d1c9a59189ad397888e7bb93c76b0cdb69b6b0",
+      "sha256": "9cb417f17724b8a70267e3b0d42ace3cd0ce4853a03f66be784f0ad777d2e718",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000011.npy",
-      "sha256": "64644cffe8f629f72d63700d008575dfeb2a4fbb9324af5103a3cc0a08a03b18",
+      "sha256": "e5022d35f79c4de928d85c6e73c1d200402c74e06b2fa84c52b0ed32909e35e3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000012.npy",
-      "sha256": "cb1e4444816b18043134ff253f802cf6595dbd305646f71866ca41b84aae160d",
+      "sha256": "369c4d7c0505db505e00d8765d0dda0e24db2f22867f1ed5355dfea6ddc81dbf",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000013.npy",
-      "sha256": "47becb8d98078def15a631db263868d029bd3401c340f64d2cb09ba1808436eb",
+      "sha256": "043e7659c42e6d2a78b0271e0931a7f77bea998b2d10be781418997f21e60ac3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000014.npy",
-      "sha256": "158297425fadc9a4b1f3a6f3247a1c8c02f13f1002d870c9185ef95fc7841c11",
+      "sha256": "eedcc2fd5057b748d933e80c43df8b3b35ce2bfd7f0e2a1d6ea42c9200ea039e",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000015.npy",
-      "sha256": "c5abc60e1644ca2bdeb389d58acaa617a2c8749c4f4f3a4a10bb688b87b18aeb",
+      "sha256": "a3c25bf04227ffd6e487b1d5d98a28458eae77fc318d252358ebbaf69f498102",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9856510162353516
     },
     {
       "filename": "000016.npy",
-      "sha256": "9519eca8a6106364c97c140ae1e7e6f14c8df84c246093b76751e7c0dc8b1648",
+      "sha256": "23fba542294c0ea3aeb352e87c18d6e876d8c3a5ed1c0aec21a8eae440c12892",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9812774658203125
+      "max": 0.986992359161377
     },
     {
       "filename": "000017.npy",
-      "sha256": "43919a09bf3fcdae0d596b95d8a41cc8fdd9a1e3d1d07708f02f5b59809d3141",
+      "sha256": "c32125bb8c85772d807e59950b2fe4ecaa133d0390aaa24dabdbf4e39cc2f1dc",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9750587344169617
+      "max": 0.9389128684997559
     },
     {
       "filename": "000018.npy",
-      "sha256": "990b84c3cb89862acae0c40554960bc103fbcdaf405baa0dd385195a48a4959a",
+      "sha256": "d81b0babcb795c1e6d7d49d4e22b3814720623230c3096118ef84009c4d6971d",
       "bytes": 262272,
-      "min": 0.09046883881092072,
+      "min": 0.08100119233131409,
       "max": 1.0
     },
     {
       "filename": "000019.npy",
-      "sha256": "7f82b7d63dde8e7ed94a7ab4d20cf3f675d4416ca150a8db46c0e49d7c9e3684",
+      "sha256": "d6fa8453c124e6c1bcab16eacdfd1f5462c53045ad824acfbca19a96d1411958",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000020.npy",
-      "sha256": "9f2eda32dbb0d2734ae1dc8d4290c6f189aa767b04ff32a4e7d66e1cbe8d7bf8",
+      "sha256": "0736dfba00290562d07c1b5e0bbb6ed21c5ec01ff6ed90ee18c90c27d585ac53",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9642724394798279
+      "max": 0.9843531250953674
     },
     {
       "filename": "000021.npy",
-      "sha256": "37a2c4f908afba60d02fdd64fe8db41e83752020e8430e2caaca0ab276e335b6",
+      "sha256": "8d549b37212d3a20ee10361204304d97d9b91e592f27b1008917f0fd9f99ece8",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9098213315010071
+      "min": 0.02445943094789982,
+      "max": 0.957325279712677
     },
     {
       "filename": "000022.npy",
-      "sha256": "d61688f8094dc65289a71854c8f92151cf5c6115ce2e46158aeedd57bb046c8b",
+      "sha256": "bc7c0acef1607bedc5a87a395703862afc279ec61a08e704973f87705625394b",
       "bytes": 262272,
-      "min": 0.006749270483851433,
+      "min": 0.0033516439143568277,
       "max": 1.0
     },
     {
       "filename": "000023.npy",
-      "sha256": "afb6d4df4810c7a2a8f46b84e1d18602b4211fd8e7c4ebd328967d928e752481",
+      "sha256": "feee4e60527a971791d68b949a58b2805e319b86cad16cdbe7799227966260b0",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9872601628303528
     },
     {
       "filename": "000024.npy",
-      "sha256": "af066c4d9d3560bcb487e0079dad4cfcfa2b279b238b94b2d337dd167cabb81e",
+      "sha256": "33c85df1142f93712062ce98db774034952626dff3cd374a14b14a153bdca7a5",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.011083314195275307,
       "max": 1.0
     },
     {
       "filename": "000025.npy",
-      "sha256": "486e5179fe26ec26c45975874213361f995a3615cd5d8bc3efb536c518cee516",
+      "sha256": "eecdf432bbee070f98a36b295956495f9a3aa567c07007ad772bf5c1163014bd",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 1.0
+      "min": 0.006588891614228487,
+      "max": 0.9844944477081299
     },
     {
       "filename": "000026.npy",
-      "sha256": "17f147cdfe4a3ed73314ad62b481cfd37c2d1c4058a720e6def67e14e92f2ae3",
+      "sha256": "2eddf0eede503439ae14dfa4abedd5473c680c9f3c5fce130c56bce00044afc9",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.980175256729126
+      "max": 0.9505558013916016
     },
     {
       "filename": "000027.npy",
-      "sha256": "33c138713924ecff4d76c5cb8b3c25536dff98c5ebe47a85aae34e1a152f1425",
+      "sha256": "f4c8368ca065624317ef3e1724c94fe6080800cdc0901bf3264e6702b28eb8fe",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.013083795085549355,
       "max": 1.0
     },
     {
       "filename": "000028.npy",
-      "sha256": "3f33a4e537e8c3a94c774f848393a806cc0aa3722b06f2856298fdbabfe582d8",
+      "sha256": "14fee753e98b03c67642681295cceabd6a01a5b2ee3db2283dfdb05acd1174d1",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.96141517162323
+      "max": 1.0
     },
     {
       "filename": "000029.npy",
-      "sha256": "f14d9d9e1805ed1e0b34c9c09551797a9c5848414f2a1e92a98c5adebff67f0f",
+      "sha256": "04522f362677633154d9359567c39c3772434edee68acaa0acc781f9f194bc5e",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.008699961006641388,
       "max": 1.0
     },
     {
       "filename": "000030.npy",
-      "sha256": "3ed6940da155acc1cf389246009114f3f76f1b27803589eb4838c4ac27e8c05b",
+      "sha256": "b6f9e9b226c93c035311f34a567d71eab3c0b685048c3df8dd8e1e6ebffa3a05",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.004073625430464745,
       "max": 1.0
     },
     {
       "filename": "000031.npy",
-      "sha256": "99a9b69cf58ff6db9af332e9c5ced4070867764b241afd0eb95b254665d5792f",
+      "sha256": "e69e1cae06a428243cb13e5dbea1ce6f85e561879d1f7f775a36fce67474658a",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000032.npy",
-      "sha256": "f4145926c1a40c9e8ac24daeeb423e859a84df70c3f88372ac993f6a0bac5148",
+      "sha256": "1095e15a24f6a00056d571c83b7c3e60e5e41d220acd608eb7d5fa7be196315b",
+      "bytes": 262272,
+      "min": 0.004889827221632004,
+      "max": 1.0
+    },
+    {
+      "filename": "000033.npy",
+      "sha256": "f9a70079f0e0f9bd90a81808e086c174154032e1eacf86a7da6c4e6c3abf597a",
+      "bytes": 262272,
+      "min": 0.03319362550973892,
+      "max": 0.9594452381134033
+    },
+    {
+      "filename": "000034.npy",
+      "sha256": "19fecfbb5087aabfffcea447f39a1b4c13d56787f056dd976b8c96f54d524b1b",
+      "bytes": 262272,
+      "min": 0.01934221014380455,
+      "max": 0.9777727127075195
+    },
+    {
+      "filename": "000035.npy",
+      "sha256": "a9623ff7f96e7ddf3e46fb892e284b609d333c55c429f439d75ee4817b3adeee",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
-      "filename": "000033.npy",
-      "sha256": "7531d5a5861571b4b33b0a23c9a027bb283344bbfcc2492b7aad0c4da0073e61",
-      "bytes": 262272,
-      "min": 0.061516158282756805,
-      "max": 0.8820078372955322
-    },
-    {
-      "filename": "000034.npy",
-      "sha256": "abae9ab57d9f19bf35c2ee3af6e8108f095a7cbfc6ca50f5d890232f767fae72",
-      "bytes": 262272,
-      "min": 0.006597437895834446,
-      "max": 0.9852379560470581
-    },
-    {
-      "filename": "000035.npy",
-      "sha256": "b8598ee21a045de45c89f8fff3f8bb4973c44e7fb030f4b734b4ae83f30e2985",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9948590397834778
-    },
-    {
       "filename": "000036.npy",
-      "sha256": "6f1d2430fd20734647014439a694ca8e4e80252e1a8b98564e6fd5f8dd3eac87",
+      "sha256": "597d936941b58faa57b64d7a4ce39c42633a954381b71ae629674803bb39673f",
       "bytes": 262272,
-      "min": 0.06385798752307892,
-      "max": 0.9769629240036011
+      "min": 0.0700131356716156,
+      "max": 1.0
     },
     {
       "filename": "000037.npy",
-      "sha256": "96a4ff6855dc200d8d3d30f258b214d24c9e959f5f35cd6d3bd256081752ee53",
+      "sha256": "a412db66396216bd044eb9d1c93d64c9fc890a8ab277b999c3fc992be2815052",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000038.npy",
-      "sha256": "2efab48973afdd83a680c12a1309822e96a825b6c6bbc02c20b18b35d5ca5e2a",
+      "sha256": "49a1152ae66dea4efe1d82774af66ec77f7d65e552eab4143873abbe6605de98",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000039.npy",
-      "sha256": "0637baaa7d7d643795c626fa699d0a89f693bcac7c0b144143ae96daf461e0aa",
+      "sha256": "1e79bdee4be8100ff553fe0a05cf832c2404ad1720cf0be30ac48c6724dd287d",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.964096188545227
-    },
-    {
-      "filename": "000040.npy",
-      "sha256": "fbbb47460228b848cdc796f458e3b15ff9e4512e87176f0c2784936afbca7222",
-      "bytes": 262272,
-      "min": 0.0,
+      "min": 0.0411209911108017,
       "max": 1.0
     },
     {
-      "filename": "000041.npy",
-      "sha256": "4c82a26cd27d257973bcb6d3064ceeb57a66d25c0b33ff41319613c588531c9b",
+      "filename": "000040.npy",
+      "sha256": "b41dff45d9f158365b65ba401cfe82dd5bfe6bb2d5cd0f1c1cb81e8fa9f194a4",
       "bytes": 262272,
-      "min": 0.029174862429499626,
+      "min": 0.0,
+      "max": 0.9989380240440369
+    },
+    {
+      "filename": "000041.npy",
+      "sha256": "1200cfa9a07c2b7318f6aab61a4448698d3df4f10da2052338d8af419d7669cd",
+      "bytes": 262272,
+      "min": 0.00864932406693697,
       "max": 1.0
     },
     {
       "filename": "000042.npy",
-      "sha256": "d9ddc011e424856081ffdbb8369424b3dea6cf4046b1fb0fedfe25fec3893ebd",
+      "sha256": "cd29b9f27c5535869cc74a7c0c55b1edcadd1250192280587d4a8dc3b521b6e3",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9883183240890503
+      "max": 0.9851105213165283
     },
     {
       "filename": "000043.npy",
-      "sha256": "a9bf68daed0926bf6ce500280c6efbd6a0dae52f9184bed2a67db95575c5598b",
+      "sha256": "311538b1b41ba2f2859207ec84ff8c5f605fb444ac84657f9a4ebd37b51b8a1b",
       "bytes": 262272,
-      "min": 0.037180181592702866,
-      "max": 0.9832482933998108
+      "min": 0.027635488659143448,
+      "max": 1.0
     },
     {
       "filename": "000044.npy",
-      "sha256": "e7b37e8ef5346dedaa002838f8e61dcc7cb4438a1fc1e028c90002559af9edb0",
+      "sha256": "5b9c5ff29cfdd4b27423d47bfd60bc3135773952537f8b810edcbcfcc3c1930d",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8346026539802551
+      "max": 0.8883262276649475
     },
     {
       "filename": "000045.npy",
-      "sha256": "3b781a821fbfaee023a39648a82c7d311ffc592e9ac4b747545acd48ab03ad39",
+      "sha256": "7aec5da36b6afa4c705e3ba8a9bfa593dcf10f43a668bc65fe2e693986f0a025",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000046.npy",
-      "sha256": "77f9f03e21949bc1d7c657ff52907951b9b076771c17efd367a726661075439b",
+      "sha256": "48fedb717fc6efc6f572bea7a7f1e607bda316354c049b97ddba7bb810aceed9",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9850237965583801
+      "max": 0.9701023101806641
     },
     {
       "filename": "000047.npy",
-      "sha256": "97861e3eb2fa684e703104ad75cdd8ccefe1232d8d6b7d77d5599caf02233d41",
+      "sha256": "4e9aaf4c8ba81e2dd9296d99cf774a7e460867726d13018ef113decf9eddc7bc",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9591862559318542
+      "max": 0.9481980800628662
     },
     {
       "filename": "000048.npy",
-      "sha256": "c087efca291fa2075bbcf6834f54564beeae304be815cb135e4498665cfa7ef4",
+      "sha256": "d921147cd6f850037a10d22c71fc301dcaffff79923952f3a0f2e36814e7253f",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000049.npy",
-      "sha256": "38bed0d8495b530b190d1318d6d01b7551405dd843bba952414ba6f1858a4c56",
+      "sha256": "929d23f475f92a87d0e535557ea408e1217ab3601440610eba55f2851044b06e",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8862901926040649
+      "max": 0.9452012777328491
     },
     {
       "filename": "000050.npy",
-      "sha256": "3f3cf9cba9efa6c174217691d8ecf57b34b9668286bc3df0997b248e02894db0",
+      "sha256": "9a7ed85798e52b14aba86f27676d0e0b1cbed7c06f9011a5105268f7a3220fe0",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9782819151878357
+      "min": 0.008362213149666786,
+      "max": 0.9778271913528442
     },
     {
       "filename": "000051.npy",
-      "sha256": "d99f0b7ff529150842465c118413bc8a15a40b9bbdac3048a450fc60519ac3e4",
+      "sha256": "dbccfe9dd9de29ef1066a1c1808f53f96acd437ef4729a592cecc4f7393453e8",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9990359544754028
+      "max": 0.9971736669540405
     },
     {
       "filename": "000052.npy",
-      "sha256": "62681cd7e84fcc2e6c414758b7f3d82e8fbb70792478e2a5755844cec9132685",
+      "sha256": "e3aeffb7602713ef5a6cbdea1b76640676abf3a851b8749a3b938ee7bce399b3",
       "bytes": 262272,
-      "min": 0.028358735144138336,
+      "min": 0.017805024981498718,
       "max": 1.0
     },
     {
       "filename": "000053.npy",
-      "sha256": "354fff48a597733e53132baa1f58b604b1b50aafa859ee8490b80d218707308c",
+      "sha256": "64bb906e692ca5a205773e1d5dafa53d70aef3237f0ceef4b3c027aeb792f5e1",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9940462112426758
     },
     {
       "filename": "000054.npy",
-      "sha256": "a03c73c000f74b5e67539fdfe18a479f6420c7aaf29959495438d2d7327048c3",
+      "sha256": "fd0e947668dd3a17d06b71b21e26f9e52059d514c51bf8829f57acab4aa702c3",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.739313006401062
+      "max": 0.7346085906028748
     },
     {
       "filename": "000055.npy",
-      "sha256": "8ec13df563f65e43958005ee36e7f72f5622cc89e6959f4d7003412a7f8941fe",
+      "sha256": "6a937ab9c64d063eb2afcce68f62a846b47c760d8c8dece1557d050ece03a8fa",
       "bytes": 262272,
-      "min": 0.03844847530126572,
+      "min": 0.015179276466369629,
       "max": 1.0
     },
     {
       "filename": "000056.npy",
-      "sha256": "3627a66535cf1ae98e49402d2a78419f009bfc65170ad97758cf83e6df700daf",
+      "sha256": "97b4b32f9796ba162e47d4929e1396cbb47ceb36e368885eec06184aa6492204",
       "bytes": 262272,
-      "min": 0.00468656700104475,
+      "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000057.npy",
-      "sha256": "5047b3f2f2194c54f1f6ad7d3f41bd3354084ab95ad7d379c6d68b5a102b634c",
+      "sha256": "22de6a24755ef61b5c1ee9df5ac4cef7aee36d9ed020e19ed4d3de62b7636e8f",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000058.npy",
-      "sha256": "0e230a24c9020ba21b45a13a94c09bbb3becb604ffd9b1186608db743d330775",
+      "sha256": "2afdbf247fd14c2f656032d8cea3c167f94522d6456d6682de479b1d863ad6e3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000059.npy",
-      "sha256": "ba3df797a8eae2152a1642e5f919c56eb76c1fb9b4947684e2e99b5c0363edf2",
+      "sha256": "7e9cac177b5301e72480e06609eb72e2f0df0cfe24aa68ab9347209361dbb0e6",
       "bytes": 262272,
-      "min": 0.04504212737083435,
+      "min": 0.00010499567724764347,
       "max": 1.0
     },
     {
       "filename": "000060.npy",
-      "sha256": "d62611eea22b2b7e47867f2f0ab110eed31b0b4baa922bcbcdbb5c3c93e025ca",
+      "sha256": "75e3ae1a49bce29d67235694bcee8ed6b54620ee97c622f912dc9539f85ad61e",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.8500725030899048
+      "min": 0.017085958272218704,
+      "max": 0.8889676928520203
     },
     {
       "filename": "000061.npy",
-      "sha256": "c97c1aa3dc3955cacdefd8d284fab0f35a7f4c366ab9da140d26c3035bb5aeb6",
+      "sha256": "d48079d93cafc4dd3789a165cd40d7bb59df341b013cef0015028ceb6a10d61d",
       "bytes": 262272,
-      "min": 0.027927231043577194,
+      "min": 0.022749371826648712,
       "max": 1.0
     },
     {
       "filename": "000062.npy",
-      "sha256": "58549709eeaf3c421cfbed731635ea70b0cb503a8e9a345935361029f0d46769",
+      "sha256": "4f5bfe44f83a7c352614baf58b5334337c63d2638ace6025113c6744a133d3f3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000063.npy",
-      "sha256": "c892ac6326660a00ba14ad6522bd8340724bc168c44ee5e6b6f611e2bf39337e",
+      "sha256": "e072d7c41a93854594deb163352903c1b9a98fa8061c0986afbec3273180afaa",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000064.npy",
-      "sha256": "a8eabf9b03d867df8bdade2bd90c5cf7f46ccdc862804d9799b0572f386ce5b2",
+      "sha256": "019063497cc3636cd12273efa182aa540ef70d33be48628068cb4644bdc34e97",
       "bytes": 262272,
-      "min": 0.015588873997330666,
-      "max": 0.9905827045440674
+      "min": 0.03297865763306618,
+      "max": 1.0
     },
     {
       "filename": "000065.npy",
-      "sha256": "81394a70ff270d9bf3832940805a39c962b9b3eaee4ee01a14e733c70052d470",
+      "sha256": "4505237f0d040242620cd6f0b7f4916f84150ae8c47f974d7044dd35e33318f6",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000066.npy",
-      "sha256": "ea6d7be65f7b0d3ea0f049d840b3f86acb609e7b31d34c02979d532e6e158650",
+      "sha256": "aa72440152c19d0bd27dbc76ad9550a02925b64f7ee6e1ba5073db2d8842d526",
       "bytes": 262272,
-      "min": 0.08277536928653717,
+      "min": 0.05501549690961838,
       "max": 1.0
     },
     {
       "filename": "000067.npy",
-      "sha256": "916daad77a3a8e986cbd53c522f71e97d659f399324eb1698598409c6dac4360",
+      "sha256": "1b4a1831fb9d12c507fd4159c4d694ac7b5fb0242b7a8603bfcaa1aa0acd7895",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000068.npy",
-      "sha256": "3648175413da00d8608b0356f34dea8486cce7fef5937fc193a413bdf703eeb0",
+      "sha256": "e074b06378b936106ec3e11233e69b7adacfa55c77e1664567ad472aa604dd6d",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9135216474533081
+      "min": 0.0021004974842071533,
+      "max": 0.9589546322822571
     },
     {
       "filename": "000069.npy",
-      "sha256": "d3078fa3875260656f14c92f42845f0ce03e11e329a4041591d02ff810024cf5",
+      "sha256": "4f39fe064c3e9b58fa0aa56e972ecb3e018acffe248b8c086b253b3edd79248b",
       "bytes": 262272,
-      "min": 0.004370564594864845,
-      "max": 0.6169577240943909
+      "min": 0.02719269134104252,
+      "max": 0.6427298188209534
     },
     {
       "filename": "000070.npy",
-      "sha256": "4c80344172c6d255ffa18156f4e092d1b0fa8f7d60794fc7bda9dd6692b7d71d",
+      "sha256": "7afa1a4faa37f5880dd31657407b12c226fb3e3451ba6925db3ab57a0e4bb303",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000071.npy",
-      "sha256": "0bb4672cb665a8a7a3811d8d86d7c25182adf9cddec1232b64f6f54d373f5407",
+      "sha256": "00025c6b85b160be1b41bbddaf387e6918ec885c61046f0b7ec38b53153e30f0",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000072.npy",
-      "sha256": "56f6007bf4f540c393b0810c4e32f024d00e30bf197d41b13e21c9ce950a820f",
+      "sha256": "5956fa42b4c4bc647656bb2e0d432e6828402b2a7f23e1eabf4e09046f997253",
       "bytes": 262272,
-      "min": 0.0081355981528759,
-      "max": 0.9822960495948792
+      "min": 0.025550004094839096,
+      "max": 1.0
     },
     {
       "filename": "000073.npy",
-      "sha256": "d6856d760a58efa9cf7c983c3f4cfcb28fa7394223b63dd1427252ac32e6ad9e",
+      "sha256": "07b26410231e6dfbf44679e4ae57206b7ae91b5a7621d4d9ab347ee6932b318f",
       "bytes": 262272,
-      "min": 0.1264219582080841,
-      "max": 0.7162803411483765
+      "min": 0.10490849614143372,
+      "max": 0.7759047150611877
     },
     {
       "filename": "000074.npy",
-      "sha256": "df814b6167cce23449846ebcd2ed72975ece7d05642cc11e92698244850ba9c5",
+      "sha256": "d9bc3baaf56e0505085d2e5064da06871aef4f8854d2a73265e48d29d2fac1eb",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9568459987640381
+      "min": 0.001482747495174408,
+      "max": 1.0
     },
     {
       "filename": "000075.npy",
-      "sha256": "17c9fcfd22f63d9a9714977d241d3d51ea2c5790af11a4f704cf2352e4901a31",
+      "sha256": "06ae979429927aa655d2b4d59781d94a0b58c7f8c7ce8176c0f1a9e825d91922",
       "bytes": 262272,
-      "min": 0.1587638109922409,
+      "min": 0.1133359745144844,
       "max": 1.0
     },
     {
       "filename": "000076.npy",
-      "sha256": "f555dc1af5dafcbe52de7df72697642a897f5098ba3399acad5a10269c1941c3",
+      "sha256": "43452863ee3524f1c01cc8eeb772c127feeb695cfe6f7a5df6b8df887056a149",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.001468618051148951,
       "max": 1.0
     },
     {
       "filename": "000077.npy",
-      "sha256": "f52d63c82e20eb67f79c900fc88a3ded04ac6cde4b182cfbc05f35c201f62e95",
+      "sha256": "e04ecd1c674932686e45caebaa2a58cd41a74a4c8c2e58caf03c541b5ef46f5b",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.946250319480896
+      "min": 0.004797870293259621,
+      "max": 0.9549733996391296
     },
     {
       "filename": "000078.npy",
-      "sha256": "c3d281e43ea0cca6cb1cc81ab01d16711f961a51da458135ac594cc92fdcd094",
+      "sha256": "718d848e508e6c6b7f79a8d521c9f5d628eba79a56105ceee5c71ffca0a9f75a",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000079.npy",
-      "sha256": "fa99d525e68c72a91a20b1fad064eb6a9e9e41df90c09da803f719d61bfd7018",
+      "sha256": "324064c4930a15660dfbe0fe312870a833efb18719f2babf69088db91ae98ae5",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000080.npy",
-      "sha256": "61735ef5e3341e1de79c73762e7fe063a985ca7290acda45eeb24aab612635ce",
+      "sha256": "5b228c75d5904f3a6ab05eec8d3698e5b26d650b2c57769b0c5d9812b89d7e97",
       "bytes": 262272,
-      "min": 0.003686079755425453,
+      "min": 0.012825355865061283,
       "max": 1.0
     },
     {
       "filename": "000081.npy",
-      "sha256": "6b6bb04f6710680fc8aef03cac30c401e7eba55685fe3cb3a525e0725d2606f1",
+      "sha256": "57db873234a3bff012c6cb54d0b0fdd7a690918c51e76488f5865861bee1be69",
       "bytes": 262272,
-      "min": 0.039545826613903046,
-      "max": 0.9954221248626709
+      "min": 0.024839427322149277,
+      "max": 0.9887124300003052
     },
     {
       "filename": "000082.npy",
-      "sha256": "d11cb176ff9b0e213d22e7b44795ea0057a035079022f3671123b2063b2af529",
+      "sha256": "f4ed72fb6a931dc300638b540085c88bb0bcc4777088cd7c784bb6c90c51c2c3",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9784943461418152
+      "min": 0.003397243097424507,
+      "max": 1.0
     },
     {
       "filename": "000083.npy",
-      "sha256": "3ccae7049d3fb53a30de642023267963fe5ca3b0ffde6d809bd8ff86524b78cd",
+      "sha256": "0c2a5a91fccbd793734282858b7b61d2f3fa071e6e1e8d43015d8ff840efbeb1",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000084.npy",
-      "sha256": "367d81ea8a1ce66869752a5f4ae3e6403dacad2bcc6a451b90abeed541d0c681",
+      "sha256": "f28011c2baaef08f03876f167afb955df8d80aeb80d16d98ab5fabf78db73a78",
       "bytes": 262272,
-      "min": 0.11664814502000809,
+      "min": 0.13309910893440247,
       "max": 1.0
     },
     {
       "filename": "000085.npy",
-      "sha256": "cea5a5bca53752f04c732448370ad878849fc70bb0332bd661c402ffcda11842",
+      "sha256": "b46199654c41305b553de1abe5e8deefbd04bc15027eefe1960b400fd4df0c86",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8884131908416748
+      "max": 0.9847919940948486
     },
     {
       "filename": "000086.npy",
-      "sha256": "2c1da6aa0490d916d3b5d77c4e6f8b5c530ad46564008c1cf8af570a6771bb03",
+      "sha256": "3aaea47373f9aa0f73e6df8f3cf322069087243468111c2b06c340d8c054be78",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000087.npy",
-      "sha256": "0a5b40ef3673a5d5b69a2092085bfa4efd2db0e9ecaf6063c1cae5b4e847431e",
+      "sha256": "27076cd78dd9025c9b4b58795b26e8cf8f5b24bd5696d4aa7973491fcc9113a5",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000088.npy",
-      "sha256": "5ba882205e4bacc3451391bcd5c875ec5b94548bc27bd546ffb75cd34e44816a",
+      "sha256": "680dba16b8e8bebceb3cf01de027469388289d732c25abf6fc8a3f7d0227243c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9757314920425415
+      "max": 0.9967955350875854
     },
     {
       "filename": "000089.npy",
-      "sha256": "287c2043f9fab65869f8d3a922d811b16c5ad343cbc97e2d27ded92f68fa7322",
+      "sha256": "5fc0362580f864ff2b8d79968449842d6725abf5fec6e5556a755f96d6b83895",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8435838222503662
+      "max": 0.9079885482788086
     },
     {
       "filename": "000090.npy",
-      "sha256": "f953be03b7cd7824fe98f2e5197e4499fb269b3f2c2343379aec1bd0c0351418",
+      "sha256": "db768e54a19cc186927e6f1e1edae624d882b86d0ea8846d44ba972cdc419091",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.015427110716700554,
       "max": 1.0
     },
     {
       "filename": "000091.npy",
-      "sha256": "ccdec0dc91c458759fe83bf63393be73e52b71115bbcde4f63ee084385a50ab8",
+      "sha256": "421dc2fcfe16f59a79733a40ddaa639099d9cc79d0c015c150cf44ccd22dc4df",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8941870331764221
+      "max": 0.9249155521392822
     },
     {
       "filename": "000092.npy",
-      "sha256": "2f7d488c9cad7007baf3d602b74ae8a00b4b25e861275e77a1d728e9b8069d83",
+      "sha256": "15363df2c9d32e1ebbb1a623ebb5998557fde5e8b5d3998a1d83f612ac979879",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9087958335876465
+      "max": 0.9493330121040344
     },
     {
       "filename": "000093.npy",
-      "sha256": "9cc30451812d33e60107ebee197a386b814f6073929bd3565bc76d957b391a54",
+      "sha256": "0b5a29cd7be8656bc99d3255200145fe069ec4519ff7ed65865bd9791405ecf1",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000094.npy",
-      "sha256": "d8f24d528341cfe5bb94adb9c5b7e7800a60f421ad92caa98c337c27b8d1720d",
+      "sha256": "f21b729a034773da7be92b57b510eaa53dc79c8a4d65886828bdf6de68aa51b0",
       "bytes": 262272,
-      "min": 0.13598129153251648,
+      "min": 0.08281366527080536,
       "max": 1.0
     },
     {
       "filename": "000095.npy",
-      "sha256": "28d601603cd43234662c24b55928eb142f8a3d87ca488d4a3257a1f762f47020",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.989529013633728
-    },
-    {
-      "filename": "000096.npy",
-      "sha256": "44df51e15150bb7be124699de7c7475cb610c52edc076446754634317e9fe08b",
+      "sha256": "1aa587725350a32c686b0b5c0ca606dd77916b0eae493d19b853c7da505e6c8c",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
-      "filename": "000097.npy",
-      "sha256": "98ae840b9ed1731a5366511e89dcb7c06f4ec50dffb615bc000ac09471c1aaf4",
+      "filename": "000096.npy",
+      "sha256": "5cf5a6eee75748a5cd6ac55b435f11037e51c9e9116f95cc5dec3451d96d17cd",
       "bytes": 262272,
-      "min": 0.32066649198532104,
-      "max": 0.9671782851219177
+      "min": 0.006522100418806076,
+      "max": 1.0
+    },
+    {
+      "filename": "000097.npy",
+      "sha256": "dd0311f73180e60f2726d412c7b7d4e94334ca20e1c57c8d42ab97d9ab4e8789",
+      "bytes": 262272,
+      "min": 0.2988225817680359,
+      "max": 1.0
     },
     {
       "filename": "000098.npy",
-      "sha256": "19e63aadba5b805caa35d5490e260721f7e48ae6583529c1bffa8b3f1105bf04",
+      "sha256": "b764497f87e3ca09660f93f969420c8431a1639d1b4925f8704bc2f4adf9e788",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.7929779291152954
+      "max": 0.8408584594726562
     },
     {
       "filename": "000099.npy",
-      "sha256": "bceee9a0e34879479c06b33324edaff42178b0a39d60a3465d9df92e5f17b915",
+      "sha256": "560301b67b5a39a03347896e5a31377205f200e51503bf15bda70afa06427ff8",
       "bytes": 262272,
-      "min": 0.07668914645910263,
-      "max": 0.9167211055755615
+      "min": 0.04551653191447258,
+      "max": 0.9549554586410522
     },
     {
       "filename": "000100.npy",
-      "sha256": "ebe0b721cf580df4bd26b8d1fd4b9e6351890ea4602c95139dc9d743a227624b",
+      "sha256": "b85e5ee7b688070b569eea1eab64f2f0e14267de76217c86d0c959b97fecdf15",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000101.npy",
-      "sha256": "12478c5d8b8e8a7e960f81521053237890d3ccc3fd1b944262cd2ec39195c8bf",
+      "sha256": "e701f49594b06e4041248c4113e56ec1716b19dee01658548676adad4e71f74c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9681334495544434
+      "max": 0.997353732585907
     },
     {
       "filename": "000102.npy",
-      "sha256": "97a2b535b8ceb5411f1fda0e28c08e0646c8fb701ba1783349984c1f8da08e01",
+      "sha256": "c547698ee6c83ee4cd983f6e57176d7806fb6abe471d1c6da182583893e04ec4",
       "bytes": 262272,
-      "min": 0.10623200237751007,
-      "max": 0.9716244339942932
+      "min": 0.119066521525383,
+      "max": 0.9869492053985596
     },
     {
       "filename": "000103.npy",
-      "sha256": "c59b9989bce68dc2ac797de7ff772418bdf8a8c7f68f264387122741709da860",
+      "sha256": "0085cba605732a559e461be2a547cc4ca7c1224a7533bace32828ff971dd79fa",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000104.npy",
-      "sha256": "2f035ac79f9f92a39cf3bca235f6bcdfccaaec8222b5bf9a04b42b08134a7775",
+      "sha256": "c679711d07f589f7ab0a683fa049dde1c2218dc5246b530aa99f453a2398b443",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8785691261291504
+      "max": 0.8818961381912231
     },
     {
       "filename": "000105.npy",
-      "sha256": "815741062f25cec5d1afba818ddf59b7592403caa9016c66d686aca0638bd7c9",
+      "sha256": "edd1a48216b741e55ed30b0290196ea3c09aa208cec2c48fbd5721051c5afb3a",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000106.npy",
-      "sha256": "33bf435be0e65b72de78c3f075e6fc7df565266998dbe328f3c4f4e3c0a3321e",
+      "sha256": "0517c831dae26cf87aacaad3ae41dddc77413dc29268bec651b1ae0bbd3c6455",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000107.npy",
-      "sha256": "e32ebf15121c219d6f80786bed16707691efba0a789d5771a87db2d510d9c4c3",
+      "sha256": "07995a1491805170bba22e39d65b9a9afe68176babe39daabeb5cc7a72fbf622",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000108.npy",
-      "sha256": "7533367ff4372230e317d79dcadd55f9afd367cbfd44488429b257af3f3a2bf4",
+      "sha256": "07bee640bf77ccbe881089fa84edced45c0f01e65e45f149514db9adbb943f84",
       "bytes": 262272,
-      "min": 0.11075511574745178,
-      "max": 0.9236855506896973
+      "min": 0.060450222343206406,
+      "max": 0.9695567488670349
     },
     {
       "filename": "000109.npy",
-      "sha256": "2af4973de0c34d50b5c33f30cf1eb53eb94dc10188fe19c329e1c45b67e23efb",
+      "sha256": "9b97c8a99f467796afe4294df37b8e108bbde22b3ed2d99ee5935de3db09af29",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000110.npy",
-      "sha256": "1cdd76819ddfe27984570d5581849fc41f3707a7debf4e90908635fd3d27c74a",
+      "sha256": "7730ef735bcdd41629eec1bb5b8c33dc464799300c84db7b147b1f2fed955cc1",
       "bytes": 262272,
-      "min": 0.0011316555319353938,
-      "max": 0.8195089101791382
+      "min": 0.0,
+      "max": 0.8787288069725037
     },
     {
       "filename": "000111.npy",
-      "sha256": "b1393aec18a7ea538081031ba8a4b9d7c9fc8894e3b32626b13af9af7eee82cf",
+      "sha256": "ec3cd54084da227b638a7d9443d8730d0405b56e452cfbd850e057cd8b031edb",
       "bytes": 262272,
-      "min": 0.048571933060884476,
-      "max": 0.9460169076919556
+      "min": 0.04608984291553497,
+      "max": 0.9268335700035095
     },
     {
       "filename": "000112.npy",
-      "sha256": "dd46204ef7129ff5d8f0880affa01030d011f08f39c644a57d4cdf97cd3f188b",
+      "sha256": "cced8d3ec3f094d4c45788061ce9ffd28b6c8167f587b9f94a0cb26fd99fa410",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9899613857269287
+      "min": 0.007350718602538109,
+      "max": 1.0
     },
     {
       "filename": "000113.npy",
-      "sha256": "98b941683c2e5f22a546e5dc8ae3cc7766774c7640f4917729eefc7d1372db82",
+      "sha256": "4192a494206e2d35a476387c38afd9d06d4993dd70a3f9e53578cfc64d3afcc3",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.023498309776186943,
       "max": 1.0
     },
     {
       "filename": "000114.npy",
-      "sha256": "8e37ef013499f364e76f210f707f9627f7c122f79930c287363bea160f93d040",
+      "sha256": "77a5731f7496233a5a01cb48aa655fc8ff03e0a39a13ad0c3af88ce4095b69a7",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000115.npy",
-      "sha256": "42495a0c46bf2e73619eb3aef8c6fd6cf45b63c0b04714f074f362b8853f9282",
+      "sha256": "5f832eeabbcf5c01d69d4752da6977d3b258bb389d31954e3e28e139d51c01f1",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000116.npy",
-      "sha256": "4666a0d2d6ed84f32450d40710527288acb9c69df5af7804e675a2c2e1b3f3f7",
+      "sha256": "110f90a182e740bcff72b3a855cc755c2ecd5cac0dfe8924e48261876e6ed867",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9990792870521545
+      "max": 0.9599283933639526
     },
     {
       "filename": "000117.npy",
-      "sha256": "fcaf70b0ea5ab7cb1d1b39503457ba5c4fb7a4cb467377d3158922f1b7561588",
+      "sha256": "dae4c097e7ca456a800b594e736702d3da3137ffa79b60c3fb9e535713d1ad28",
       "bytes": 262272,
-      "min": 0.006544089876115322,
+      "min": 0.004028497263789177,
       "max": 1.0
     },
     {
       "filename": "000118.npy",
-      "sha256": "fb7d7232bcbde8a1d4b91f439cf851448a77c1ebd420bded6267dcf4446c3f2a",
+      "sha256": "aab564414c247d04fe973373e981f592b4d84441f3a265ed13eada4665e85ceb",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8916707038879395
+      "max": 0.9402939677238464
     },
     {
       "filename": "000119.npy",
-      "sha256": "0e685a214f1d697318cea22eb452f409928258db17766dddb4be47912ec8d552",
+      "sha256": "7d8060770a1db9c82a3a528913b17cfddd6bc40e7a7efd7cad24ca4e6714148d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000120.npy",
-      "sha256": "9ee848e6ec2cdeb269d7ce564d2018e9ca40b5783d21f9222473b91e943fa8eb",
+      "sha256": "45be62f8d8b12988a7a43d05e21e9bf82d8c29e46d9ee9cd781f802d344e3994",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000121.npy",
-      "sha256": "1f905571e5c3763c90ea8973303899fc5dd3b101e05b1a464750ee51c6254644",
+      "sha256": "84a2b7f658ce85b27027c68db552a3abe5502100e04845bd8fef17e350afd11b",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.0017517190426588058,
       "max": 1.0
     },
     {
       "filename": "000122.npy",
-      "sha256": "85952a8f87dd012468929746f3d8b1abe82dcf3e3debc05101798e677d8862be",
+      "sha256": "f699c2ed15f6ae7f6c4f868fd1dfa8e76bbae9a39c2c2b53a9fd2e18b98d53d8",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.933164119720459
+      "max": 0.957570493221283
     },
     {
       "filename": "000123.npy",
-      "sha256": "76c737db65e246e0ff4016af354cf652c8a97b7c1f8d481065f5977b546a9bb2",
+      "sha256": "4a3ca4ab9f657cc4c3e4a35f8e4302200a829a0ae210f153274846cc5e629319",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9667656421661377
+      "max": 0.9940391182899475
     },
     {
       "filename": "000124.npy",
-      "sha256": "85ddaa05e48da13c0c03859ea4dcd2796be12b4be279a47a06376427f162921b",
+      "sha256": "48c798d46270d024ed4c6765497996447d1182046e5dfe9d4b0a67d839d6cba6",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9659996628761292
+      "max": 0.9594913721084595
     },
     {
       "filename": "000125.npy",
-      "sha256": "6f19fb52d2fbc18827f0cf845de45aaa6dafc6b3c73ee0b7472279cdaf0b853e",
+      "sha256": "093601c02166603902b3ca4e38bf7907a0208d5a8eeb2d79643e033374744670",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000126.npy",
-      "sha256": "91416b7dadea95a6306df5032d1e936dece65dfc099e9ee645f07b35751ac923",
+      "sha256": "bab9b695233542d94bf2d63e75f6792c86846bfd533c73879a4bdba690a4cc3b",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000127.npy",
-      "sha256": "0762141d03a05b77ef7127545461010ce36c3eba281190af857d7363fb6a2c87",
+      "sha256": "6ec7fdce608137edd51eac9bd623806ab52b36e783916aac0e1abbedabbecc3e",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000128.npy",
-      "sha256": "719d7c16b54bbe1305327f8dfa7a0b32e50df4d8e13f0a21909fac7b7d8b7af9",
+      "sha256": "0ae917443a222f32f6dbfeea4cffc97737c3a826bee06274891e2854bf66814f",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9988328218460083
+      "max": 1.0
     },
     {
       "filename": "000129.npy",
-      "sha256": "42bc6fb0bbf27fe9c8fdd78907cca92dd8b3b301c0806f6ec62bee3175e67243",
+      "sha256": "c034fa56d09253905e757bc93b9975f15caa93ee15a9b85ac4b6d555b18d4835",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9821396470069885
+      "max": 0.9987591505050659
     },
     {
       "filename": "000130.npy",
-      "sha256": "3ef0d7f330a0e2438f45db992b773fbb896f3a6ecce259305ab5e72be352b866",
+      "sha256": "92b7c00fb60fa52a7a7be015bdc25a4c99acbeba9eff31242b8982b141f5d504",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9030796885490417
+      "min": 0.011248399503529072,
+      "max": 0.9171232581138611
     },
     {
       "filename": "000131.npy",
-      "sha256": "285082dd0e1037783f511d11effdf87bb36cacb28c128377ad3b1facdfd053fb",
+      "sha256": "c469095a2594bbf883a32b7594f633bfa6cec119fe5c606573d3b9eaf3d58d19",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000132.npy",
-      "sha256": "6101aff768fdd4f619a3e857bd00f25b53668bb5e977c6bb6a1b73c8696ed0d3",
+      "sha256": "acddc317f3a816dd4b0258e69b7805ba01ff9139eec9776e7e327e95084ce34d",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9943603873252869
     },
     {
       "filename": "000133.npy",
-      "sha256": "c0302427edd03f809cc8e5d9f18b25ee7c6ba53a38cc706855b6d0bc3986cd84",
+      "sha256": "d9a3ab5dcb58725e4c274032b425be20e873d8d0a6244324383bd01403cefd67",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8796365261077881
+      "max": 0.9472030401229858
     },
     {
       "filename": "000134.npy",
-      "sha256": "fa5ec3820c70b5dbfe6482988791b0b715cb23716c4dc904476c8432ed035df2",
+      "sha256": "a0587bdba8abf2f4227796e55288c18acabb7299874b9fc32cc9ffe8ec16e18b",
       "bytes": 262272,
-      "min": 0.009532901458442211,
+      "min": 0.005853790789842606,
       "max": 1.0
     },
     {
       "filename": "000135.npy",
-      "sha256": "83f27ff50e08f0b60c70ba21bc114a0f22a951fe64da7417fd87bb62159f7b54",
+      "sha256": "d69dda283d7c2a2398846426e3db98a88c18bda98c53fb5b0329419adeeea553",
       "bytes": 262272,
-      "min": 0.013839743100106716,
-      "max": 0.980733335018158
+      "min": 0.0068355887196958065,
+      "max": 0.9518561363220215
     },
     {
       "filename": "000136.npy",
-      "sha256": "2a753bedd6c37d334c8105e5cfd102d093c9e793daa16569a6819754e3a1cc1d",
+      "sha256": "b1095649ee58b70746bda132e95795b8a943c49d0d7d474459f26c5d7c048383",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000137.npy",
-      "sha256": "a789fdaada104c985d0f5d2002361f50fe9d9231245003a1988cfcb4add8b52b",
+      "sha256": "5ae35a63bab582c3979d50859e994c9ae5041b1febe2d6253e41f7cc12c7b037",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000138.npy",
-      "sha256": "f0a84cd3f355ffac6e61b6769adde053506fbf6449339447afc518e9b8d2010c",
+      "sha256": "035c16d14ddce2c238f051bb87b9ba91bc2bfe9d01bca3c536b116530c08c47c",
       "bytes": 262272,
-      "min": 0.11212898045778275,
-      "max": 0.8117541074752808
+      "min": 0.10516926646232605,
+      "max": 0.891230583190918
     },
     {
       "filename": "000139.npy",
-      "sha256": "aec1683cdf0e765be68ac7bca0b4e707db876fe3382daa2d61f56c14b6b9563b",
+      "sha256": "ac735eebefe8f1d37aa23d3f46febea50788c4674a64727ddd5b7e30749d6d1a",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8739686012268066
+      "max": 0.943278431892395
     },
     {
       "filename": "000140.npy",
-      "sha256": "c3ab4ac5d44cb82cfbc2d3bf474ee35430b8e8f8bcf1fa870b93b89ebca3cea2",
+      "sha256": "90ea6310890b326c5879aa4a70554a1fe73fc03d9fa3e3aaa757001a5e77d933",
       "bytes": 262272,
-      "min": 0.017941812053322792,
+      "min": 0.01649034209549427,
       "max": 1.0
     },
     {
       "filename": "000141.npy",
-      "sha256": "066650f1c2ae2486df0a75a3e60ceb607b3f7e86fa387f40d0b9f7b34c268742",
+      "sha256": "1d1feb0f356c9eda57c38d4b98ffacdd2a20ead9b662e1e700280e83f6469912",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.940829336643219
+      "max": 0.9402058124542236
     },
     {
       "filename": "000142.npy",
-      "sha256": "f27b25a5579ec658def8343f3620fc05398db4d5d17057806ab1656660255a0f",
+      "sha256": "767680f05e28fb11f53dfb40f79607697228e94e0728be6f6391572b4717de9d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000143.npy",
-      "sha256": "705a54f52b4e1d6e06b34ee87b236cfaecac5a92ecc9417d655608ee03a37d0f",
+      "sha256": "1570a4d36d519584dc3f425336901e501b7dae2ebc006ea3593eb1ff389e408d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000144.npy",
-      "sha256": "9e4ee87ebfad0d5c69abd2a7c3e76104c4c5b8970b482d19dcbf1eac57d2a529",
+      "sha256": "0b2d0962e0a94aa5a3d957c4c286f8b2e4c8c6289424c78aab2e0fb4070eaa9a",
       "bytes": 262272,
-      "min": 0.023355334997177124,
-      "max": 0.9324688911437988
+      "min": 0.03332124277949333,
+      "max": 1.0
     },
     {
       "filename": "000145.npy",
-      "sha256": "57ddf3d9d12043bbf3bc7bb1511c4a1370c84ad7e5e830bed60b7cf4ed24c364",
+      "sha256": "6511e68e07d5875c79877f71911884b365a9a51d858e43be36408ddd0c265eac",
       "bytes": 262272,
-      "min": 0.011302969418466091,
-      "max": 0.9695332050323486
+      "min": 0.0028980267234146595,
+      "max": 0.9797959327697754
     },
     {
       "filename": "000146.npy",
-      "sha256": "446faa99148cc286fd95da0a199b5d0c2636d8701dbfa2853f87f1a69bd9cff2",
+      "sha256": "030e03e2507a358b271a85348c4cb65f5d313d60164bdddf86c7c69cff07251b",
       "bytes": 262272,
-      "min": 0.046349216252565384,
-      "max": 0.9880330562591553
+      "min": 0.01911243237555027,
+      "max": 0.9798755645751953
     },
     {
       "filename": "000147.npy",
-      "sha256": "d2d5fec3d7da392dc1c6f145b0b854838278be8f8fb9479336c7b6dc1ffddd00",
+      "sha256": "6d1fb85fec1de03c1a06d97ccd6c5358d4d397acb0776710e0c44ed97b6ce739",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000148.npy",
-      "sha256": "3a08051c0496d8deb8072d53cdbc9f755e23ae4d6405a686e1ca86d07e74aab3",
+      "sha256": "becd48d219704026e157d895751c2e7bb2b6d38e7e003e61795b6463608f8658",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000149.npy",
-      "sha256": "0e1808300e5bd116c2bd0d2a69872ab7783180544b1bf0be50bffa66689f72f9",
+      "sha256": "86ac5f0e3709a5e2abf48e7d11f771385d8111b0e1684038a9b5252420d594f3",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9758568406105042
+      "min": 0.00012727384455502033,
+      "max": 0.9863023161888123
     },
     {
       "filename": "000150.npy",
-      "sha256": "9e7a0d99dd972253b84639f85a14f6a105c264743e85fe4c1abab9d91da0bbec",
+      "sha256": "2b0a632e14aeac6a66c6b2dd1023adef3241bcd8a2d2f8cba32f35fd0af0efa1",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.00025649950839579105,
       "max": 1.0
     },
     {
       "filename": "000151.npy",
-      "sha256": "6dd39715d5c0ebcc82f153a949f42e18a068bfb49c4d27069f34e58e1ff4742c",
+      "sha256": "f55ae1d87056df89897c8f1694c2004d0dc87cb57d3e0c7100ca6b49abfee197",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000152.npy",
-      "sha256": "0cb267d8216828e49f107f32de2bd31b337cd4e993275f6d554c38634f27f5d1",
+      "sha256": "1c2757b8f2b8870d1580b44190145f63edc49cec1fe0ead0913a21be938243f3",
       "bytes": 262272,
-      "min": 0.06573431938886642,
-      "max": 0.9702113270759583
+      "min": 0.026683161035180092,
+      "max": 1.0
     },
     {
       "filename": "000153.npy",
-      "sha256": "07fdbdee931d9581cb1d76d6f62ff2736f95b40f6110c48291983e37d215537d",
+      "sha256": "e5affa20be4e4b37b82553a279a353c1a7d3a223f42bc23cefcbceee29726ec2",
       "bytes": 262272,
-      "min": 0.017818864434957504,
+      "min": 0.01888943836092949,
       "max": 1.0
     },
     {
       "filename": "000154.npy",
-      "sha256": "8f77923469799c464bb5a84ecfe47566a4f60ff86a55a67737b7fb0386761310",
+      "sha256": "001ffe3dd0d5fe9581c09c10a2d7d2feb2414ae32a7d20e92abac7de3bb5be8f",
       "bytes": 262272,
-      "min": 0.1623765379190445,
+      "min": 0.06394823640584946,
       "max": 1.0
     },
     {
       "filename": "000155.npy",
-      "sha256": "d1225cea993746a3b68b993d6a4a775166e62faf8df8107a0fed66397f91686e",
+      "sha256": "bc0de05d75c652f7516599fa90e4f6a82b4409f86a3c846b82f1b1d8423d37aa",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.8608375191688538
+      "min": 0.0010454810690134764,
+      "max": 0.925297200679779
     },
     {
       "filename": "000156.npy",
-      "sha256": "a4421d9625a9dfe5003d8fef7e1be738ad07a05a0e54fafb725be42c9cab55ce",
+      "sha256": "9ee314f9f8c4b3318061eea1f251ea0f82c26a227c999883bc3190869f84102f",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000157.npy",
-      "sha256": "dd4f673fddce8dd8ac80e0e5dbd64742cd15971691cb5ea3fbe42072df98a9b5",
+      "sha256": "4e95ba6d2499b7ee40246c5ef2e50d811a2718bc03e2d68bbc10ce07ee1509de",
       "bytes": 262272,
-      "min": 0.11439653486013412,
+      "min": 0.06002357229590416,
       "max": 1.0
     },
     {
       "filename": "000158.npy",
-      "sha256": "3fcb28ee5fa45dd95ff90253e14f7aa35103c0f036be3d4ee1afca8654c7cf68",
+      "sha256": "241c52f4932d0c8d58badfbebe05c080f13eb8fcb0d90e703d8a4ae741a673f3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000159.npy",
-      "sha256": "2e1c0c5ab94fa1a626111aca3b929936215aa4d57e903566bf8cca0ed7e38f3b",
+      "sha256": "37ebf6d5854a6668e253e1d5201de616c6b21ed9a721e0d5888f9ec849f0900e",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8994541764259338
+      "max": 0.9221934080123901
     },
     {
       "filename": "000160.npy",
-      "sha256": "ec968ba174584f2a7519de2ad61661cb350393a18ab02d586c04ebc867d9a8c9",
+      "sha256": "5d03dc4c4f3a8956ac6d5a2c55d9f9a1da8843d9b0f44f870a2d373bba770f84",
       "bytes": 262272,
-      "min": 0.0834624245762825,
-      "max": 0.8775887489318848
+      "min": 0.10945608466863632,
+      "max": 0.864179790019989
     },
     {
       "filename": "000161.npy",
-      "sha256": "dae51cae5c5dd70134eed035c25cde0f64bf2d54dcea645a48b964fabe69e4d0",
+      "sha256": "623f940cc12f10e9c68a1e0a996d6b20cbf188607d9ae5631af4cbbf578b77aa",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9639647006988525
+      "max": 1.0
     },
     {
       "filename": "000162.npy",
-      "sha256": "62b3941531bae3611952b63cfa9f506ec7b6a13a95c47bbecdfd075ad2531a40",
+      "sha256": "749fd9cbd748a429137e746af33fb7fb9f98e98a233917a838b55de2cbf3ed96",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9811393022537231
+      "min": 0.0023564626462757587,
+      "max": 1.0
     },
     {
       "filename": "000163.npy",
-      "sha256": "cd41c20ccfcc63eb52e8868d97f8ebe0e9906ceeb03796b9135de9c5fa250a80",
+      "sha256": "53d809d2f21e3229347e32c84dd3b59bcfc9707a0dbefb7641ca6458b44d8ffe",
       "bytes": 262272,
-      "min": 0.006755601614713669,
+      "min": 0.010077395476400852,
       "max": 1.0
     },
     {
       "filename": "000164.npy",
-      "sha256": "00dd4f369655176fe837162a9df5100a674adcd349ca57b3966744fda96d8736",
+      "sha256": "2845a566be693a6ed6d14036dfad119850730a86c145c86e188232aa8486827b",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9539082646369934
+      "max": 0.988734781742096
     },
     {
       "filename": "000165.npy",
-      "sha256": "9153cbd177633af0e29ddf383e97a50abc4d97ad473e763eebbae52af86744d5",
+      "sha256": "1e4dbdf6e8b7c9f112721a2db7db0ef449edf67707e84fc912ca6d3c2984fb79",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.989415168762207
     },
     {
       "filename": "000166.npy",
-      "sha256": "6ce51605f26983e163adeccc4eb700e4005d21340f967d6d6742a7f0e7761d7a",
+      "sha256": "e86905b489541b1bc3963cd221634578e3e178e2f4a9de9169fee2cbe898a8a3",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8996918201446533
+      "max": 0.9645249247550964
     },
     {
       "filename": "000167.npy",
-      "sha256": "49ea42dc2b7c5c58ff3e94eed7fc31977c1c88689c78a4a405e70d97c158452f",
+      "sha256": "02f517b51a4e752e575fa535cdd6851dfdf453ace7a79e7c65fac11b0ee03915",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000168.npy",
-      "sha256": "0118fff2ff8475eaab4c56f97fdea025cb5f478263ed52d72da0b7e2726d45f8",
+      "sha256": "3d8f0f8c6cb0f63d0995bb348d7454fd7fdffb5dac457440030372e3ce36a5b7",
+      "bytes": 262272,
+      "min": 0.007293473929166794,
+      "max": 1.0
+    },
+    {
+      "filename": "000169.npy",
+      "sha256": "99a30a8a5d91083ed48fa355ee53dad9690c11214398b38266230e01f632e4d3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
-      "filename": "000169.npy",
-      "sha256": "710573ada0f29a3bdc309493e7459e5fb19e74f8f079f2b4d24d6c81e249876f",
-      "bytes": 262272,
-      "min": 0.0049385675229132175,
-      "max": 0.9696089625358582
-    },
-    {
       "filename": "000170.npy",
-      "sha256": "b3f8fe239f0993b3d6e89ccd8d8306483f83215a5a98375c2a4868591075f8ae",
+      "sha256": "bb69daa60b6c116f0b4b44472efb693eae8e71812fa945cad928e27b7d8cbbd2",
       "bytes": 262272,
-      "min": 0.0010513123124837875,
-      "max": 0.9945276379585266
+      "min": 0.03356549143791199,
+      "max": 0.9958264231681824
     },
     {
       "filename": "000171.npy",
-      "sha256": "f228e1f4377a6b57165eedf0d48b4ee7c4e2e9393a56e07c3c0311c299a55121",
+      "sha256": "78ecf4bb1e0bdd15836634651b2550f8a3da580bb3af43958a9c5322cc4498f0",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9933171272277832
+      "max": 1.0
     },
     {
       "filename": "000172.npy",
-      "sha256": "75a77d924391f636acf475d49d8e9620708f53a1db22c0aed86013683aab3898",
+      "sha256": "f2aa13a62377b1bf1f47fcba98c1e8c173aad4b78b2c830aaee04dd98a2b28aa",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000173.npy",
-      "sha256": "8a46a16ca37a4b0a86d61be55cb0b60f73d614f55d5ea1029c014ae2fb97036b",
+      "sha256": "e0577a09ade660febb6af56b1b88979fcc8830bd69c7685453ce965b52d70d34",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000174.npy",
-      "sha256": "5603c110c218d1d5ad9909a39d11c0ea9a6adb87fbb83cf437f5e61fce9e78d2",
+      "sha256": "3462ecab0a11b62a3434106b4c2871a7e8122f628163968511e1dd07b32011f0",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9085369110107422
+      "min": 0.004592102020978928,
+      "max": 0.9545294642448425
     },
     {
       "filename": "000175.npy",
-      "sha256": "4e163f750bd8795ceb0bf53f12954171c26cfde53a8cfe14655c08348cb346d5",
+      "sha256": "11f0d30930a58672892081ab82fc7a9f99a4d5ee2f6eaa806ac4215d29e023fe",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9165709018707275
+      "max": 0.9409393072128296
     },
     {
       "filename": "000176.npy",
-      "sha256": "169529533852b1a7dd389536215bfe8fe70eb81d7143c56a2ed56cbe81edd428",
+      "sha256": "0aa5d433936fcf9e4b94cd603f6a980b0648543feb1fb445054d7eb3dad25d07",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000177.npy",
-      "sha256": "6220af5318a5a1af284b4f4976c0b96fc41916c9611de54b927d77e40bcc9f0b",
+      "sha256": "2c04a57da482208eea02711d0d8c86f8373c535db86581adb317203deeb50c15",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.008940787985920906,
       "max": 1.0
     },
     {
       "filename": "000178.npy",
-      "sha256": "2ea3f50ca44cbe78be9aba84251b5ab110e565aadc0d15baa2c7ba7ed72b11a4",
+      "sha256": "f08dd639e0bdbf28a075dec6fb8e8550bda4b6a9be7c93862e9bcdf8c84b4182",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000179.npy",
-      "sha256": "01337944aee49c6c3a78b441b1896ff9185c907fb9500f643ddd12becb974761",
+      "sha256": "d17548b3c538681600f873608dba739b1ea34ca274e609dadb05630c87629d41",
       "bytes": 262272,
-      "min": 0.046251408755779266,
+      "min": 0.042523957788944244,
       "max": 1.0
     },
     {
       "filename": "000180.npy",
-      "sha256": "c8c55e198849725707bcaedceecf49677a85837e54791375b45c2ada75de4af9",
+      "sha256": "ae367c1e030b6888028df73f9d3897d86a17a72c929f63888fe1aaab080244ba",
       "bytes": 262272,
-      "min": 0.00291348434984684,
+      "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000181.npy",
-      "sha256": "c5d5bf46add8e873104ca12dd40a07c860da0134db06c5b96e8b12979e6965fc",
+      "sha256": "839ff674a86860c52e75400ef96011514a7c3fca4332904fbf4ba2cde844a526",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000182.npy",
-      "sha256": "2a14e001768436b0376b61e86920be3347e15381eba1afc02ad394ebceafc918",
+      "sha256": "7958db6630780a9fb812cf6733eea265c65bd8ba29daff407377d76cb9f5e6ac",
       "bytes": 262272,
-      "min": 0.00697316974401474,
+      "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000183.npy",
-      "sha256": "55eecbf4c6c176111558b5e3c21c5ce8ce76b1193fd3ec23694bd8d04d8aa99c",
+      "sha256": "87730027ee6d2b1e8c7c38812a62b57bdfd73dc9939d6b443fea9f5f3f7f829b",
       "bytes": 262272,
-      "min": 0.1556544303894043,
-      "max": 0.9800771474838257
+      "min": 0.14521925151348114,
+      "max": 1.0
     },
     {
       "filename": "000184.npy",
-      "sha256": "6ccd1087ce98dd579cd44a12a2553a4512e040d91d5f0c55daad7346fbec8cdc",
+      "sha256": "9d4c92ae47c19d3fad7cbbdc9fa062aeaf01040c7a237f35d9d053f9b5bb185f",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9061117172241211
+      "min": 0.010886473581194878,
+      "max": 0.9787032604217529
     },
     {
       "filename": "000185.npy",
-      "sha256": "1d286dd4b437f099f88fbcb788074d681c75b603d849130e56144516075cd346",
+      "sha256": "d56655cdb4df20655d5673793b09f85606f27443111c22d8f6b2fb0bac1745c3",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.8970316648483276
+      "min": 0.012646213173866272,
+      "max": 0.9431934952735901
     },
     {
       "filename": "000186.npy",
-      "sha256": "7966f03f8cdb87d2e7591db45326f3b50f15ada7179684717cbf0b88b5dfa1bc",
+      "sha256": "a60d10017cdd7fec3021df1a6e83444be94de9a1fdac69955318bfa1077fb78d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000187.npy",
-      "sha256": "09ac2195924543780ae96f07942e9ea7cb261cc5d45252fc598171d2247ebdd3",
+      "sha256": "f9b5d2be8bfee8cac8fc6107a8b237832904e4dc6a86f2c3d64b44b0192714e9",
       "bytes": 262272,
-      "min": 0.053005460649728775,
+      "min": 0.012991443276405334,
       "max": 1.0
     },
     {
       "filename": "000188.npy",
-      "sha256": "77c80bfb48c084e102785b7489611d3f37066d35fe872a801e3f9bc47d4f50b4",
+      "sha256": "d31cbd323630f80dd19c864b353d1cd5a06d0cbe522da21a9fb3021605af3feb",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000189.npy",
-      "sha256": "e0c6a55a00c2c9de206279f1e816139b895d7c883e532146fdaf6160d2a211e3",
+      "sha256": "f4f3a7437ed0d70811efdf94c69e2f914e0b76895bde82eab4b17c470a89e03c",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.017889942973852158,
       "max": 1.0
     },
     {
       "filename": "000190.npy",
-      "sha256": "c71b936f15236282e755a5bdeb8209fb1e4cb83e9b2f850b7cdc4ef258bf94ce",
+      "sha256": "73daeda9732cf42b3c76687aff42c12c3b16c5eb17026bc392e3e3a96b528876",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000191.npy",
-      "sha256": "4b9f87617f01d2ca2ddd5d5440b158d420689667e928743237fb98f8c11ff1d6",
+      "sha256": "7bf57fbe8b00179b4a08ca776337a63031f86021b2c46038c0f49d8a5a008475",
       "bytes": 262272,
-      "min": 0.004228739999234676,
-      "max": 1.0
+      "min": 0.00011437549255788326,
+      "max": 0.9677239060401917
     },
     {
       "filename": "000192.npy",
-      "sha256": "f71d7abd6cfa8fe0855415a1aa070c80cb052fa09e2c1f87baa0962c13c69679",
+      "sha256": "6155c0b5d92ceaa6a06f426fa6538ef45aa21c4a12625ca65d6e9beaf2871d57",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000193.npy",
-      "sha256": "7c576be3d72c209fe8c3219288db4a1e012ef27525e99615aad8215a6c6b6226",
+      "sha256": "3369114fea5fa9f8d09b9ba04292f03bcd7497608ee24cadcaa4c3b80cb0bc07",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000194.npy",
-      "sha256": "75307bf59325d0c2539ac0b4cf6afb5032858f722ecde77ab0a70d9cac9add14",
+      "sha256": "5dfdd355f227c1289b1b313ee9b3266b0cc3ddcc65f880b1fcae56a4691d269a",
       "bytes": 262272,
-      "min": 0.2622792720794678,
+      "min": 0.23955084383487701,
       "max": 1.0
     },
     {
       "filename": "000195.npy",
-      "sha256": "a832b518c66368ea23e039bbe2196b58ff8aa789e0f57f5f34f6a32be2fca21d",
+      "sha256": "4ea301a6afd56821efe9051d7d4b90fb0ee517010557fb43874bd22ce6d48f82",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9489555358886719
+      "max": 0.9577900767326355
     },
     {
       "filename": "000196.npy",
-      "sha256": "c2ccee7f9a0f138d08b2c38508e6505ed1e3dbb8b75c4bdf0e1a9e43dc4de2bf",
+      "sha256": "15ada012804934ce170ca5810aa1161d8792ed7539791666646754911b5bbe2c",
       "bytes": 262272,
-      "min": 0.0236712247133255,
+      "min": 0.027232006192207336,
       "max": 1.0
     },
     {
       "filename": "000197.npy",
-      "sha256": "1c2c088c0bc740351a5d8f86a553fd64dedb428872ffe0805b44daa13206781d",
+      "sha256": "0c37567df26172b2e72af41700216a59ef461439901fb55ab096c3fc8911f084",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000198.npy",
-      "sha256": "578f2c6d6af3347b4233aefbcbff678a18a2ec579c7556ac71747388ab6ac634",
+      "sha256": "b3177061e31ef03490b89908e5fee47360f4b19103912bc8f0a50f89df037305",
       "bytes": 262272,
-      "min": 0.010104273445904255,
-      "max": 0.7617407441139221
+      "min": 0.008292322978377342,
+      "max": 0.9091249108314514
     },
     {
       "filename": "000199.npy",
-      "sha256": "54b429f4e6eba70c6f3ae7d4d5b59e2598f6416093d30d10cc430aba12d1bd40",
+      "sha256": "6726978cb951d93a83d71acf70fc99d0fcca2b6f4b41d70a8965d7801f24eb76",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9146878719329834
+      "max": 0.9671331644058228
     },
     {
       "filename": "000200.npy",
-      "sha256": "a216a2ecf7462dad361db84cbcb285b1c57f53decf828a79fe1046e31b888863",
+      "sha256": "799bb32783179129055a1ebc577594696acced6d55362fece8aaccb13021a406",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.002102564089000225,
       "max": 1.0
     },
     {
       "filename": "000201.npy",
-      "sha256": "599bfdf07506c6bb76211d8a7ec5aca1c51df55d0c1c50d81267ca1dfc906239",
+      "sha256": "97b6bfa1bf64494716ad8923ea14a3d6b3c363437dc9946e33c2485f9db85a4d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000202.npy",
-      "sha256": "9b97a88846601c2872c2f15c32def9733eb24cc777e70fc7246227aaf0304ceb",
+      "sha256": "df983fd07a212795baab0ab8cade9b9695fc3e485fc5faa55db29f5d8ec5e11e",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000203.npy",
-      "sha256": "a5cc4a7c73199fc7343e7e5acbc4c2d584a4271e29d307f4a01bf1cc713b09a9",
+      "sha256": "529714e04b09024a61d1c1745d18c8a2f00a45f005225546f70b564797dcd2b6",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9590682983398438
+      "min": 0.005781407468020916,
+      "max": 0.9782443046569824
     },
     {
       "filename": "000204.npy",
-      "sha256": "877f166b8d402ce22bf830d8bc26d8329e73e75e1f89ca1b8d5559f8026c5b7b",
+      "sha256": "fc639c4529e093b16bacb02a37f83e41771a84256084f0aeb114d901a9c67d3a",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9457749128341675
+      "max": 0.9529808759689331
     },
     {
       "filename": "000205.npy",
-      "sha256": "698481802c07de9887e1ec32a1f078305eb5fc5b4afa5dc05807bac0aed100d4",
+      "sha256": "5ba8568e380c6cf40a11b4862c1c4e6cad948544d5d66baf16bc477c61915c9a",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9552344083786011
+      "max": 0.9607722163200378
     },
     {
       "filename": "000206.npy",
-      "sha256": "5e818064dd2eeb73a02460c993bf808db1e0482d4aadfef6043bd85d20ad9af8",
+      "sha256": "9cdaef4db82171fe3d6a7b268b0a7660d52c9c5d7eddccbfaaeae36971b48ae7",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9821587204933167
+      "max": 0.9823382496833801
     },
     {
       "filename": "000207.npy",
-      "sha256": "4e4a80a7bee08afd5303842cdbfe38166f737034ee186be993b1be5c081df93f",
+      "sha256": "ed0699f17898650ef5d7f5217425e517377f10291f71f79beb66429bef16f11e",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000208.npy",
-      "sha256": "7a476e42515021724ab35e430a3ff5fd4d07b8663fc53fceb652a03f8f654dcd",
+      "sha256": "35a087ab10c6b063677e6013760ecb98554bdaab25bebf8527292bdf3707fd3e",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.0028127613477408886,
       "max": 1.0
     },
     {
       "filename": "000209.npy",
-      "sha256": "83efeba65f386f495e02b737a8e2a816a09837913de3f84ab50395d00abb5e22",
+      "sha256": "62200ebb2d96cd74e8cf9af0f88ade64946c9d515d04369db38ab3468c675ced",
       "bytes": 262272,
-      "min": 0.038753900676965714,
-      "max": 0.7826895713806152
+      "min": 0.03041686676442623,
+      "max": 0.842816174030304
     },
     {
       "filename": "000210.npy",
-      "sha256": "55a8588aa6d4ea8ff07806a2445d2bf11fce249c85f5d9ee896cd1a3d5be5779",
+      "sha256": "abe5452bfd6d06d358cd6a9d761c053e407852cd4d3a4eaf68af2ca629a96ec9",
       "bytes": 262272,
-      "min": 0.17844252288341522,
-      "max": 0.911858081817627
+      "min": 0.09827803820371628,
+      "max": 0.9629501104354858
     },
     {
       "filename": "000211.npy",
-      "sha256": "c509116b204b46367e2bea71a3b0afa2cccf644a98c9b0c4d0518d44c24b991e",
+      "sha256": "9336679c26ef86aef63fa0e2a93e34cf1eb9ab0ff10b1ab860ced46bbb024d87",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.8994796276092529
+      "min": 0.0007998384535312653,
+      "max": 0.952359676361084
     },
     {
       "filename": "000212.npy",
-      "sha256": "a5c51e239cabcb2818e19151e999fc45eb5ebdf2b14481bc19fb62d383ab9713",
+      "sha256": "c3776e31b8bd207459aa18d8c34f95204b160d0515d234af3878447b27a9e9ca",
       "bytes": 262272,
-      "min": 0.0008380191284231842,
+      "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000213.npy",
-      "sha256": "8e10bed8abc3c0086d0ed349448e3968ba82abbef700d50b6921b2a5883e4ab2",
+      "sha256": "43f63f8858b19b248aa27776b0aeb1a4decf1e12bc934811d9c7db2ab388ad0d",
       "bytes": 262272,
-      "min": 0.03632630780339241,
+      "min": 0.034116536378860474,
       "max": 1.0
     },
     {
       "filename": "000214.npy",
-      "sha256": "c0e5d5125f45e82706bd413aecb6803ef0911166c21f158cc7b5bd4f401c272f",
+      "sha256": "9456c6a7801a3b981992242913da47c1fe2eb3e5533e4b20cae2d8c0eb3836f3",
       "bytes": 262272,
-      "min": 0.057575978338718414,
+      "min": 0.0747428685426712,
       "max": 1.0
     },
     {
       "filename": "000215.npy",
-      "sha256": "b1044b0c0caaccd18ee455c54814dd1af86665c41c0298e97e2d34273158b259",
+      "sha256": "7f263870de09ef8f8aaa8d87bc5c126d49e31e6ba1abf76304c94f11fd98a7a7",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000216.npy",
-      "sha256": "f56b0886c29818238ce27c785b5bc79cab8a1ba6e0a83fe44a98e08927c5f14a",
+      "sha256": "d9728e78e6513be831689245f95f7ceb0d5260f216979c531dde8f96dc9123be",
       "bytes": 262272,
-      "min": 0.07961023598909378,
-      "max": 0.9253823757171631
+      "min": 0.08980707824230194,
+      "max": 0.8915495872497559
     },
     {
       "filename": "000217.npy",
-      "sha256": "879b71ea22381ed4f86fe86b330d2f7894a765035a7809f9303271f49ecf8600",
+      "sha256": "79b9094fadd7dc51a5817f5429c3d5b0346319b150d0949de15ce54f7c6c59de",
       "bytes": 262272,
-      "min": 0.007977434433996677,
-      "max": 0.9979803562164307
+      "min": 0.005089417565613985,
+      "max": 1.0
     },
     {
       "filename": "000218.npy",
-      "sha256": "d05ca9c14e11f14dacab57e45f1a17ae285ea840b9f95d107b0198608094eb75",
+      "sha256": "55cb287cc0f5de97fa9a7c1b554a6797414f1ca2902ac8d8bd419c27c32dfe78",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9751015901565552
+      "max": 1.0
     },
     {
       "filename": "000219.npy",
-      "sha256": "c66f28672eaea068d2e9a4251a1142b2cdc3f8a69daebd8829995d775e6575ee",
+      "sha256": "adb95ea75083f15fc67e91b0c0545a6551504d1ec469728b3fd9408dfd0a51d1",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8523178100585938
+      "max": 0.9220568537712097
     },
     {
       "filename": "000220.npy",
-      "sha256": "1ea3f4dbfe86e695971bfaa51a4b2060f6539c6919aa3ea1b02fb1db3d1dc5b8",
+      "sha256": "73b886c32d63058a2c3b1e7968a37f139863a08ba96a18ce905ba52fccd9c23d",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8855636715888977
+      "max": 0.9736260175704956
     },
     {
       "filename": "000221.npy",
-      "sha256": "473ade2245da0bc07fd9f1ccfc1261b4a982f63aa6e420f9ef078047156dae7f",
+      "sha256": "f8b11f3fde98bdd8b57b8a96b654e7376f3f818d7802555ad528eb873fc0a779",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9723069071769714
+      "max": 0.9967966675758362
     },
     {
       "filename": "000222.npy",
-      "sha256": "75d46004f4f262a874616a1325471624ce5af406e9838cfa4a9502bfb72e2046",
+      "sha256": "a9cc4d870a6cfd38f9cab8cd82f84cf242840609bf73fd133bc6463bc59a2553",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9356764554977417
+      "max": 0.9793521165847778
     },
     {
       "filename": "000223.npy",
-      "sha256": "6f85550d3de770d69b7d90712dc1729b3094425fa2b652bfa8fdcfb7441fbde6",
+      "sha256": "417a1dfbce245c860f7c43445019da08100a66544b834d8bf67ce1f7486a3cd1",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000224.npy",
-      "sha256": "de7095649e2761484c50c2874659a468f0773dd4ac5bc05b4640533393279bde",
+      "sha256": "da1bd39d31c402c83166859f25726e748d56a80445c910fde8fb339708785451",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000225.npy",
-      "sha256": "8a017fc5a1f900b73d444aaa94b2393f43639b82ba7f133f4cfb57958d54e3b7",
+      "sha256": "a2c3e2825d95c578c3de1aca8f4196a777b4c9cc9a3ba423c36975cc310ce2be",
       "bytes": 262272,
-      "min": 0.09328430891036987,
-      "max": 0.8576474785804749
+      "min": 0.10234515368938446,
+      "max": 0.895447313785553
     },
     {
       "filename": "000226.npy",
-      "sha256": "56db12aee6d2d0b97c7268dd92e1da843a1dab7819e33dd0f4b81f2e8f286e98",
+      "sha256": "cacf1c78b22d245e8f73a9ef8ab708663ab7ccf60550f9c1e2a8f1e34e048678",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8910073041915894
+      "max": 0.9569396376609802
     },
     {
       "filename": "000227.npy",
-      "sha256": "2b5106a262a97a97063c07fd3635f1321a7e72fa3afe0b6b3761b084cda63cca",
+      "sha256": "c8f35d09d52e82a261a02916438266a6ecf31c4c922240d81b861a28e85803ac",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000228.npy",
-      "sha256": "d714e37119bc95c099f11d2305340694c38885dc1e7abc727ea8ca2532dc8b69",
+      "sha256": "ee30d38dd92b300e5b8e535b36c5baf8f7e754d6c8cb2a5eaf8e637530097637",
       "bytes": 262272,
-      "min": 9.50247049331665e-05,
-      "max": 0.935285747051239
+      "min": 0.005319791845977306,
+      "max": 0.9981159567832947
     },
     {
       "filename": "000229.npy",
-      "sha256": "c301f7f6efd4800df9588a76760cf140d7289907de2f089ee423d36d64befd5a",
+      "sha256": "a2d4e6261caa58eb866de8d315ef5beaa81fd9d3bc2590ce087eec2e3714b21b",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000230.npy",
-      "sha256": "9ad74c311e19d2522f832bf97d9a2c185d52d301f2dd25ff998d98c63d5f45b8",
+      "sha256": "6cf5f839860ffd7eb091c703e9f99d1b89799d811ac6156e60df6dc2e4063e2d",
       "bytes": 262272,
-      "min": 0.02248029038310051,
-      "max": 0.9437822103500366
+      "min": 0.013960998505353928,
+      "max": 0.9807919263839722
     },
     {
       "filename": "000231.npy",
-      "sha256": "33e85fa764f2f7688c8ac9a2cedc3efca7dd69237c9ab6bb6eb21cb33442a91e",
+      "sha256": "392fe69751b60e328b7fa1d6c1283e1225a8ffd86a27fd6dd265b2faf64d7b22",
       "bytes": 262272,
-      "min": 0.011099149473011494,
+      "min": 0.016396330669522285,
       "max": 1.0
     },
     {
       "filename": "000232.npy",
-      "sha256": "f2ef754da68f2ee1dd6c15c0a2308e49bb679d2d0866050ed23a0a9479aff971",
+      "sha256": "5c755dfc4bd84360a99edaa19701935fe44b42c4c4de77eee4d899b2fbc15bcf",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000233.npy",
-      "sha256": "3a5b2e6c96c7842f3cc931d1876554ef7b0405637842e7988aad08a6c9e15cea",
+      "sha256": "c3d3d0f69dc8be67aed6dcba4911814fda48ef38ffe6f2b5179f2b42275a0c6e",
       "bytes": 262272,
-      "min": 0.012284193187952042,
-      "max": 0.902976393699646
+      "min": 0.02631843462586403,
+      "max": 0.8661481738090515
     },
     {
       "filename": "000234.npy",
-      "sha256": "865cbd6874e58a08d4c015c3d9c1cf3f9f781db17f2d0ec6656caca4d1044360",
+      "sha256": "01c1e2264042bd66a0b3352320e333d3d81e7ffda498c1a257bbf1f90e55ce18",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000235.npy",
-      "sha256": "1588eba80f3d28441e2449a3eaa3da9d9744d20a3e47c348b1405130fd821c98",
+      "sha256": "d63fd531eef47cb886b8d97a9fd2cb2b397f04fbe643dda24afffae6117b3667",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000236.npy",
-      "sha256": "46e5e4432a859c4b98fb0f6b197d3dcf78ea26d3f7b4dd67977b3bd4642d8b9a",
+      "sha256": "b88b217e357c082654a33d2e7b98d5e3e004c7979a5273e6918baec5611455ca",
       "bytes": 262272,
-      "min": 0.003422485664486885,
+      "min": 0.010104656219482422,
       "max": 1.0
     },
     {
       "filename": "000237.npy",
-      "sha256": "5325e3e6e5bf41f0bcb3036477c7a4f5a4a088e6df4649dd2dbb8bbe548e43dd",
+      "sha256": "010bf8d0df4c5a0f01cc1a0d1e39c9d491d5a5408b250689091553da5dbb55c8",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9868232607841492
+      "max": 1.0
     },
     {
       "filename": "000238.npy",
-      "sha256": "4e480d6f8cafe4a3928f88bc513bf180f4d40bf5430e150d9e2706b610adeb3a",
+      "sha256": "1faf5e1bdd44051c7eda24c87ba0f9d9c39f792640c3cc81efb55eb959adac12",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9102995991706848
+      "max": 0.9061013460159302
     },
     {
       "filename": "000239.npy",
-      "sha256": "1a170d71de5a800056ee5eb36d8ae9d8e1c73cc310cd98100292eb7541a37266",
+      "sha256": "825532fe8b6e7bbf562751a2dbd6397b263da6eaf5921f974030f99e8214ef27",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000240.npy",
-      "sha256": "49627c12c14018cabcc70530729e721ba47db3d590a4f3e5e60773600800f71d",
+      "sha256": "4ee9e1bb06007f1764acb73b7bc1b804ae84e04338b21209756029b18da899ac",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9562578201293945
+      "max": 0.9851110577583313
     },
     {
       "filename": "000241.npy",
-      "sha256": "00f50df6ba7d2810a26f752441ba1e8f01f3715548b982d7a45dcea66fa7e7c6",
+      "sha256": "a1bfdbe271d419d52d3a974b3ac87f8c2cdb9add405359e50675dc66f1dc91e6",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000242.npy",
-      "sha256": "4c092a19135ea5ad6e8c4d8f968dedb0892fa86f1432ee31e12db93eef4c1b6a",
+      "sha256": "0fbb9b39407522e36a4752293e254fa5b1d5cbfc370e8fdcf04e639b7d1466fe",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9353429675102234
+      "max": 0.8956233263015747
     },
     {
       "filename": "000243.npy",
-      "sha256": "0550c5e41ffa99fe5c5b77681050fe7cd4ef984afe54d8f8281586923c399edd",
+      "sha256": "4fa89f9c987495ea586c25d0cb3fefa6f22ca269837e515e14a09137341de7a5",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9667890667915344
+      "max": 1.0
     },
     {
       "filename": "000244.npy",
-      "sha256": "086efadbff6b7a955a5273a28185f1557837d8bf6e07cfa1ad86fd01c7155980",
+      "sha256": "eadfaac91a4e0752dd2441a6678278439981682eb1c629f523eb23a2bd9f940e",
       "bytes": 262272,
-      "min": 0.017106913030147552,
-      "max": 0.7884603142738342
+      "min": 0.024275287985801697,
+      "max": 0.808336079120636
     },
     {
       "filename": "000245.npy",
-      "sha256": "585e3bcf7faf8f870d3eb7d5035fb95c0223029f1c3ee604fd75971f2ed5156d",
+      "sha256": "9c25b650b870e699456975c9467b8c2d18b16d786931bcf520cbb1b841eeffaf",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.015063857659697533,
       "max": 1.0
     },
     {
       "filename": "000246.npy",
-      "sha256": "6340b4b3516779b93a5f4e60eebc2725c7a5bd79462a6bbf01d633d4d48a6ec8",
+      "sha256": "a5f7e3d82cad2bf1e8cdb9f2b149a7482dcdedb00c17674a9b049549fd4e08f8",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.007876523770391941,
       "max": 1.0
     },
     {
       "filename": "000247.npy",
-      "sha256": "1ce1160d34a85d7281899ec6b0616b6278235679ee718b3451f57541ecdc76ca",
+      "sha256": "9ada9e10da21f5cce693fe8b3223afe1e6739789043d9533271dc87dcab2289d",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9889398217201233
+      "min": 0.013120323419570923,
+      "max": 1.0
     },
     {
       "filename": "000248.npy",
-      "sha256": "cd20f5e4b4dcf5a571ad31a83f727c96e1d498171e30f11b448338c566d00994",
+      "sha256": "161c9f4dea2a9ff8ba5499c5d1a13a731a3e25f55e2b9de7ed7e13e1463649bc",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9864726066589355
+      "max": 1.0
     },
     {
       "filename": "000249.npy",
-      "sha256": "27711858d5cf93e64c5ccfa5536d352e1d1d359bb99362f021a0273af04dddd4",
+      "sha256": "e9428a1bcac0c049c44309997214f2a34d115bb010077ce77100adb4c9efec34",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.0016758907586336136,
       "max": 1.0
     },
     {
       "filename": "000250.npy",
-      "sha256": "3af432cf1856aafdd437ba62f65c43b9fa6a8347e8d88f0eb334fcaaab68962c",
+      "sha256": "89dae818ecf6b64cd8b852f1e4e2808ed83d15cd3929d27b5b48f6a02d1f856a",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9490395784378052
+      "min": 0.0020896121859550476,
+      "max": 0.9810066223144531
     },
     {
       "filename": "000251.npy",
-      "sha256": "198caeeb84cb8d77814e41e8b88de71f632ed04e3a24faf325eb3f6d29d4293b",
+      "sha256": "227c4669875ba6103b2eb18083e561d0d811ca323f6f002a62f192de032ef9a2",
       "bytes": 262272,
-      "min": 0.12345024943351746,
+      "min": 0.08414717763662338,
       "max": 1.0
     },
     {
       "filename": "000252.npy",
-      "sha256": "1e34b2177b65cb218bfdd39859f2e27bc944ea9f9b84143ea22962eb217c0000",
+      "sha256": "85d46767e3e143adfb0eac9c5b3f7ecd5c931051e26650149e714c20423b5ef8",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000253.npy",
-      "sha256": "55d4f570eb8abb9608fa5f63c28f5290a73f361e3b0ce4398a0370a4ee563d1e",
+      "sha256": "17d07f810b65732469130168a68e4faa85b2319fcfb23d8d95b77a728811a8a7",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9796370267868042
+      "max": 0.9459960460662842
     },
     {
       "filename": "000254.npy",
-      "sha256": "fbed7d5d1fd6a43a51b85ffccec0c98a83b546575f3af7dfe5be3f2e335c2a36",
+      "sha256": "e08bee3f9f8516cb2e37cb7368fafe5eb694cc6b1a7777bad7ba829f9aab7378",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9638649225234985
+      "max": 1.0
     },
     {
       "filename": "000255.npy",
-      "sha256": "a979cc712f88339b0b60eb9e004d781d504c600d6fc8cb3a5cca85ddd2857899",
+      "sha256": "d4db24d29f6952f3fcbb2f428ffad6fefacde1c1aeb0d8840054eecc2c72eac3",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9413706064224243
+      "max": 1.0
     },
     {
       "filename": "000256.npy",
-      "sha256": "6a1ed68647675fa55d445d46efd9a60b6125d243e811519e7c39d4a2ed0cd507",
+      "sha256": "4a768e8c88d456fcc9b6b6d930fc930cb8ab6d85b5a41bef9ca9a6e2f5dcf33b",
       "bytes": 262272,
-      "min": 0.00512237474322319,
+      "min": 0.015568557195365429,
       "max": 1.0
     },
     {
       "filename": "000257.npy",
-      "sha256": "e8a9389e690348e7491ca0076bfd5806134379df868c2747af3b138de94d0950",
+      "sha256": "2f3e92664eed2967be5a11f663db1709edb68ecf7de87cfa21c45f8b077b3f79",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000258.npy",
-      "sha256": "5218bd04a2845a1f86c9b08be63089deb9773ba2765aef622b6689bda5deb23d",
+      "sha256": "87616ab3fec4c81cfb0d83ee18c75ad977742687af121091165992b922c1a959",
       "bytes": 262272,
-      "min": 0.05056403577327728,
-      "max": 1.0
+      "min": 0.07114030420780182,
+      "max": 0.9896168112754822
     },
     {
       "filename": "000259.npy",
-      "sha256": "ef4a0e46c6d6a854e49abf33c99ae9c1ac401783b8bab079fecf07e5f206a8f2",
+      "sha256": "a45df9c28ff68b25a9d686ee534f21314cfab8b4d4b6d398953544efdf92dac9",
       "bytes": 262272,
-      "min": 0.009389523416757584,
-      "max": 0.937001645565033
+      "min": 0.0052851722575724125,
+      "max": 0.9851464629173279
     },
     {
       "filename": "000260.npy",
-      "sha256": "307c6183b034ae6cb69d1788a0a81ad2eed8def869b1ea055e412f1cbe4046d6",
+      "sha256": "f0d7d365b600cf3d4d836cf0befc74fd8319e2ce5cb9b9a3677233be5558a172",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9633311033248901
+      "min": 0.007138827815651894,
+      "max": 0.9634360074996948
     },
     {
       "filename": "000261.npy",
-      "sha256": "587597929554a8e6129ba3aab6533db5bb133f7da1baf7cacc2cecdcc3599aea",
+      "sha256": "b01c9ed986deab30263acc3a31a9121e311c0d43c15df03078b0ef4bc6f5ee1f",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000262.npy",
-      "sha256": "24ac7b88743424712a17e80f92f36ca2e445b7c99d48fee15b5a6d7ee82cafce",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9822162389755249
-    },
-    {
-      "filename": "000263.npy",
-      "sha256": "bcec1fb85ab0f13b056b19d530f31b6c930c02f2475d465ada4ce5aaa98c42a7",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9377968311309814
-    },
-    {
-      "filename": "000264.npy",
-      "sha256": "ad370ba854b2e9891b2049915881c8c21e3aa22ac65e465150273c529f6f089b",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9462704658508301
-    },
-    {
-      "filename": "000265.npy",
-      "sha256": "89beb686d577520d15774b23c2a65c43533c3c02de4a89333005bf6c4bb869bf",
-      "bytes": 262272,
-      "min": 0.006949286907911301,
-      "max": 0.9765481948852539
-    },
-    {
-      "filename": "000266.npy",
-      "sha256": "8ecd1cd50dcbee3da6a9947659742ae1422351caeb2bfab4416a6969ae0a102a",
+      "sha256": "6dfa2f85f23df00a417b180e05297118a9393c199b08d870aa845161a94393fa",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
-      "filename": "000267.npy",
-      "sha256": "767716e3c6cfa4f0a6ba5ce3aa77b98eb2e29550f53e37bf0d1a4634f8d37594",
+      "filename": "000263.npy",
+      "sha256": "f20461e95ab3685c0c223152380f67f48cacf1d906d2d147b1c8d00ce892a87a",
       "bytes": 262272,
-      "min": 0.029403017833828926,
-      "max": 0.9278666973114014
+      "min": 0.0,
+      "max": 0.8997713327407837
+    },
+    {
+      "filename": "000264.npy",
+      "sha256": "b3279be9bc2e6c830e81f6c9127b12a3944b87064dedd8f482f49bd906086e30",
+      "bytes": 262272,
+      "min": 0.006087738089263439,
+      "max": 1.0
+    },
+    {
+      "filename": "000265.npy",
+      "sha256": "655e59a3ee11209f2990eb2dcd5bc9dbdb6a6cf1382362137db11bffdc1bf751",
+      "bytes": 262272,
+      "min": 0.010448146611452103,
+      "max": 0.9893195629119873
+    },
+    {
+      "filename": "000266.npy",
+      "sha256": "fab925ba78eeb2a0c875cf1034bb95e9b62caabcaad0278c47a9044cb61d1af4",
+      "bytes": 262272,
+      "min": 0.005478527396917343,
+      "max": 1.0
+    },
+    {
+      "filename": "000267.npy",
+      "sha256": "5b89e0b87721b5988c3823a5f123b04a4b01f145d210c11683204289bebd6353",
+      "bytes": 262272,
+      "min": 0.03898349404335022,
+      "max": 0.9697360992431641
     },
     {
       "filename": "000268.npy",
-      "sha256": "03f9107de78a4f6a9ee83ab4f96f1e5f17dd8bbcae833e2b6649e62353b6a860",
+      "sha256": "ed3e644648c1da86b397eb646649092fac12938cdae694da829c234938b3497a",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000269.npy",
-      "sha256": "0361de014772c31b5839caa120e9c48c92e8a5c184af27112ed12bd7f181bfe0",
+      "sha256": "9ff55c071e8a0de99c8c7296edd37d708c8d45166fbe1044dfcbacb637c91efa",
       "bytes": 262272,
-      "min": 0.023793667554855347,
-      "max": 0.9654075503349304
+      "min": 0.04108787328004837,
+      "max": 1.0
     },
     {
       "filename": "000270.npy",
-      "sha256": "e1da619100d95d8b922182c914ae5441cf6b2a55a8c10ec712488ef345b70da0",
+      "sha256": "77e792c0dc9f15f1ec1e6483dc7da3defe17457f5b6dbf6bda2aabcac17c16b3",
       "bytes": 262272,
-      "min": 0.20259860157966614,
+      "min": 0.17082104086875916,
       "max": 1.0
     },
     {
       "filename": "000271.npy",
-      "sha256": "0d750588b5605b8ca630183b7e71a88593716f76067abf5cfbf5f19393fa825a",
+      "sha256": "0b65c44809566311b09ea159afdfc5566255bd390f3a20ec433a0096fde1ebec",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9962473511695862
+      "max": 0.9908220767974854
     },
     {
       "filename": "000272.npy",
-      "sha256": "6d5968613466460a6f1863040710e280a431a34dfe77a2dc50249de83b40305e",
+      "sha256": "ea8cfdca4d8532b160717a101c797a784724a17b34b829c1736a18758f92002c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9504238963127136
+      "max": 0.9997705221176147
     },
     {
       "filename": "000273.npy",
-      "sha256": "d7113894d275dc3341a31ddcd5ae12605c8b35fbb18789dc1c1a6f6929fa4146",
+      "sha256": "afa6afa2e95b1834307a927984f191bb89bc226ebc15c4e1241df1057bc7bcab",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000274.npy",
-      "sha256": "fd59a908fcd18c342174dd25bec2f20e7ee245ad65cd13ee05a9af5f9c799b64",
+      "sha256": "9282c13208e39281b8a9822c8353ac791be194417df724be26be8fa2601992a6",
       "bytes": 262272,
-      "min": 0.016334298998117447,
-      "max": 0.9700809717178345
+      "min": 0.00549384206533432,
+      "max": 0.9806464910507202
     },
     {
       "filename": "000275.npy",
-      "sha256": "d8b2ff997dc42b860a934f1a20b685f54ae3cc9e94b3ad111f6352d67f451580",
+      "sha256": "87706f1920c1d9f27a2c5b7a1864d7e9b897ec11c421c1b50b80429c15d2558e",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9053452014923096
+      "min": 0.0045639872550964355,
+      "max": 0.9618479609489441
     },
     {
       "filename": "000276.npy",
-      "sha256": "30881498c56397fe50cb29c2a523ace1bb68d8de4631462ae9756a5ae78045d5",
+      "sha256": "58a4cf6b772e89da5601fe82190614bb38e8629b2a4d0548d2cecf952492f655",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000277.npy",
-      "sha256": "cc1450cc49469363bfcba2d11f2d94668c7a692413865b0fa5057b0545562e1d",
+      "sha256": "69979fa03e9ab6aa61bd207ea1975de7279bb68c5ffec03b437c74caaa6b7783",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000278.npy",
-      "sha256": "3d207337dcbc42f56ddd5c29fad98501e6aeaab85c261bfbadc67282e8ef1990",
+      "sha256": "50c8ea5d69aaa6bbeb1715c26f81141c48252d4d10601978ed071452a6eafc7b",
       "bytes": 262272,
-      "min": 0.025293592363595963,
-      "max": 0.9318563938140869
+      "min": 0.022328834980726242,
+      "max": 0.9593600630760193
     },
     {
       "filename": "000279.npy",
-      "sha256": "d4d154ca74df98e6eb762ef4465398af6010b2cc5a63ca7bcd6c2dd5a4dc480c",
+      "sha256": "5c1415d574edf412ca4e582ce5d2da6fe9756b7987dad33e27f7a1e32229f78c",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.03910361975431442,
       "max": 1.0
     },
     {
       "filename": "000280.npy",
-      "sha256": "0cbde070dab85753076cc465c663bb19b63f809c99ec2bf87772d937ae0c9564",
+      "sha256": "506fd7a8408e09041beeb6171ba8d59a39eed3dd54057e6ec4277d43129e8368",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9554475545883179
+      "max": 0.9978598356246948
     },
     {
       "filename": "000281.npy",
-      "sha256": "968697720f497dbcb8fd948bdb9c0d0fec34cef792d518441d4dbf3e0744a886",
+      "sha256": "f3aa490dca2d4e6dd059dd2a6500283caa2a88404f4a58ff36ad7992000111d5",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000282.npy",
-      "sha256": "be1c17c9f5a7763a2be1f3bbe6a6a56d0324c59442258267dd50d5afeae21f47",
+      "sha256": "28b6557c4c2587bdbfa1f4eb491a8fa6ee56406acc367998bedd7148cf71aa04",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.944402277469635
+      "min": 0.003282547928392887,
+      "max": 0.9849502444267273
     },
     {
       "filename": "000283.npy",
-      "sha256": "8501cc4743bd5d7990437b7a66463a8683d39b75a0f75dca25375ea25fae9444",
+      "sha256": "e39dc8f71af37022bb21e212ed3b3ef2c06ca6079313ba89d785f27cced9e026",
       "bytes": 262272,
-      "min": 0.11548022925853729,
-      "max": 0.9732553958892822
+      "min": 0.12834927439689636,
+      "max": 1.0
     },
     {
       "filename": "000284.npy",
-      "sha256": "8e81df1723c82402abf2e6254e9e716d519ef8dccdf9565117919dfe6140ef93",
+      "sha256": "fdd8a0404a12e59fa3c3d92d010473ff2ba5c065c3a21bac842a57b9eadb3242",
       "bytes": 262272,
-      "min": 0.011368682608008385,
-      "max": 0.9627686738967896
+      "min": 0.008368338458240032,
+      "max": 1.0
     },
     {
       "filename": "000285.npy",
-      "sha256": "65f756c8e3bb9447fb5dd3052993459522a64e67bed4adba79aca9ef344dc9cb",
+      "sha256": "bf628ab35f1442e1a4612fed98fcbc8bbe405a9160e94ef4577a1d13cc4b1928",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9829840660095215
+      "max": 0.9575999975204468
     },
     {
       "filename": "000286.npy",
-      "sha256": "79a0f62e462f7dc4df04e6c1a778c4c6c6caa24fd8283ef7fc034e0fa6320493",
+      "sha256": "ecf1d5b46a467f9e1f8a7241b5431216ad070df7a893bd06b59e7751ab80c173",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.011575963348150253,
       "max": 1.0
     },
     {
       "filename": "000287.npy",
-      "sha256": "1dafe4809f2285894555ddfe8dcb53df1c829e67fdb181d3f08c8ddf1f837806",
+      "sha256": "6f5aad4608d42e9ebe532108a44a30b4d21ee733ac1e131cfb4ca651429b4709",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9198434352874756
+      "max": 0.9670877456665039
     },
     {
       "filename": "000288.npy",
-      "sha256": "8449f104911a3dd5521672b98d9f53a1d0c78703c6940b82db9624764e26b73a",
+      "sha256": "e941396a87f80b0f5da2497aa01af6ba58d917651d8fddc1174d539cd73bc899",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9432773590087891
+      "max": 0.9776067137718201
     },
     {
       "filename": "000289.npy",
-      "sha256": "7b2e58dde50637f5bc482c06337e93881a02a6de3434f8110fcf5b54addf01fe",
+      "sha256": "5a68711c4dfd861a51de8be34732bdaf2fe76f21008c2b9880828273f36a2afc",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9562587738037109
+      "min": 0.012620012275874615,
+      "max": 1.0
     },
     {
       "filename": "000290.npy",
-      "sha256": "40894cafd92366c3882f8fe201499cacc79e721167161914d7a128dcb3d78178",
+      "sha256": "62a78f3d29a5fc8ed18204e635f701d425cc974b4c1ba87f1f9ec3809b2a9fb4",
       "bytes": 262272,
-      "min": 0.029818587005138397,
-      "max": 0.9839155673980713
+      "min": 0.03009267896413803,
+      "max": 1.0
     },
     {
       "filename": "000291.npy",
-      "sha256": "5bb95cf830d52d7d93ef5e7b0bfa8e4086911802369639e13b6b141a913f2cb3",
+      "sha256": "05da6291e46b46467f1ec4c5a910613cc710dec2bb672eb81f86df177cd09c1c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9834915399551392
+      "max": 0.9794569611549377
     },
     {
       "filename": "000292.npy",
-      "sha256": "383d812759bfcb7dcf60fe3a6b1ce14a0769bca92f944c195e70dbda29d8eebf",
+      "sha256": "ed8a867dc7be6258ebd8ed86772b5220149958bf2c44214ed99fb55f741e6a27",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000293.npy",
-      "sha256": "f5eec69cc311da5aef8a612b8e5ca18323e37c1b6aba4f719866ce77fe5c1e75",
+      "sha256": "1bcc74c12ec707b0369ba524d80e4d2702db8f5a8b018a8fd21513e5b00475b9",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000294.npy",
-      "sha256": "48d41268fcd00e76ec511268fdb2a7283d4fde975bb4bd03c9fb623d1790c9ec",
+      "sha256": "3d25c8ea8edc1f94dcbee00140b8d319759c1f29a0942c3c5009c8bb67b2c264",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9398596286773682
+      "max": 0.9359097480773926
     },
     {
       "filename": "000295.npy",
-      "sha256": "5a1f3524b61022a067cfaccf552d9484bd8391ba3665d3426001135a148e861a",
+      "sha256": "7dfe3c529eb9f1d50bbba2d4693bac41d8b0cc48656eb5d4558de268ae2095bb",
       "bytes": 262272,
-      "min": 0.048156872391700745,
-      "max": 0.7655130624771118
+      "min": 0.04097758233547211,
+      "max": 0.8689122200012207
     },
     {
       "filename": "000296.npy",
-      "sha256": "34ea76516f2fdf2d612ec8e28132d5eb265d070cf5dc8c48225a68c422163eb9",
+      "sha256": "d597a839827156f63ac597fd242ebbcec99ad4f5fa26648e236c1ceb0b7d6642",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.947080671787262
+      "min": 0.006635311525315046,
+      "max": 0.983348548412323
     },
     {
       "filename": "000297.npy",
-      "sha256": "aad0abf02106005e7a0f425248e7dbb3a8302d670b5e4ef5e09e486bedcc9f1a",
+      "sha256": "1a4f3ecd0263aeebbb847bad0f46fae75de3f62c83000c37de526faa253ebf38",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9389680624008179
+      "max": 0.9688038229942322
     },
     {
       "filename": "000298.npy",
-      "sha256": "97c3de36d9c51f1510609efb76b959127a878d509bdfba4240bc5bfd833d6228",
+      "sha256": "85b29a6ef25139e817d849fd62d4da4d4aed1b8856e2db9e1633f3af2d350a31",
       "bytes": 262272,
-      "min": 0.005116306245326996,
-      "max": 1.0
+      "min": 0.0,
+      "max": 0.9989684820175171
     },
     {
       "filename": "000299.npy",
-      "sha256": "17222971de72a4e1c45952b57e7690db6ce1b36f68e8070b1806c3d1b2a7d5eb",
+      "sha256": "18f5857b5cfdbb325c07f0dbd69d58e35197200430a441f83cf92b0e3cef65db",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9429063200950623
+      "max": 1.0
     },
     {
       "filename": "000300.npy",
-      "sha256": "1289ae3dc4399100f69e27b3ffecb7f3be3334fb5b2039345f3873900c2a2bf3",
+      "sha256": "7e30d480cff64c5cba980ddcf7ac5ad54762d29c38b93d7c9a97b7630a382800",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9591990113258362
+      "min": 0.009599527344107628,
+      "max": 1.0
     },
     {
       "filename": "000301.npy",
-      "sha256": "51da181346e453789bc42d49f82a57f9390d1070aac41e6a71baddea921ebbc6",
+      "sha256": "485bd6bc1a275060efa4a04b270e9e69620b5c80c2d0e51c51e4be66285b2305",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.896648108959198
+      "max": 0.9668304920196533
     },
     {
       "filename": "000302.npy",
-      "sha256": "36312b7c22639ae9ba20892c50d171ead0a6f2cbe274087a6a25a86a644f1d6e",
+      "sha256": "27a77481108c790c3a2e95895fd0948cebb1d6f294f50eaae892f76528885afc",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000303.npy",
-      "sha256": "dde467bc365b385f805ea8040e512024acb03596fa443409d1aba25cead34705",
+      "sha256": "46a9a93872fb4cbde5d1c9685185714f1c9bcf1df79f44d0d6721fd671a24b5f",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000304.npy",
-      "sha256": "ebf285f2b26f465f152a71677ea37b63bc785b24658eb96f628585dcd142ae79",
+      "sha256": "732259df4123684c0e71fba4cf9479ec93cacb73f606a74aeffa1bb5c534be70",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000305.npy",
-      "sha256": "8ed9de6bb55d94af2ef324726f7df665c0577cff37593c2e86f88379f1124da4",
+      "sha256": "90471a0b309affd84fe548535cc7a75518fb2ecf88d7281b81f86f284c1598c4",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.91936856508255
+      "min": 0.0161877628415823,
+      "max": 0.9736614227294922
     },
     {
       "filename": "000306.npy",
-      "sha256": "63790d0cc11a590091bcd05592ce183164d2b956fc55a188ee56290c064bbe04",
+      "sha256": "133ad6c2cbe98b1a3c14ecd5b0cd16446bb23c58da4bae728ddecefbaad9105e",
       "bytes": 262272,
-      "min": 0.003980666399002075,
+      "min": 0.020761875435709953,
       "max": 1.0
     },
     {
       "filename": "000307.npy",
-      "sha256": "2957391b8c31e04651f1adb972a79f31786ba3d445821dc31547f5a346362427",
+      "sha256": "857f70cda04faf524ed978003fb41f474157ae6c325ae58c9fd18031d5248c00",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000308.npy",
-      "sha256": "31054a8970af9d33ac196339aed1ba39c15f8f2676bf960e617a8fcb95b7a9d7",
+      "sha256": "99b3aa3fd2cb82c1e6708c14315042065acf1b301b56f8fd04b15764839a6a58",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9765848517417908
+      "max": 0.950620174407959
     },
     {
       "filename": "000309.npy",
-      "sha256": "2791fb9bb03f7ec6415fdebc52725b3264406adfd6f4c7ab881ff99eefe73ecc",
+      "sha256": "64e30b511d059c9971fcece0ebaed145e1e627ca7b9d998b56dabaa8ef66b64c",
       "bytes": 262272,
-      "min": 0.059749241918325424,
-      "max": 1.0
+      "min": 0.06596831977367401,
+      "max": 0.9911842346191406
     },
     {
       "filename": "000310.npy",
-      "sha256": "5cbcdf002031edd0016ca9d346f34281d13984b8ecdf1371cdea491c71a49527",
+      "sha256": "191fb6539da52a162c67c6f021551d4bfec8c61f916daafd1d7b97ed4729dd8f",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000311.npy",
-      "sha256": "f8456052e29ca9d5d148e2eb1417c2ec78cb73978756614cb9a9209b18555f7e",
+      "sha256": "5fd9d65d7d560f2097a051961f11e6614b0a44f1935fb255682796fe718eaf84",
       "bytes": 262272,
-      "min": 0.023224085569381714,
+      "min": 0.014944175258278847,
       "max": 1.0
     },
     {
       "filename": "000312.npy",
-      "sha256": "611732362dfbde86ef6a8f39aed59d499f5a0aadf49690d87dadab8199f5afbb",
+      "sha256": "eabf939fe42e4347a531768fc283cbc8b5c5266ccbbdc3088bdde162d187190e",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9972609281539917
+      "max": 1.0
     },
     {
       "filename": "000313.npy",
-      "sha256": "300a9ee6337142bd9854ceb783758950dfedc6a41e98a5eab3a25b79ef6dd141",
+      "sha256": "ea51e6f3218766cd4a3ffee5771bb961324380384f45e914be23bc8d1260e6b9",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9620648622512817
+      "max": 0.9996803402900696
     },
     {
       "filename": "000314.npy",
-      "sha256": "c86d615171f49ec0d0082474c5578f8e3ec79a78c06335b2ff84cac856e91cf2",
+      "sha256": "613c1a9f1f410d256e5eb5b4f6daf05a684d7e04078b072f0d53cc2b1f187c0a",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000315.npy",
-      "sha256": "32f42ae2b78c73d3ad06a1a29d21a5dda2a20a29a5291cb3c8e4b26efe708910",
+      "sha256": "11fe1533448d614abf4eed4828de721a447ce5f07e4f307d786d0c12086e0fcb",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9100508689880371
+      "max": 0.9270894527435303
     },
     {
       "filename": "000316.npy",
-      "sha256": "68bdaea3f366de6ebb53f4a9fbbabb850d80dd3102b64477a9e087d3172dd090",
+      "sha256": "ee3ae86a3fef469a1b03a015baae559d2f926a35b167e87365de8d8c2953ef0f",
       "bytes": 262272,
-      "min": 0.17329983413219452,
-      "max": 0.9516915082931519
-    },
-    {
-      "filename": "000317.npy",
-      "sha256": "cf3d80e3856791f7d6156fa383f27d5f0e1f2291784f9395e26d760a219f1c93",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9990482330322266
-    },
-    {
-      "filename": "000318.npy",
-      "sha256": "be19af176ba1d73a6b8c9d7cf8461b08369bd09eb7695f2f62932675c0d5ba7a",
-      "bytes": 262272,
-      "min": 0.0,
+      "min": 0.11878174543380737,
       "max": 1.0
     },
     {
-      "filename": "000319.npy",
-      "sha256": "13a3884aaa0c85e711fe390e8c9c5790888a956786c40e54284d343f3d8298e7",
+      "filename": "000317.npy",
+      "sha256": "3c3de5a1f0f1bfdcf20ad4168c12b6efa8c15f14c9f6ea15d075c18682521aeb",
+      "bytes": 262272,
+      "min": 0.006913755089044571,
+      "max": 0.9510616064071655
+    },
+    {
+      "filename": "000318.npy",
+      "sha256": "2cb479768e33843cc1b24f63cdada13254d850d8a12da7a8b25fbd85ee3ac383",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.8779724836349487
+      "max": 0.980583667755127
+    },
+    {
+      "filename": "000319.npy",
+      "sha256": "fd061bda344a6a2a824ebe0d15817d065f3952f676b1ec9477e76a43bbe1d7ce",
+      "bytes": 262272,
+      "min": 0.0,
+      "max": 0.926362931728363
     },
     {
       "filename": "000320.npy",
-      "sha256": "0f87c432ef14d843a4014c93c567be91275422d683a132c1a363e3889a07a2eb",
+      "sha256": "720cec6d6e6192473bb9836b7d8849c33d9ecf618c99f4babd22e84d5c1f5104",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.8734575510025024
+      "min": 0.007469428703188896,
+      "max": 0.9363067150115967
     },
     {
       "filename": "000321.npy",
-      "sha256": "1fd9de82d1ba0f8231daf0888f32b1f243bc84b5cae07a454769e815af59d6f6",
+      "sha256": "5694b610bcb887448d1a8606abfd6f743f79efd1939495454227a556d7dee9e0",
       "bytes": 262272,
-      "min": 0.01146857813000679,
-      "max": 0.9633604884147644
+      "min": 0.010988229885697365,
+      "max": 0.9378612637519836
     },
     {
       "filename": "000322.npy",
-      "sha256": "ce3685f3a39a1981b5d50c2196481b801a1a95740f1094faef8e174f463c4772",
+      "sha256": "cab865255b9e8386b5710aaec1afb15c2d63380f164be52adb9fed7b8ccc1a37",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000323.npy",
-      "sha256": "0dae486d1c8e829b4dd490b8e9f05bc69107006ac3cada4473d0b026d29e9061",
+      "sha256": "9bf774c5622bc6ca8d3fbae346ec8d1e01f5a2348a0702b010fa25f0565fb778",
       "bytes": 262272,
-      "min": 0.014246229082345963,
+      "min": 0.02938198857009411,
       "max": 1.0
     },
     {
       "filename": "000324.npy",
-      "sha256": "4ddeb6d91ef44415a6cc2672f6457d979be9e42d2260dc92d7298bf4070639f9",
+      "sha256": "28891e034dbba5eb5c52a83d4abc4184a49e1d3b091fd99f6355e57e4dbb3cd7",
       "bytes": 262272,
-      "min": 0.06886030733585358,
-      "max": 0.992115318775177
+      "min": 0.04810112714767456,
+      "max": 1.0
     },
     {
       "filename": "000325.npy",
-      "sha256": "beb1e6fe36dc20ee764db12d85262bdf479714ad4158afebc5279e81eeba245a",
+      "sha256": "bf833779dab35d78e40805974cf3f1051d79ae6dbd8d1860b5690dc90dc42b95",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.988849937915802
+      "min": 0.015194958075881004,
+      "max": 1.0
     },
     {
       "filename": "000326.npy",
-      "sha256": "b36a067dc23ee0ccad9eaebcf495067922d648bfce26c6f556faaa81e6c136db",
+      "sha256": "59a930cf9df250df9f2206b867525711062ec87dfecc37dee7c4860ebba6a3c2",
       "bytes": 262272,
-      "min": 0.06192007660865784,
+      "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000327.npy",
-      "sha256": "00ddf620fec03ef1bb268ec4bb256f23db45606299ecfb89a3432b3bca21c2f9",
+      "sha256": "3e86c9761eb517e5b8fe15e8b0093c27520b01787e9176dbd8d84cde408e4e0b",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9329671859741211
+      "max": 0.9658843278884888
     },
     {
       "filename": "000328.npy",
-      "sha256": "95fa217e236b5defb1c45f554f2851b5303b6c9d658e8d113244bf75bf85268e",
+      "sha256": "12728e81dffa930134dc65f15ba02dad61625b56f48a811a17f15a422e302895",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.7807368040084839
+      "max": 0.797755241394043
     },
     {
       "filename": "000329.npy",
-      "sha256": "1c48adae3268c6257e22fd1a4f4a74f25880202ad18fc7e18a2fa6f467a52cef",
+      "sha256": "bbdd51e32159ad6e212a18438791d11df7a31d75416f6c75611b0c2e84ede4f2",
       "bytes": 262272,
-      "min": 0.0015863645821809769,
+      "min": 0.00672822305932641,
       "max": 1.0
     },
     {
       "filename": "000330.npy",
-      "sha256": "52cd31845615623ccf99703f79f832d4510a307c62f5f68c3f08a8f181d3878e",
+      "sha256": "1189c8b988a36ac033657964b03cb7a6286eedcd1c08f518d2092457a04ddf9c",
       "bytes": 262272,
-      "min": 0.07754606008529663,
-      "max": 0.9579230546951294
+      "min": 0.07221511751413345,
+      "max": 0.9963929653167725
     },
     {
       "filename": "000331.npy",
-      "sha256": "b7a7996e03501dde3e0afb45a235d3b2e4bf1c8059ba11e312319e26126bbc7b",
+      "sha256": "37d6e00e5e605f9faa4b780ab2877a2614e052658ad4ce872b9c39f71193246b",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000332.npy",
-      "sha256": "810d78724b23790c006fb07f8f289521a54ca1885490f8cf7e5b2d5a721d7271",
+      "sha256": "3404fd8e36452ebe84b86dfa6bdaeba9978b283d71084e5c2609b4ba072b0c9c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9974272847175598
+      "max": 1.0
     },
     {
       "filename": "000333.npy",
-      "sha256": "b1af12420f75844bcac2fb7fa0bd25822fcff1044772280329c7fbcc463c242b",
+      "sha256": "dd6e4959b85fe51a9074e4c72cd8be7df8542437ce1e4f846eae572d56c4eec4",
       "bytes": 262272,
-      "min": 0.06078506261110306,
-      "max": 0.9858195185661316
+      "min": 0.0393650159239769,
+      "max": 0.9594384431838989
     },
     {
       "filename": "000334.npy",
-      "sha256": "1c9926b07c1500b02747e33daf98477acfc6853d1ceaf9546643015bbf3bbad8",
+      "sha256": "dc7c2db53a2c8dc5cc93acb972fbb2b91a79dc402d2293ceb39174d26273190c",
       "bytes": 262272,
-      "min": 0.0049979109317064285,
-      "max": 0.635089099407196
+      "min": 0.005145500414073467,
+      "max": 0.6962291598320007
     },
     {
       "filename": "000335.npy",
-      "sha256": "fecbfb7d17f649dd18601ce5bc17a5d9789b973c9a2e037013d1de3f7d0b8948",
+      "sha256": "73a8dba6c24bd7ca2e1e6c479d85be6f67ccf00ac22a4056a1526a6b9b0af596",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9651700854301453
+      "max": 1.0
     },
     {
       "filename": "000336.npy",
-      "sha256": "f2e78c675fd0a8305606aab1420c1a395905c0e83692f280b28178c05a74f4bb",
+      "sha256": "6bb030d41eb9f71060e5c6b60d7784a2508888b5d3de540718d024cc26634d6c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.975014865398407
+      "max": 1.0
     },
     {
       "filename": "000337.npy",
-      "sha256": "546f78ac6bd17bfd20870c9b6b7bba068d38b2cc4e5c44db5c07d5fd483bad67",
+      "sha256": "9547363e45ecb44f1616b6688f70b7bf75a3339e5ae4418a55392c632a5bde04",
       "bytes": 262272,
-      "min": 0.0179765522480011,
+      "min": 0.03181597217917442,
       "max": 1.0
     },
     {
       "filename": "000338.npy",
-      "sha256": "913cfd6f6d45c4bb74d7ecdf63b8e707938acd953d41065605ef29bc199e8eca",
+      "sha256": "f6d0f0ebbce9d9eb8943a930eae89fb6e5f2db4d3358cf285b28d0555aa79680",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.008774944581091404,
       "max": 1.0
     },
     {
       "filename": "000339.npy",
-      "sha256": "62bfbd14321766051d734ecfdf04d45f2a344bbf6de6497a36330ef84e7c1d28",
+      "sha256": "9ea19978e6e5da01b449f0dce0e2b18986672b5121fa21ba1691c3101d517866",
       "bytes": 262272,
-      "min": 0.044800881296396255,
-      "max": 0.938909113407135
+      "min": 0.04789421707391739,
+      "max": 0.9730960130691528
     },
     {
       "filename": "000340.npy",
-      "sha256": "5095e637bc44bbd13a47672c07546094c3d587be36da8fc11bf0fc676dd60d4e",
+      "sha256": "66fa51e717f08fcf1b6799ee77af2924337602796996c5ddf8fff56ce5564954",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9971163272857666
+      "min": 0.0020937463268637657,
+      "max": 1.0
     },
     {
       "filename": "000341.npy",
-      "sha256": "7a8ce638a78ac80649b6db3647342f84c7af03f62669f3902f371cacee8cf83b",
+      "sha256": "4de3bc6f96fac1071e0e0eb6e606eed30e43c7038b0386050fe9be339cd6c4d8",
       "bytes": 262272,
-      "min": 0.025485597550868988,
-      "max": 0.9950845837593079
+      "min": 0.03616930544376373,
+      "max": 0.9938133358955383
     },
     {
       "filename": "000342.npy",
-      "sha256": "9560a3467fe22a7aa713adfae059ea5f46d6ecf826ad8277c67429925699ae7b",
+      "sha256": "5bacb2f8f0bd0ff71f7fa58e7be9c6f424afa14237f393113009bb521ab8fd81",
       "bytes": 262272,
-      "min": 0.17428496479988098,
-      "max": 0.9681332111358643
+      "min": 0.11550536006689072,
+      "max": 1.0
     },
     {
       "filename": "000343.npy",
-      "sha256": "14ad9be9627fb97a00274911f366c0837648851601f7a3f701d3d10d6b2be791",
+      "sha256": "f5055966c0e32fa3c9c972a9ee7e64e74dc888ac2b9b9d92246785fe50880af2",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9849380254745483
+      "min": 0.0038851359859108925,
+      "max": 1.0
     },
     {
       "filename": "000344.npy",
-      "sha256": "a6245ad4089abdd03f7c17b91dab7c595988d05ebbe935fe77889b912123a761",
+      "sha256": "9aa1a24ef7980f49729d973e5853f9a4e3fa0c4fffde2c57bc958d4b3c2d976d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000345.npy",
-      "sha256": "477980dd0840abc3b9c14466fd17bd5bc5a1ab0c230e1fd57cc4e94a4650318d",
+      "sha256": "624c8d9adf0fedcabda540a082eb5cc647e0f8e325e74d2f62ec49f49d0d55d1",
       "bytes": 262272,
-      "min": 0.0019690068438649178,
+      "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000346.npy",
-      "sha256": "18b466f9883ed9aa69f4ed833ca2204d10378e6a84e61e2df8c8c12e55cf0746",
+      "sha256": "fd9d53446d5d3ba8a8eed62c3b5de0e709b87af75406121417dd533b44bf4ece",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000347.npy",
-      "sha256": "64490676d6f31ef69b4dae0c00331d2ce28d4adbdaf1cbae2ce382893abbe077",
+      "sha256": "8fbafb2b87fc8ada900308af1ca46b6999182676ef595319b3d85b342f0d0274",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9918237328529358
     },
     {
       "filename": "000348.npy",
-      "sha256": "7bc40990f873ae4af15ab200ed66a0b85e1f456cec9eff9efb5305daa2eeb03f",
+      "sha256": "7be22badc3e3bafd8b16fe821f7ed0b8464a54e8aae82a80224ab26651b736af",
       "bytes": 262272,
-      "min": 0.07399715483188629,
-      "max": 0.8738785982131958
+      "min": 0.08012621104717255,
+      "max": 0.9684521555900574
     },
     {
       "filename": "000349.npy",
-      "sha256": "c51e98bbd022d6100dae72f93476031995672e91d1e8d3684b516f369901e6e0",
+      "sha256": "b6abe11db4120625ef2b93d0237ec3a90253e8b2e47e51df8b812d9cc8e22dac",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000350.npy",
-      "sha256": "d37bd94112be4c6c16b3dbe7e9b5ddbeeaff4f296afc735029df9fad47543195",
+      "sha256": "65d4dbc9e76d82bf5cea4e179910475320d6f3762f677fd549beaaac89fd1f63",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9327046871185303
+      "min": 0.002786199562251568,
+      "max": 1.0
     },
     {
       "filename": "000351.npy",
-      "sha256": "6be7d993c0d592b893e8060384bbd162d8a68cfa13dc9c45dc0761b78689c5ea",
+      "sha256": "5bf0befb2c647680ae2c03822f70a9a6e8d8f89c95b8a35612259b955ca486fe",
       "bytes": 262272,
-      "min": 0.04681834578514099,
-      "max": 0.9425311088562012
+      "min": 0.02780311182141304,
+      "max": 1.0
     },
     {
       "filename": "000352.npy",
-      "sha256": "8c1324c83c835bafc8a86e26a075e25232893007569125721711a5a936bd85a8",
+      "sha256": "a76b1cdeaa0d2b712bd7097704f3f30c3eebedcefa395b7c79fde1963fb89e65",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9276443123817444
+      "max": 0.9558091759681702
     },
     {
       "filename": "000353.npy",
-      "sha256": "3342b5166f95c80041addef3de9a90458bc69bc5a8aa43c2e42cef61c507941f",
+      "sha256": "7ab7bf3d604191369e576927231124a55c6b5b63cc0e5f6d4970f9f4f492e940",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000354.npy",
-      "sha256": "b0cebf2c77062f2d152958efaadbf3e232ec53174045b4b480b4d27a9893f6a9",
+      "sha256": "5c586ac6e12bf9554ea89275c145bbeeb71b284e49a99da4551c410b239ac486",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000355.npy",
-      "sha256": "a164581b6d80dfdce9965e7a39bca71ecd45c35f4e6da8a929cc9bb5134ce023",
+      "sha256": "5d06311c973323f7ef038e4bf53b4224639e108edae030184473b20aa9781dd9",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.008637987077236176,
       "max": 1.0
     },
     {
       "filename": "000356.npy",
-      "sha256": "7d8835c0c124d47369fe0d41a438fdf72960dbc3e100d61de476443733e4ff50",
+      "sha256": "ed7bafc23c414ae3e3fd86a91a3986e2a4bdb28591b6332c9b0dc2586484f87a",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000357.npy",
-      "sha256": "04f0dec90612b7b61cba991bf0a6eceb6c361217500a7eead6ccda9ea47a68ba",
+      "sha256": "8d51b347ec5fac71d0268651bc2c43a4053c436739e6c3278af2d0b5ccc624fa",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9869118332862854
     },
     {
       "filename": "000358.npy",
-      "sha256": "a63d2529b1ae991f95a913da9ce9a6944cb59b8b1618f5ef5abe7235b97af97d",
+      "sha256": "3f1044131a515fb70f9b7992b71f16da17b94771f2e72a5cfed1411ba1b191cc",
       "bytes": 262272,
-      "min": 0.07247812300920486,
-      "max": 0.918867290019989
+      "min": 0.076124407351017,
+      "max": 0.9713274836540222
     },
     {
       "filename": "000359.npy",
-      "sha256": "ecd47ef7b398566ac31932d828a2318412aa5acd2c17badba047289847aa8ef5",
+      "sha256": "80e9103d00393ed8ffdbb0ed264a43c27d5a7748ae9bb686e56da22a3477d468",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000360.npy",
-      "sha256": "90ef44e540cdf0de67325f15d7f721fe35bf805a4c21f15cbf87c7568646ea52",
+      "sha256": "0a6fcda0cc3f90d018805ab42859ee10913618409dd2e7d92e131c894af989b8",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9391628503799438
+      "max": 0.94035804271698
     },
     {
       "filename": "000361.npy",
-      "sha256": "fcb8ff510cdb63d3279144f8b0176507b4977fcc8e22329dbc367159a825698f",
+      "sha256": "4d549cb23840565eac4f41f12a6b8dc59042d899079fc194ffdc67e942a7a8d1",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9465087652206421
+      "max": 0.9387686252593994
     },
     {
       "filename": "000362.npy",
-      "sha256": "fdf206e0403bb819ce8e7cb8d56d906ee7e60e8fe649f09f584bfcab733824d9",
+      "sha256": "aab2ebabfb4cd285ebcfbdeb619f36e82ce31599ec405ca651508949b1f17095",
       "bytes": 262272,
-      "min": 0.04430198669433594,
-      "max": 0.9620072245597839
+      "min": 0.07071131467819214,
+      "max": 0.9933299422264099
     },
     {
       "filename": "000363.npy",
-      "sha256": "81a614a50420079545ee5e2c06e5d331bce0929760194785780cf9fd825cb435",
+      "sha256": "c28b678d6cc1078487d940baa44790247369645efcf4303ac05a2a12ac4f7a7f",
       "bytes": 262272,
       "min": 0.0,
-      "max": 1.0
+      "max": 0.9943797588348389
     },
     {
       "filename": "000364.npy",
-      "sha256": "fc9a5eb243681c4abd67763d383454cd8808e34adc918935e98c070da20cc8b0",
+      "sha256": "af5e86329f8d1a1cf18a25183cacb700c0219e887b5aed0d10d64984df1b2bf7",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000365.npy",
-      "sha256": "0b36195d26ae8030f35f389842c538ff1145ab08d915e28445d00aa6de45c72e",
+      "sha256": "88afed2da882bb5a2026b36c51760dde821703f240aa303995770fda007bc5c9",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9461886882781982
+      "min": 0.004084106534719467,
+      "max": 0.9921416640281677
     },
     {
       "filename": "000366.npy",
-      "sha256": "d8a9a438c11b14d95f6aab61ae9a75ee0ea749bd6cd82678d0e7c28e8e9d1e7f",
+      "sha256": "e89da693027f5e79ee6328d738fc6f0aac77b8f90600e905599efc1e17d6a0d2",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9028931856155396
+      "min": 0.0093156099319458,
+      "max": 0.9651293754577637
     },
     {
       "filename": "000367.npy",
-      "sha256": "66cbf49a5d7807fed5cfee12b0ab0de471dad89a58cea49dd2f02bbe5c902255",
+      "sha256": "7689576b328e2bea45d9f7488cdbd83d91fbde109b6fd27bf3f93294fb91f25d",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9677664041519165
+      "min": 0.011530287563800812,
+      "max": 1.0
     },
     {
       "filename": "000368.npy",
-      "sha256": "6103782401889ea7aeacdb9e6e7866bc46856e3f3beb992df13c05346fe837e0",
+      "sha256": "cf69b2433ada80c788a848060b78affae685fdb2ac36178ca99ca4df5f3333e6",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000369.npy",
-      "sha256": "8bc807c4d517605b22a12b8214e77c72abb27bf63eddc96f38b0b1ce38913982",
+      "sha256": "7633e81021df9861ceab8d4f0e59f700b54b0264051f7282edeacd852a9486bb",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.006278930697590113,
       "max": 1.0
     },
     {
       "filename": "000370.npy",
-      "sha256": "3d1f900d3fb07f0565f3c3febd118f173dcb94509a1d55261a2dc0eebfb61f7c",
+      "sha256": "fe6460a559b05d23adfbc4fbe1e203379308ac25afee0648f76eb954b4451ccd",
       "bytes": 262272,
-      "min": 0.1638270616531372,
-      "max": 0.9727233648300171
+      "min": 0.1539309322834015,
+      "max": 1.0
     },
     {
       "filename": "000371.npy",
-      "sha256": "91ff49198914bf1a998b349a29f8d341e16765f9864404892a7c4852854a8948",
+      "sha256": "1cce50d0ebc5d3837a61d1ce88887fd39f5368bf8bfb60c0af10e6fe0edef2f4",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9091199636459351
+      "max": 0.9780153632164001
     },
     {
       "filename": "000372.npy",
-      "sha256": "9b5e0d8717392215bd3b202d14f90048df9a4b248be680a39c528948f2f145d3",
+      "sha256": "bfe73910edf4ecbd5627ffe4d370867c9db63e0025e818a632af88627f3b33af",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.9631372094154358
+      "max": 0.9937553405761719
     },
     {
       "filename": "000373.npy",
-      "sha256": "05c2f100c716e487b15962e05f7d6d9ebcd7f5663cbf58c40d09b87074ac007c",
+      "sha256": "9fa8df72a1d43dac887c73dc639784acaeda3aea30ae8331c9132c88a8d0a9b3",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000374.npy",
-      "sha256": "431a6c41bf44fbb55222c9b9084042ffe27af643fa5888c88caeb069de75a332",
+      "sha256": "3076bb5de8515b5ee755df7cce6f75c1e28d04bf3d3ba4dddba47e2522509906",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000375.npy",
-      "sha256": "60932d0b0778af08193484904b2d01759c810d1157a2710c448ab0feb16edc16",
+      "sha256": "035d7aad45c5e26befdce32f2b29ce770cdcf2d921097d06515afa4c4ac2eb7b",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.018394052982330322,
       "max": 1.0
     },
     {
       "filename": "000376.npy",
-      "sha256": "5c5e31fa367b1ad5ed46e004097b2f92ea90105c6be4377071e2795dedc26aba",
+      "sha256": "bd7111ecddf6ea25db1e750c8e69e309a2311f34497a5389d1cc0c5e48fae1e1",
       "bytes": 262272,
-      "min": 0.00755265261977911,
+      "min": 0.04304119572043419,
       "max": 1.0
     },
     {
       "filename": "000377.npy",
-      "sha256": "100c94050114acdd5cd47a713a3626a284cc9e3cb866433f7110927899e45a9f",
+      "sha256": "6e184cc5d1aa86e23a75e8e04474d2c7d8f0553c7782562612eb859c9b8d9fde",
       "bytes": 262272,
-      "min": 0.041958801448345184,
-      "max": 0.975462019443512
-    },
-    {
-      "filename": "000378.npy",
-      "sha256": "72605d7e8a9fc31a3bca2028c9c95b39730b6f1b0ba442be7ad62ef55758049f",
-      "bytes": 262272,
-      "min": 0.0035670495126396418,
+      "min": 0.042606838047504425,
       "max": 1.0
     },
     {
-      "filename": "000379.npy",
-      "sha256": "e0e4d56df0dad42be58f3f87d9c80eba65845dc6a4075f541cbccf90035ecd82",
+      "filename": "000378.npy",
+      "sha256": "2e253c32834b4a3885f0fb153df704ea54bda16d57804e329bb1ad35d130b610",
       "bytes": 262272,
-      "min": 0.0036662076599895954,
+      "min": 0.01092191506177187,
+      "max": 0.9967480301856995
+    },
+    {
+      "filename": "000379.npy",
+      "sha256": "69fe64434d4c3ff5cab8d7b16de31f26effa5b270d04730a670d9a195abf7a91",
+      "bytes": 262272,
+      "min": 0.00412065489217639,
       "max": 1.0
     },
     {
       "filename": "000380.npy",
-      "sha256": "f17c5135231c1a5e430a320b398b30e400457949ec4fb110f0e527c3c711ecb3",
+      "sha256": "c25436a3cc5c6530ccaeefe456ca5d221e058bad7eb3c05ce1a21140cc41748c",
       "bytes": 262272,
       "min": 0.0,
-      "max": 0.993089497089386
+      "max": 1.0
     },
     {
       "filename": "000381.npy",
-      "sha256": "5ac2d7f5419cd044f17817d201247e3fb8b065aeff9c0efbbda71cc5af2e8e97",
+      "sha256": "e34513263b116eff1cae711c936f80ac13ef57e39766219fbe821e07792a125d",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000382.npy",
-      "sha256": "ae719c9aea48db32d67fbcf10678d9cad115e3bef7fc24a1eeeac21345c5c8d8",
+      "sha256": "3ecef63d6dca71ef8a519acd3455e795112907669a9c5c2e284fbf1c7d7ac5a5",
       "bytes": 262272,
-      "min": 0.020012080669403076,
-      "max": 0.9560011029243469
+      "min": 0.014638935215771198,
+      "max": 0.9820588827133179
     },
     {
       "filename": "000383.npy",
-      "sha256": "9440597d94278de427c4626bc3e61e298132b9b2f9f7680058fd95a52b28ff68",
+      "sha256": "23130f005f0b4048b4c9d55c902d81ccb727797601da551715cfddf52619d506",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000384.npy",
-      "sha256": "a4084c6ae9ca7e85cf678debfc793229c6a3424f91a2046d6cc05d1b5a20e09d",
+      "sha256": "d759b3b78927c84dbacc71d6361d55a2606dec20f4972320b46587a5c678bbda",
       "bytes": 262272,
-      "min": 0.1411842405796051,
-      "max": 0.9141459465026855
+      "min": 0.14168672263622284,
+      "max": 0.9781758189201355
     },
     {
       "filename": "000385.npy",
-      "sha256": "7003830f7025a51419ae773662b03002e30eba1668f1102b1d72d7208f192cfb",
+      "sha256": "3aae9744cda30ec1faf55cc3a353922acdb4ad87de3be9d7c152d32ed801ea00",
+      "bytes": 262272,
+      "min": 0.0,
+      "max": 0.9895402789115906
+    },
+    {
+      "filename": "000386.npy",
+      "sha256": "457950ed659d4d7a5cdab216f0fbed72cc265adbf37de856ac5bf4eff3932391",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
-      "filename": "000386.npy",
-      "sha256": "aefbea754dca91d70016156e558bbd4440fea4a512352de6cd482710ecdd4d99",
-      "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9805753827095032
-    },
-    {
       "filename": "000387.npy",
-      "sha256": "5d26e9f22f3f4d1a8e2c8fed908595a2969f0b018c16360759fe5de499917f7d",
+      "sha256": "c863db0e63ac1c47a0c0530729ae08b254db2be883fee8b4e1e2f84c78c73576",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9771148562431335
+      "min": 0.004020489752292633,
+      "max": 0.9851275682449341
     },
     {
       "filename": "000388.npy",
-      "sha256": "62eba1d96fb7caad8a8ef7d3db94d707d8bffec744a60471debe958269464292",
+      "sha256": "3feffb66dcf2bff0df2c1b9d364382acb17abecc1db1dae7bc24885dd4cf6962",
       "bytes": 262272,
-      "min": 0.0,
+      "min": 0.004833592101931572,
       "max": 1.0
     },
     {
       "filename": "000389.npy",
-      "sha256": "2e0c5fc764843df89968c191699659d47556fe4fdde643eced902534aa02462a",
+      "sha256": "43ee2fb37c89e1a5192ad1d4804434e085050e8c1ea3939ea936151079951a57",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000390.npy",
-      "sha256": "e7fb2fd5e4e2d25f27d7d7fc545e10780b9121d544899e783aeaa4a4b706b093",
+      "sha256": "a88475edfe72a9b8efe8d4907bcc6771dfd5cf5a2de0e956cebb759bb5023d11",
       "bytes": 262272,
-      "min": 0.003694870276376605,
-      "max": 0.9425182938575745
+      "min": 0.0,
+      "max": 0.9932621121406555
     },
     {
       "filename": "000391.npy",
-      "sha256": "f4619f7ccc2948c7631ae24117bf876230c81f3c3fb989cb923d780a383b19dc",
+      "sha256": "3fe2e8b6ed3e11f20ef32d3c57416b3aa450514989da66135c5294538799e5cd",
       "bytes": 262272,
-      "min": 0.005900878459215164,
-      "max": 0.9963099956512451
+      "min": 0.04246111214160919,
+      "max": 1.0
     },
     {
       "filename": "000392.npy",
-      "sha256": "5d7cd65b546e21aa710c56347b9bf416629a3d2ade4fed355b00938f6b30b2be",
+      "sha256": "af07490615d907f6e69d0e16d7575d3ae8c66b0b77351026667be42e0ce72e92",
       "bytes": 262272,
-      "min": 0.02594270184636116,
+      "min": 0.02710549160838127,
       "max": 1.0
     },
     {
       "filename": "000393.npy",
-      "sha256": "5aeafef5c04966b269f7227d734e059ff2e53d9fdc1d410cd5b8ea58f53abb8e",
+      "sha256": "f001ffcc50e2ca671ce70a188378e968976f949933107ffa4a7ebdcd68bdf2cd",
       "bytes": 262272,
-      "min": 0.00840991921722889,
-      "max": 0.9636700749397278
+      "min": 0.0031413293909281492,
+      "max": 0.9655524492263794
     },
     {
       "filename": "000394.npy",
-      "sha256": "04347cb8bc033ab408b9deb412af3166c09eeb2488bd55659bf53640fad729fd",
+      "sha256": "598b0e94c1d8762b8912d363913e009ad1eccb7e652d7c146ccf8eb1ed2060bd",
       "bytes": 262272,
-      "min": 0.012480948120355606,
-      "max": 0.9934970140457153
+      "min": 0.017993059009313583,
+      "max": 1.0
     },
     {
       "filename": "000395.npy",
-      "sha256": "116e5890f7371e418d2e442a1a6ed38592e2bbc8880425cabee91f71c4e7d7e4",
+      "sha256": "0accdf01dabb29d075001afd109806c1101379837fcf88bef466d5e6143ffc2a",
       "bytes": 262272,
-      "min": 0.04845327138900757,
+      "min": 0.041565075516700745,
       "max": 1.0
     },
     {
       "filename": "000396.npy",
-      "sha256": "f51fd740c35e7278e1ef519e54053061f971b89480cd5e76daef10060dad59a0",
+      "sha256": "089641e396e0d9c91a34c2f12c9d831328a8911043ff729e70f143eb3c5feeb8",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.9576417803764343
+      "min": 0.03605720028281212,
+      "max": 0.9909985661506653
     },
     {
       "filename": "000397.npy",
-      "sha256": "203ac424c1814da217c9e3b7618ddbba1e1ed0b10db499960c51778144f23043",
+      "sha256": "ae5cd6b3806daba8fb18c6fe618c0055a5feafa42b0226a67183322b5de5626a",
       "bytes": 262272,
-      "min": 0.00904629286378622,
+      "min": 0.014768937602639198,
       "max": 1.0
     },
     {
       "filename": "000398.npy",
-      "sha256": "7a9b866364512b0bc4bc93f96e60243b3df462f17cf0e842b79d7813d6373c64",
+      "sha256": "93b68770f70ce3113483ac8780086bdb56c794f989e65ae78f256a43e11b9149",
       "bytes": 262272,
       "min": 0.0,
       "max": 1.0
     },
     {
       "filename": "000399.npy",
-      "sha256": "2aa57284564daf47cb09f1bcb68fd060b364c62678750c51d43e74c7aa35a9cc",
+      "sha256": "d17a343eae5e0fce04c6b02fbb69d33ac5a444f2195c98d5f3ff99378118980b",
       "bytes": 262272,
-      "min": 0.0,
-      "max": 0.7687760591506958
+      "min": 0.002391580492258072,
+      "max": 0.8273603320121765
     }
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "weights": [
+    "weights/final.pt"
+  ],
+  "self_ensemble": "x1",
+  "device": "cuda",
+  "batch_size": 1,
+  "warmup": 30,
+  "runs": 200,
+  "milliseconds_per_image": {
+    "mean": 11.355612409679452,
+    "p50": 11.34994799940614,
+    "p95": 11.422263559506973
+  },
+  "models": 1,
+  "parameters_per_model": [
+    580609
+  ],
+  "peak_vram_mib": 35.69677734375
+}

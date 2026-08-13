@@ -1,0 +1,20 @@
+{
+  "weights": [
+    "weights/v4a_ablation/v2_control/best_balanced.pt"
+  ],
+  "self_ensemble": "x1",
+  "device": "cuda",
+  "batch_size": 1,
+  "warmup": 30,
+  "runs": 200,
+  "milliseconds_per_image": {
+    "mean": 11.350060044860584,
+    "p50": 11.339179502101615,
+    "p95": 11.449733657354955
+  },
+  "models": 1,
+  "parameters_per_model": [
+    580609
+  ],
+  "peak_vram_mib": 35.69677734375
+}

@@ -29,6 +29,7 @@ from kla_restore.model import (
 )
 from kla_restore.runtime import choose_device
 from compare_paired import compare, exact_sign_pvalue, read_rows
+from train import set_v4b_stage, v4b_parameter_groups
 
 
 class SplitTests(unittest.TestCase):
@@ -249,6 +250,26 @@ class ModelAndMetricTests(unittest.TestCase):
         gradient = model.frequency_branch.project.weight.grad
         self.assertIsNotNone(gradient)
         self.assertGreater(float(gradient.abs().sum()), 0.0)
+
+    def test_v4b_staging_freezes_only_the_backbone(self) -> None:
+        model = KLARestoreNet(
+            width=8,
+            blocks=1,
+            variant="v4b",
+            frequency_width=8,
+            frequency_blocks=1,
+        )
+        backbone, branch = v4b_parameter_groups(model)
+        self.assertFalse(set(backbone) & set(branch))
+        self.assertEqual(
+            sum(x.numel() for x in backbone + branch),
+            sum(x.numel() for x in model.parameters()),
+        )
+        set_v4b_stage(model, branch_only=True)
+        self.assertTrue(all(not x.requires_grad for x in backbone))
+        self.assertTrue(all(x.requires_grad for x in branch))
+        set_v4b_stage(model, branch_only=False)
+        self.assertTrue(all(x.requires_grad for x in backbone + branch))
 
     def test_data_consistency_is_lower_for_matching_projection(self) -> None:
         high = torch.rand(2, 1, 24, 20)

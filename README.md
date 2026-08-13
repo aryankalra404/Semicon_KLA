@@ -208,6 +208,20 @@ six-scenario stress robustness, batch-1 latency/VRAM, and paired bootstrap and
 sign-test evidence. v4b is experimental and never replaces `weights/final.pt`
 unless it beats its matched control under the documented promotion gate.
 
+The final optimization test uses a staged schedule designed for v4b's
+zero-initialized auxiliary path. For epochs 1-5 it freezes all inherited v2
+parameters and trains only the frequency branch. It then unfreezes the network
+for up to ten epochs using a `5e-6` backbone learning rate and `5e-5` branch
+learning rate, with balanced-score early stopping. The command evaluates both
+the protected final v2 and staged challenger; it never promotes automatically:
+
+```bash
+./run_gpu_matrix.sh v4b-staged
+```
+
+The challenger must meet the same PSNR/SSIM/LPIPS, stress, latency, and paired
+statistical gates before `weights/final.pt` can be changed.
+
 ## Evaluate a trained checkpoint
 
 ```bash

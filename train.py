@@ -42,6 +42,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--learning-rate", type=float, default=2e-4)
+    parser.add_argument(
+        "--freeze-backbone-epochs",
+        type=int,
+        default=0,
+        help="For v4b, train only frequency_branch for the first N epochs",
+    )
+    parser.add_argument(
+        "--backbone-learning-rate",
+        type=float,
+        help="v4b backbone LR after staged unfreezing (defaults to --learning-rate)",
+    )
+    parser.add_argument(
+        "--branch-learning-rate",
+        type=float,
+        help="v4b frequency-branch LR (defaults to --learning-rate)",
+    )
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--width", type=int, default=48)
     parser.add_argument("--blocks", type=int, default=12)
@@ -85,6 +101,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--edge-weight", type=float, default=0.1)
     parser.add_argument("--ema-decay", type=float, default=0.999)
     parser.add_argument("--gradient-clip", type=float, default=1.0)
+    parser.add_argument(
+        "--early-stopping-patience",
+        type=int,
+        default=0,
+        help="Stop after N validation epochs without balanced-score improvement; 0 disables",
+    )
+    parser.add_argument("--early-stopping-min-delta", type=float, default=0.0)
     parser.add_argument("--skip-data-audit", action="store_true")
     return parser.parse_args()
 
@@ -95,6 +118,29 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+
+def v4b_parameter_groups(
+    model: KLARestoreNet,
+) -> tuple[list[torch.nn.Parameter], list[torch.nn.Parameter]]:
+    """Return disjoint backbone and frequency-branch parameter lists."""
+    if model.variant != "v4b":
+        raise ValueError("Differential parameter groups require a v4b model")
+    backbone, branch = [], []
+    for name, parameter in model.named_parameters():
+        (branch if name.startswith("frequency_branch.") else backbone).append(parameter)
+    if not backbone or not branch:
+        raise ValueError("v4b parameter grouping produced an empty group")
+    return backbone, branch
+
+
+def set_v4b_stage(model: KLARestoreNet, *, branch_only: bool) -> None:
+    """Freeze or unfreeze v4b's inherited backbone without touching its branch."""
+    backbone, branch = v4b_parameter_groups(model)
+    for parameter in backbone:
+        parameter.requires_grad_(not branch_only)
+    for parameter in branch:
+        parameter.requires_grad_(True)
 
 
 @torch.no_grad()
@@ -116,6 +162,13 @@ def main() -> None:
     args = parse_args()
     if args.resume and args.initialize_from:
         raise SystemExit("Use only one of --resume and --initialize-from")
+    if args.freeze_backbone_epochs < 0 or args.early_stopping_patience < 0:
+        raise SystemExit("freeze epochs and early-stopping patience must be non-negative")
+    staged_v4b = args.freeze_backbone_epochs > 0
+    if staged_v4b and args.variant != "v4b":
+        raise SystemExit("--freeze-backbone-epochs is supported only for v4b")
+    if args.early_stopping_min_delta < 0:
+        raise SystemExit("--early-stopping-min-delta must be non-negative")
     set_seed(args.seed)
     device = choose_device(args.device)
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -230,8 +283,25 @@ def main() -> None:
         edge_weight=args.edge_weight,
         consistency_weight=args.consistency_weight,
     )
-    optimizer = AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
+    backbone_lr = args.backbone_learning_rate or args.learning_rate
+    branch_lr = args.branch_learning_rate or args.learning_rate
+    if staged_v4b:
+        backbone_parameters, branch_parameters = v4b_parameter_groups(model)
+        optimizer = AdamW(
+            [
+                {"params": backbone_parameters, "lr": 0.0, "group_name": "backbone"},
+                {"params": branch_parameters, "lr": branch_lr, "group_name": "branch"},
+            ],
+            weight_decay=args.weight_decay,
+        )
+        scheduler = None
+    else:
+        optimizer = AdamW(
+            model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay
+        )
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=args.epochs
+        )
     use_amp = device.type == "cuda"
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
     best_ssim = -1.0
@@ -239,6 +309,7 @@ def main() -> None:
     best_balanced = -1.0
     history = []
     start_epoch = 1
+    epochs_without_improvement = 0
 
     if args.resume:
         checkpoint = torch.load(args.resume, map_location="cpu", weights_only=False)
@@ -253,7 +324,7 @@ def main() -> None:
         ema_model.load_state_dict(checkpoint.get("ema_model", checkpoint["model"]))
         if "optimizer" in checkpoint:
             optimizer.load_state_dict(checkpoint["optimizer"])
-        if "scheduler" in checkpoint:
+        if scheduler is not None and checkpoint.get("scheduler") is not None:
             scheduler.load_state_dict(checkpoint["scheduler"])
         start_epoch = int(checkpoint["epoch"]) + 1
         best_ssim = float(checkpoint.get("best_ssim", checkpoint["metrics"]["ssim"]))
@@ -267,6 +338,9 @@ def main() -> None:
         history_path = args.output_dir / "history.json"
         if history_path.is_file():
             history = json.loads(history_path.read_text())
+        epochs_without_improvement = int(
+            checkpoint.get("epochs_without_improvement", 0)
+        )
 
     print(
         f"device={device} train={len(train_set)} "
@@ -274,6 +348,19 @@ def main() -> None:
         f"parameters={parameter_count(model):,}"
     )
     for epoch in range(start_epoch, args.epochs + 1):
+        if staged_v4b:
+            branch_only = epoch <= args.freeze_backbone_epochs
+            set_v4b_stage(model, branch_only=branch_only)
+            fine_tune_epochs = max(1, args.epochs - args.freeze_backbone_epochs)
+            if branch_only:
+                stage_progress = (epoch - 1) / max(1, args.freeze_backbone_epochs)
+                current_backbone_lr = 0.0
+            else:
+                stage_progress = (epoch - args.freeze_backbone_epochs - 1) / fine_tune_epochs
+                current_backbone_lr = backbone_lr
+            cosine_factor = 0.5 * (1.0 + np.cos(np.pi * stage_progress))
+            optimizer.param_groups[0]["lr"] = current_backbone_lr * cosine_factor
+            optimizer.param_groups[1]["lr"] = branch_lr * cosine_factor
         model.train()
         started = time.perf_counter()
         running_loss = 0.0
@@ -297,7 +384,8 @@ def main() -> None:
             running_loss += float(loss.detach()) * lr.shape[0]
             for name, value in parts.items():
                 running_parts[name] = running_parts.get(name, 0.0) + value * lr.shape[0]
-        scheduler.step()
+        if scheduler is not None:
+            scheduler.step()
 
         metrics = (
             validate(ema_model, val_loader, device)
@@ -313,9 +401,34 @@ def main() -> None:
             "val_psnr": metrics["psnr"],
             "val_ssim": metrics["ssim"],
             "seconds": time.perf_counter() - started,
+            "learning_rates": {
+                str(group.get("group_name", index)): group["lr"]
+                for index, group in enumerate(optimizer.param_groups)
+            },
+            "trainable_parameters": sum(
+                parameter.numel() for parameter in model.parameters()
+                if parameter.requires_grad
+            ),
         }
         history.append(record)
         print(json.dumps(record))
+
+        balanced = metrics["psnr"] + 10 * metrics["ssim"]
+        improved_balanced = balanced > best_balanced + args.early_stopping_min_delta
+        improved_ssim = metrics["ssim"] > best_ssim
+        improved_psnr = metrics["psnr"] > best_psnr
+        if improved_ssim:
+            best_ssim = metrics["ssim"]
+        if improved_psnr:
+            best_psnr = metrics["psnr"]
+        if improved_balanced:
+            best_balanced = balanced
+            epochs_without_improvement = 0
+        elif staged_v4b and epoch <= args.freeze_backbone_epochs:
+            # Branch warm-up is intentionally not an early-stopping trial.
+            epochs_without_improvement = 0
+        else:
+            epochs_without_improvement += 1
 
         checkpoint = {
             "model": ema_model.state_dict(),
@@ -341,16 +454,20 @@ def main() -> None:
                 "initialized_from": (
                     str(args.initialize_from) if args.initialize_from else None
                 ),
+                "freeze_backbone_epochs": args.freeze_backbone_epochs,
+                "backbone_learning_rate": backbone_lr,
+                "branch_learning_rate": branch_lr,
+                "early_stopping_patience": args.early_stopping_patience,
+                "early_stopping_min_delta": args.early_stopping_min_delta,
             },
             "optimizer": optimizer.state_dict(),
-            "scheduler": scheduler.state_dict(),
+            "scheduler": scheduler.state_dict() if scheduler is not None else None,
             "epoch": epoch,
             "metrics": metrics,
-            "best_ssim": max(best_ssim, metrics["ssim"]),
-            "best_psnr": max(best_psnr, metrics["psnr"]),
-            "best_balanced": max(
-                best_balanced, metrics["psnr"] + 10 * metrics["ssim"]
-            ),
+            "best_ssim": best_ssim,
+            "best_psnr": best_psnr,
+            "best_balanced": best_balanced,
+            "epochs_without_improvement": epochs_without_improvement,
         }
         torch.save(checkpoint, args.output_dir / "last.pt")
         if val_loader is None:
@@ -359,17 +476,28 @@ def main() -> None:
                 json.dumps(history, indent=2)
             )
             continue
-        if metrics["ssim"] > best_ssim:
-            best_ssim = metrics["ssim"]
+        if improved_ssim:
             torch.save(checkpoint, args.output_dir / "best_ssim.pt")
-        if metrics["psnr"] > best_psnr:
-            best_psnr = metrics["psnr"]
+        if improved_psnr:
             torch.save(checkpoint, args.output_dir / "best_psnr.pt")
-        balanced = metrics["psnr"] + 10 * metrics["ssim"]
-        if balanced > best_balanced:
-            best_balanced = balanced
+        if improved_balanced:
             torch.save(checkpoint, args.output_dir / "best_balanced.pt")
         (args.output_dir / "history.json").write_text(json.dumps(history, indent=2))
+        if (
+            args.early_stopping_patience > 0
+            and epochs_without_improvement >= args.early_stopping_patience
+        ):
+            print(
+                json.dumps(
+                    {
+                        "early_stop": True,
+                        "epoch": epoch,
+                        "best_balanced": best_balanced,
+                        "patience": args.early_stopping_patience,
+                    }
+                )
+            )
+            break
 
 
 if __name__ == "__main__":

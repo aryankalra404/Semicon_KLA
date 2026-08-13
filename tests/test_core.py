@@ -21,7 +21,9 @@ from kla_restore.model import (
     KLARestoreNet,
     build_model,
     initialize_v3_from_v2,
+    initialize_v4a_from_v2,
     model_config,
+    range_aware_input,
 )
 from kla_restore.runtime import choose_device
 
@@ -111,7 +113,22 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertIsNotNone(model.output.weight.grad)
         self.assertTrue(torch.isfinite(model.output.weight.grad).all())
 
-    def test_model_config_preserves_legacy_and_v3_variants(self) -> None:
+    def test_range_aware_input_preserves_raw_and_encodes_excursions(self) -> None:
+        inputs = torch.tensor([[[[-0.2, 0.4, 1.3]]]])
+        encoded = range_aware_input(inputs)
+        self.assertEqual(encoded.shape, (1, 4, 1, 3))
+        self.assertTrue(torch.equal(encoded[:, 0:1], inputs))
+        self.assertTrue(
+            torch.equal(encoded[:, 1], torch.tensor([[[0.0, 0.4, 1.0]]]))
+        )
+        self.assertTrue(
+            torch.allclose(encoded[:, 2], torch.tensor([[[0.0, 0.0, 0.3]]]))
+        )
+        self.assertTrue(
+            torch.equal(encoded[:, 3], torch.tensor([[[0.2, 0.0, 0.0]]]))
+        )
+
+    def test_model_config_preserves_all_variants(self) -> None:
         legacy = build_model({"width": 8, "blocks": 1})
         self.assertEqual(
             model_config(legacy), {"variant": "v2", "width": 8, "blocks": 1}
@@ -120,6 +137,8 @@ class ModelAndMetricTests(unittest.TestCase):
             8, 1, variant="v3", condition_dim=8, hr_width=8, hr_blocks=1
         )
         self.assertEqual(model_config(build_model(model_config(v3))), model_config(v3))
+        v4a = KLARestoreNet(8, 1, variant="v4a")
+        self.assertEqual(model_config(build_model(model_config(v4a))), model_config(v4a))
 
     def test_v3_warm_start_exactly_preserves_v2_output(self) -> None:
         torch.manual_seed(3)
@@ -137,6 +156,19 @@ class ModelAndMetricTests(unittest.TestCase):
         initialize_v3_from_v2(v3, v2.state_dict())
         inputs = torch.randn(2, 1, 12, 10)
         self.assertTrue(torch.equal(v2(inputs), v3(inputs)))
+
+    def test_v4a_warm_start_exactly_preserves_v2_output(self) -> None:
+        torch.manual_seed(5)
+        v2 = KLARestoreNet(width=8, blocks=2)
+        torch.nn.init.normal_(v2.upsample[-1].weight, std=0.02)
+        torch.nn.init.normal_(v2.upsample[-1].bias, std=0.02)
+        v4a = KLARestoreNet(width=8, blocks=2, variant="v4a")
+        copied, parameters = initialize_v4a_from_v2(v4a, v2.state_dict())
+        self.assertEqual(copied, len(v2.state_dict()))
+        self.assertEqual(parameters, sum(x.numel() for x in v2.state_dict().values()))
+        inputs = torch.randn(2, 1, 12, 10)
+        self.assertTrue(torch.equal(v2(inputs), v4a(inputs)))
+        self.assertTrue(torch.count_nonzero(v4a.range_stem.weight) == 0)
 
     def test_data_consistency_is_lower_for_matching_projection(self) -> None:
         high = torch.rand(2, 1, 24, 20)

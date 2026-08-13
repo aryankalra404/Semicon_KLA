@@ -27,6 +27,7 @@ from kla_restore.model import (
     KLARestoreNet,
     build_model,
     initialize_v3_from_v2,
+    initialize_v4a_from_v2,
     model_config,
     parameter_count,
 )
@@ -43,7 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--width", type=int, default=48)
     parser.add_argument("--blocks", type=int, default=12)
-    parser.add_argument("--variant", choices=("v2", "v3"), default="v2")
+    parser.add_argument("--variant", choices=("v2", "v3", "v4a"), default="v2")
     parser.add_argument("--condition-dim", type=int, default=32)
     parser.add_argument("--hr-width", type=int, default=48)
     parser.add_argument("--hr-blocks", type=int, default=2)
@@ -67,7 +68,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--initialize-from",
         type=Path,
-        help="Warm-start v3 from a v2 inference/training checkpoint",
+        help="Warm-start v3 or v4a from a v2 inference/training checkpoint",
     )
     parser.add_argument("--synthetic-probability", type=float, default=0.0)
     parser.add_argument(
@@ -176,8 +177,10 @@ def main() -> None:
         degradation_conditioning=not args.disable_degradation_conditioning,
     ).to(device)
     if args.initialize_from:
-        if args.variant != "v3":
-            raise SystemExit("--initialize-from is supported only for --variant v3")
+        if args.variant not in {"v3", "v4a"}:
+            raise SystemExit(
+                "--initialize-from is supported only for --variant v3 or v4a"
+            )
         source = torch.load(args.initialize_from, map_location="cpu", weights_only=False)
         source_config = source.get("model_config", {})
         if source_config.get("variant", "v2") != "v2":
@@ -186,19 +189,20 @@ def main() -> None:
             source_config.get("blocks", 12)
         ) != args.blocks:
             raise ValueError(
-                "--initialize-from width/blocks must match the requested v3 "
+                "--initialize-from width/blocks must match the requested model "
                 f"configuration; checkpoint={source_config}, "
                 f"requested width={args.width}/blocks={args.blocks}"
             )
-        copied_tensors, copied_parameters = initialize_v3_from_v2(
-            model, source["model"]
+        initializer = (
+            initialize_v3_from_v2 if args.variant == "v3" else initialize_v4a_from_v2
         )
+        copied_tensors, copied_parameters = initializer(model, source["model"])
         source_parameters = sum(value.numel() for value in source["model"].values())
         if copied_parameters != source_parameters:
             raise ValueError(
                 "Warm-start did not copy the complete v2 model: "
                 f"copied {copied_parameters:,}/{source_parameters:,} parameters. "
-                "For exact transfer, set --hr-width equal to --width."
+                "For exact v3 transfer, set --hr-width equal to --width."
             )
         print(
             f"initialized_from={args.initialize_from} tensors={copied_tensors} "

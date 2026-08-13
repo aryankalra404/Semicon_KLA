@@ -154,6 +154,27 @@ Only promote v3 if it improves both official validation metrics, or materially
 improves LPIPS/stress robustness while losing no more than `0.10 dB` PSNR and
 `0.002` SSIM. The committed v2 checkpoint remains the fallback.
 
+## Range-aware v4a experiment
+
+The isolated v4a experiment targets a KLA-specific observation: speckle noise
+can push NoisyLR intensities beyond the nominal ground-truth range. Its stem
+receives four deterministic channels: raw intensity, clipped intensity,
+positive overflow, and negative overflow. Raw measurements remain untouched.
+
+v4a otherwise preserves the compact v2 stem, trunk, and upsampler. Warm-starting
+copies the complete v2 model unchanged and initializes a separate three-channel
+auxiliary stem to zero, so the first prediction is exactly identical to v2.
+
+```bash
+./run_gpu_matrix.sh v4a-pilot
+./run_gpu_matrix.sh v4a-evaluate
+```
+
+The five-epoch pilot is a controlled architecture ablation: it uses the same
+split, loss, synthetic policy, and seed as v2, with a lower fine-tuning learning
+rate. It remains experimental until official validation, LPIPS, stress metrics,
+and batch-1 latency justify promotion.
+
 ## Evaluate a trained checkpoint
 
 ```bash

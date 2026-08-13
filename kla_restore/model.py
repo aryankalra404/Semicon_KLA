@@ -26,6 +26,25 @@ class SimpleGate(nn.Module):
         return left * right
 
 
+def range_aware_input(x: torch.Tensor) -> torch.Tensor:
+    """Expose KLA speckle excursions without discarding the raw observation.
+
+    Channels are raw intensity, nominal-range intensity, positive overflow, and
+    negative overflow. The representation is deterministic and parameter-free.
+    """
+    if x.ndim != 4 or x.shape[1] != 1:
+        raise ValueError(f"Expected NCHW grayscale input, got {tuple(x.shape)}")
+    return torch.cat(
+        (
+            x,
+            x.clamp(0.0, 1.0),
+            (x - 1.0).clamp_min(0.0),
+            (-x).clamp_min(0.0),
+        ),
+        dim=1,
+    )
+
+
 class NAFBlock(nn.Module):
     def __init__(self, channels: int, expansion: int = 2) -> None:
         super().__init__()
@@ -147,6 +166,7 @@ class KLARestoreNet(nn.Module):
 
     ``variant="v2"`` preserves the original architecture and state-dict names.
     ``variant="v3"`` adds degradation conditioning and an HR refinement stage.
+    ``variant="v4a"`` preserves v2 except for a range-aware four-channel stem.
     """
 
     def __init__(
@@ -163,8 +183,8 @@ class KLARestoreNet(nn.Module):
         super().__init__()
         if width < 8 or blocks < 1:
             raise ValueError("width must be >= 8 and blocks must be >= 1")
-        if variant not in {"v2", "v3"}:
-            raise ValueError("variant must be 'v2' or 'v3'")
+        if variant not in {"v2", "v3", "v4a"}:
+            raise ValueError("variant must be 'v2', 'v3', or 'v4a'")
         if variant == "v3" and (condition_dim < 4 or hr_width < 8 or hr_blocks < 0):
             raise ValueError(
                 "v3 requires condition_dim >= 4, hr_width >= 8, hr_blocks >= 0"
@@ -173,7 +193,10 @@ class KLARestoreNet(nn.Module):
         self.blocks = blocks
         self.variant = variant
         self.stem = nn.Conv2d(1, width, 3, padding=1)
-        if variant == "v2":
+        if variant == "v4a":
+            self.range_stem = nn.Conv2d(3, width, 3, padding=1, bias=False)
+            nn.init.zeros_(self.range_stem.weight)
+        if variant in {"v2", "v4a"}:
             self.body = nn.Sequential(*(NAFBlock(width) for _ in range(blocks)))
             self.body_tail = nn.Conv2d(width, width, 3, padding=1)
             self.upsample = nn.Sequential(
@@ -219,7 +242,9 @@ class KLARestoreNet(nn.Module):
             x, scale_factor=2, mode="bicubic", align_corners=False
         ).clamp(0.0, 1.0)
         stem = self.stem(x)
-        if self.variant == "v2":
+        if self.variant == "v4a":
+            stem = stem + self.range_stem(range_aware_input(x)[:, 1:])
+        if self.variant in {"v2", "v4a"}:
             residual = self.upsample(stem + self.body_tail(self.body(stem)))
             return baseline + residual
 
@@ -257,7 +282,7 @@ def model_config(model: KLARestoreNet) -> dict[str, int | str | bool]:
 
 
 def build_model(config: dict[str, object] | None = None) -> KLARestoreNet:
-    """Build a model from either a legacy v2 or a complete v3 config."""
+    """Build a model from a legacy v2 or complete experimental config."""
     config = config or {}
     variant = str(config.get("variant", "v2"))
     return KLARestoreNet(
@@ -292,6 +317,28 @@ def initialize_v3_from_v2(
             target_state[target_name] = value
             copied += 1
             copied_parameters += value.numel()
+    target.load_state_dict(target_state, strict=True)
+    return copied, copied_parameters
+
+
+def initialize_v4a_from_v2(
+    target: KLARestoreNet, source_state: dict[str, torch.Tensor]
+) -> tuple[int, int]:
+    """Warm-start v4a exactly from v2 while zeroing auxiliary stem channels."""
+    if target.variant != "v4a":
+        raise ValueError("Warm-start target must be a v4a model")
+    target_state = target.state_dict()
+    target_state["range_stem.weight"].zero_()
+
+    copied = 0
+    copied_parameters = 0
+    for name, value in source_state.items():
+        if name in target_state and target_state[name].shape == value.shape:
+            target_state[name] = value
+        else:
+            raise ValueError(f"Cannot transfer v2 tensor {name}")
+        copied += 1
+        copied_parameters += value.numel()
     target.load_state_dict(target_state, strict=True)
     return copied, copied_parameters
 

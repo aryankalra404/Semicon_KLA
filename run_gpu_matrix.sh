@@ -72,6 +72,30 @@ case "${1:-}" in
       --seed 2026 --device cuda --output-dir weights/sweep/pixelheavy \
       2>&1 | tee logs/train_pixelheavy.log'
     ;;
+  v4a-pilot)
+    run_container bash -lc 'python -u train.py \
+      --variant v4a --initialize-from weights/final.pt \
+      --epochs 5 --batch-size 8 --workers 4 --width 48 --blocks 12 \
+      --learning-rate 5e-5 --synthetic-probability 0.2 \
+      --synthetic-policy fixed --ema-decay 0.995 --gradient-clip 1.0 \
+      --seed 2026 --device cuda --output-dir weights/v4a_pilot \
+      2>&1 | tee logs/train_v4a_pilot.log'
+    ;;
+  v4a-evaluate)
+    run_container python evaluate.py --method model --split val \
+      --input-dir data/train/NoisyLR --gt-dir data/train/GT \
+      --weights weights/v4a_pilot/best_balanced.pt \
+      --batch-size 8 --device cuda --lpips \
+      --json-output outputs/experiments/v4a_pilot.json \
+      --per-image-output outputs/experiments/v4a_pilot_per_image.csv
+    run_container python evaluate_stress.py \
+      --weights weights/v4a_pilot/best_balanced.pt --device cuda \
+      --json-output outputs/experiments/v4a_pilot_stress.json
+    run_container python benchmark.py \
+      --weights weights/v4a_pilot/best_balanced.pt --batch-size 1 \
+      --device cuda \
+      --json-output outputs/experiments/v4a_pilot_benchmark.json
+    ;;
   split3407)
     run_container bash -lc 'python -u train.py \
       --epochs 30 --batch-size 8 --workers 4 --width 48 --blocks 12 \
@@ -109,7 +133,7 @@ case "${1:-}" in
       2>&1 | tee logs/train_all_data.log'
     ;;
   *)
-    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|split3407|evaluate|all-data}" >&2
+    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|split3407|evaluate|all-data}" >&2
     exit 2
     ;;
 esac

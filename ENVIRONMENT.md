@@ -10,8 +10,10 @@ PyTorch: 2.13.0a0+9186a08b2c.nv26.07
 
 The model was trained and benchmarked on an NVIDIA RTX A4000 (16 GB) using
 NVIDIA driver 580.173.02. CUDA forward compatibility was enabled by the NGC
-container. The Dockerfile pins the base image tag and `requirements.txt` lists
-the direct Python dependencies needed outside NGC.
+container. `requirements.txt` is the complete `pip freeze` captured from that
+training container. Because the NGC freeze includes packages supplied by local
+image paths, `requirements.runtime.txt` separately lists the portable direct
+dependencies used by the Docker build and by non-container installations.
 
 For exact evaluator reproduction, prefer Docker:
 

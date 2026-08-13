@@ -15,6 +15,7 @@ REQUIRED_FILES = (
     "README.md",
     "Dockerfile",
     "requirements.txt",
+    "requirements.runtime.txt",
     "inference.py",
     "train.py",
     "evaluate.py",
@@ -45,6 +46,13 @@ def main() -> None:
     missing = [relative for relative in REQUIRED_FILES if not (root / relative).is_file()]
     if missing:
         raise SystemExit("Missing required files: " + ", ".join(missing))
+
+    freeze = (root / "requirements.txt").read_text().splitlines()
+    if len(freeze) < 100:
+        raise SystemExit("requirements.txt does not look like a complete environment freeze")
+    forbidden_freeze_text = ("== PyTorch ==", "NVIDIA Release", "GOVERNING TERMS", "CUDA failed")
+    if any(marker in line for line in freeze for marker in forbidden_freeze_text):
+        raise SystemExit("requirements.txt contains container startup output")
 
     manifest = json.loads((root / "outputs/output_manifest.json").read_text())
     if manifest.get("count") != args.expected_outputs:

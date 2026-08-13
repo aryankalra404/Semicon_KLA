@@ -37,11 +37,15 @@ Python 3.10-3.12 is recommended for CUDA environments.
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements.runtime.txt
 ```
 
 For the exact NGC image, CUDA/container metadata and clean Docker command, see
 [`ENVIRONMENT.md`](ENVIRONMENT.md).
+
+`requirements.txt` records the complete training-container `pip freeze`, as
+required for submission. Use `requirements.runtime.txt` for installation; the
+full NGC freeze contains image-bundled packages with container-local paths.
 
 The bounded GPU experiment runner is `run_gpu_matrix.sh`; it builds the local
 `kla-restorenet:latest` image from the pinned NVIDIA NGC base image on first

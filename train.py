@@ -81,6 +81,11 @@ def parse_args() -> argparse.Namespace:
         help="Use a reproducible random 90/10 split instead of fixed IDs",
     )
     parser.add_argument(
+        "--split-manifest",
+        type=Path,
+        help="JSON manifest containing disjoint train_names and val_names",
+    )
+    parser.add_argument(
         "--train-all",
         action="store_true",
         help="Train on all 3,200 pairs after configuration selection; validation is disabled",
@@ -93,6 +98,11 @@ def parse_args() -> argparse.Namespace:
         help="Initialize v2, v3, v4a, or v4b from a v2 checkpoint",
     )
     parser.add_argument("--synthetic-probability", type=float, default=0.0)
+    parser.add_argument(
+        "--synthetic-probability-final",
+        type=float,
+        help="Linearly increase synthetic probability to this value by the final epoch",
+    )
     parser.add_argument(
         "--synthetic-policy", choices=("fixed", "randomized"), default="fixed"
     )
@@ -189,6 +199,10 @@ def main() -> None:
     args = parse_args()
     if args.resume and args.initialize_from:
         raise SystemExit("Use only one of --resume and --initialize-from")
+    if args.split_seed is not None and args.split_manifest is not None:
+        raise SystemExit("Use only one of --split-seed and --split-manifest")
+    if args.train_all and args.split_manifest is not None:
+        raise SystemExit("--train-all cannot be combined with --split-manifest")
     if args.freeze_backbone_epochs < 0 or args.early_stopping_patience < 0:
         raise SystemExit("freeze epochs and early-stopping patience must be non-negative")
     staged_v4b = args.freeze_backbone_epochs > 0
@@ -200,6 +214,13 @@ def main() -> None:
         args.collapse_guard_psnr_drop,
     ) < 0:
         raise SystemExit("early-stop, preservation, and collapse values must be non-negative")
+    synthetic_final = (
+        args.synthetic_probability
+        if args.synthetic_probability_final is None
+        else args.synthetic_probability_final
+    )
+    if not 0.0 <= synthetic_final <= 1.0:
+        raise SystemExit("--synthetic-probability-final must be in [0, 1]")
     if args.preservation_weight > 0 and args.preservation_weights is None:
         raise SystemExit("--preservation-weight requires --preservation-weights")
     if args.collapse_guard_psnr_drop > 0 and args.preservation_weights is None:
@@ -211,6 +232,18 @@ def main() -> None:
     if args.train_all:
         train_names = all_pair_names()
         val_names: list[str] = []
+    elif args.split_manifest is not None:
+        split = json.loads(args.split_manifest.read_text())
+        train_names = list(split.get("train_names", ()))
+        val_names = list(split.get("val_names", ()))
+        if not train_names or not val_names:
+            raise ValueError("split manifest requires non-empty train_names and val_names")
+        overlap = set(train_names) & set(val_names)
+        if overlap:
+            raise ValueError(f"split manifest overlaps on {len(overlap)} filenames")
+        unknown = (set(train_names) | set(val_names)) - set(all_pair_names())
+        if unknown:
+            raise ValueError(f"split manifest contains {len(unknown)} unknown filenames")
     elif args.split_seed is not None:
         train_names, val_names = deterministic_split_names(args.split_seed)
     else:
@@ -398,6 +431,10 @@ def main() -> None:
         f"parameters={parameter_count(model):,}"
     )
     for epoch in range(start_epoch, args.epochs + 1):
+        curriculum_progress = (epoch - 1) / max(1, args.epochs - 1)
+        train_set.synthetic_probability = args.synthetic_probability + (
+            synthetic_final - args.synthetic_probability
+        ) * curriculum_progress
         if staged_v4b:
             branch_only = epoch <= args.freeze_backbone_epochs
             set_v4b_stage(model, branch_only=branch_only)
@@ -451,6 +488,7 @@ def main() -> None:
         record = {
             "epoch": epoch,
             "train_loss": running_loss / len(train_set),
+            "synthetic_probability": train_set.synthetic_probability,
             "train_parts": {
                 name: value / len(train_set) for name, value in running_parts.items()
             },
@@ -493,6 +531,7 @@ def main() -> None:
             "model_config": model_config(model),
             "training_config": {
                 "synthetic_probability": args.synthetic_probability,
+                "synthetic_probability_final": synthetic_final,
                 "synthetic_policy": args.synthetic_policy,
                 "consistency_weight": args.consistency_weight,
                 "ema_decay": args.ema_decay,
@@ -500,6 +539,9 @@ def main() -> None:
                 "seed": args.seed,
                 "data_order_seed": args.seed,
                 "split_seed": args.split_seed,
+                "split_manifest": (
+                    str(args.split_manifest) if args.split_manifest else None
+                ),
                 "train_all": args.train_all,
                 "loss_weights": {
                     "pixel": args.pixel_weight,

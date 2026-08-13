@@ -25,6 +25,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", type=Path, default=Path("data/test/NoisyLR"))
     parser.add_argument("--gt-dir", type=Path, default=Path("data/train/GT"))
     parser.add_argument("--split", choices=("val", "all"), default="val")
+    parser.add_argument(
+        "--names-manifest",
+        type=Path,
+        help="Optional JSON manifest containing the filenames to evaluate",
+    )
+    parser.add_argument("--manifest-key", default="val_names")
     parser.add_argument("--method", choices=("bicubic", "model"), default="bicubic")
     parser.add_argument(
         "--weights", type=Path, nargs="+", help="One or more model checkpoints"
@@ -43,11 +49,19 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    names = (
-        names_for_split("val")
-        if args.split == "val"
-        else sorted(path.name for path in args.input_dir.glob("*.npy"))
-    )
+    if args.names_manifest is not None:
+        manifest = json.loads(args.names_manifest.read_text())
+        names = list(manifest.get(args.manifest_key, ()))
+        if not names:
+            raise ValueError(
+                f"Manifest {args.names_manifest} has no names under {args.manifest_key!r}"
+            )
+    else:
+        names = (
+            names_for_split("val")
+            if args.split == "val"
+            else sorted(path.name for path in args.input_dir.glob("*.npy"))
+        )
     dataset = PairedNpyDataset(args.input_dir, args.gt_dir, names)
     loader = DataLoader(dataset, batch_size=args.batch_size, num_workers=args.workers)
     device = choose_device(args.device)
@@ -107,6 +121,9 @@ def main() -> None:
     ssim_mean, ssim_ci = mean_and_ci95(ssim_values)
     result = {
         "method": args.method,
+        "evaluation_manifest": (
+            str(args.names_manifest) if args.names_manifest is not None else None
+        ),
         "images": images,
         "device": str(device),
         "psnr": psnr_mean,

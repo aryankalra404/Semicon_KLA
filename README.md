@@ -59,6 +59,48 @@ python -m unittest discover -s tests -v
 python audit_data.py
 ```
 
+## Robustness and reliability protocol
+
+The frozen submission checkpoint remains `weights/final.pt`. Robustness
+experiments are isolated and cannot replace it unless every fail-closed gate
+passes. The protocol adds four forms of evidence:
+
+- **Cluster-disjoint OOD proxy:** intensity, gradient, frequency and coarse
+  spatial descriptors cluster the original training partition; one complete
+  appearance cluster is withheld. This is explicitly a proxy because KLA does
+  not provide source labels.
+- **Degradation-order curriculum:** matched fixed-policy and randomized-order
+  models use the same cluster split. A separate low-learning-rate challenger
+  starts from the frozen final checkpoint.
+- **Defect-preservation probes:** controlled bright/dark dots, thin lines, line
+  breaks and notches are degraded in both orders. Contrast recovery, localized
+  response F1 and false-pattern rate are reported. These are synthetic probes,
+  not real defect labels.
+- **Reliability and scale:** geometric-consistency disagreement produces an
+  optional uncertainty heatmap, while both `128→256` and `256→512` contracts are
+  benchmarked for shape, range, latency and memory. Quality claims remain
+  limited to resolutions with paired GT.
+
+Run the bounded GPU stages independently:
+
+```bash
+nohup ./run_gpu_matrix.sh robustness-ood > logs/robustness_ood_driver.log 2>&1 < /dev/null &
+nohup ./run_gpu_matrix.sh robustness-candidate > logs/robustness_candidate_driver.log 2>&1 < /dev/null &
+# Run only after both training stages complete:
+nohup ./run_gpu_matrix.sh robustness-evaluate > logs/robustness_evaluate_driver.log 2>&1 < /dev/null &
+# Optional reliability maps for blind test inputs:
+nohup ./run_gpu_matrix.sh robustness-uncertainty > logs/robustness_uncertainty_driver.log 2>&1 < /dev/null &
+# Render figures after evaluation and uncertainty stages finish:
+./run_gpu_matrix.sh robustness-figures
+```
+
+`promote_robust_candidate.py` rejects the challenger unless official PSNR,
+SSIM, LPIPS and latency remain within strict limits and stress, both order
+scenarios, cluster-disjoint OOD metrics, defect F1 and false-pattern behavior
+all pass. OOD improvement is supplied by the matched cluster-split policy
+ablation; the ordinary-split challenger is never assigned a misleading OOD
+score. Rejected challengers remain documented ablations.
+
 ## Bicubic baseline
 
 ```bash

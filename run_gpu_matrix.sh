@@ -266,8 +266,122 @@ case "${1:-}" in
       --output-dir weights/all_data \
       2>&1 | tee logs/train_all_data.log'
     ;;
+  robustness-ood)
+    acquire_run_lock "$ROOT/.robustness_ood.lock"
+    run_container python make_ood_split.py \
+      --clusters 10 --target-size 320 --seed 260813 \
+      --output splits/ood_cluster.json
+    run_container bash -lc 'set -o pipefail
+      python -u train.py --split-manifest splits/ood_cluster.json \
+        --epochs 30 --batch-size 8 --workers 4 --width 48 --blocks 12 \
+        --learning-rate 1e-4 --synthetic-probability 0.05 \
+        --synthetic-probability-final 0.20 --synthetic-policy fixed \
+        --ema-decay 0.999 --gradient-clip 1.0 --seed 2026 --device cuda \
+        --output-dir weights/robustness_ood/fixed_control \
+        2>&1 | tee logs/train_robustness_ood_fixed.log &&
+      python -u train.py --split-manifest splits/ood_cluster.json \
+        --epochs 30 --batch-size 8 --workers 4 --width 48 --blocks 12 \
+        --learning-rate 1e-4 --synthetic-probability 0.05 \
+        --synthetic-probability-final 0.20 --synthetic-policy randomized \
+        --ema-decay 0.999 --gradient-clip 1.0 --seed 2026 --device cuda \
+        --output-dir weights/robustness_ood/randomized \
+        2>&1 | tee logs/train_robustness_ood_randomized.log
+    '
+    ;;
+  robustness-candidate)
+    acquire_run_lock "$ROOT/.robustness_candidate.lock"
+    run_container bash -lc 'set -o pipefail
+      python -u train.py --variant v2 --initialize-from weights/final.pt \
+        --epochs 8 --batch-size 8 --workers 4 --width 48 --blocks 12 \
+        --learning-rate 5e-6 --synthetic-probability 0.05 \
+        --synthetic-probability-final 0.15 --synthetic-policy randomized \
+        --preservation-weights weights/final.pt --preservation-weight 0.10 \
+        --collapse-guard-psnr-drop 0.05 --early-stopping-patience 3 \
+        --early-stopping-min-delta 0.001 --ema-decay 0.995 \
+        --gradient-clip 1.0 --seed 2026 --device cuda \
+        --output-dir weights/robustness_candidate \
+        2>&1 | tee logs/train_robustness_candidate.log
+    '
+    ;;
+  robustness-evaluate)
+    acquire_run_lock "$ROOT/.robustness_evaluate.lock"
+    mkdir -p outputs/robustness results weights/promoted
+    for candidate in final challenger; do
+      case "$candidate" in
+        final) checkpoint="weights/final.pt" ;;
+        challenger) checkpoint="weights/robustness_candidate/best_balanced.pt" ;;
+      esac
+      run_container python evaluate.py --method model --split val \
+        --input-dir data/train/NoisyLR --gt-dir data/train/GT \
+        --weights "$checkpoint" --batch-size 8 --device cuda --lpips \
+        --json-output "outputs/robustness/${candidate}_official.json" \
+        --per-image-output "outputs/robustness/${candidate}_official.csv"
+      run_container python evaluate_stress.py --weights "$checkpoint" \
+        --device cuda --json-output "outputs/robustness/${candidate}_stress.json"
+      run_container python evaluate_defects.py --weights "$checkpoint" \
+        --device cuda --limit 80 \
+        --json-output "outputs/robustness/${candidate}_defects.json"
+      run_container python benchmark.py --weights "$checkpoint" --batch-size 1 \
+        --device cuda --json-output "outputs/robustness/${candidate}_benchmark.json"
+    done
+    run_container python evaluate_defects.py --method bicubic --device cuda --limit 80 \
+      --json-output outputs/robustness/bicubic_defects.json
+    for policy in fixed randomized; do
+      case "$policy" in
+        fixed) checkpoint="weights/robustness_ood/fixed_control/best_balanced.pt" ;;
+        randomized) checkpoint="weights/robustness_ood/randomized/best_balanced.pt" ;;
+      esac
+      run_container python evaluate.py --method model --split val \
+        --names-manifest splits/ood_cluster.json --manifest-key val_names \
+        --input-dir data/train/NoisyLR --gt-dir data/train/GT \
+        --weights "$checkpoint" --batch-size 8 --device cuda --lpips \
+        --json-output "outputs/robustness/ood_${policy}.json" \
+        --per-image-output "outputs/robustness/ood_${policy}.csv"
+    done
+    run_container python benchmark_resolutions.py --weights weights/final.pt \
+      --device cuda --json-output outputs/robustness/final_resolutions.json
+    run_container python evaluate_uncertainty.py --weights weights/final.pt \
+      --self-ensemble x8 --batch-size 4 --device cuda \
+      --json-output outputs/robustness/uncertainty_validation.json
+    run_container python promote_robust_candidate.py \
+      --control-metrics outputs/robustness/final_official.json \
+      --candidate-metrics outputs/robustness/challenger_official.json \
+      --control-stress outputs/robustness/final_stress.json \
+      --candidate-stress outputs/robustness/challenger_stress.json \
+      --ood-fixed-policy outputs/robustness/ood_fixed.json \
+      --ood-randomized-policy outputs/robustness/ood_randomized.json \
+      --control-defects outputs/robustness/final_defects.json \
+      --candidate-defects outputs/robustness/challenger_defects.json \
+      --control-benchmark outputs/robustness/final_benchmark.json \
+      --candidate-benchmark outputs/robustness/challenger_benchmark.json \
+      --uncertainty-validation outputs/robustness/uncertainty_validation.json \
+      --candidate-weights weights/robustness_candidate/best_balanced.pt \
+      --report results/robustness_promotion.json \
+      --promote-to weights/promoted/robustness_candidate.pt
+    ;;
+  robustness-uncertainty)
+    acquire_run_lock "$ROOT/.robustness_uncertainty.lock"
+    run_container python inference_uncertainty.py \
+      --input-dir data/test/NoisyLR \
+      --output-dir outputs/robustness/restored_x8 \
+      --uncertainty-dir outputs/robustness/uncertainty \
+      --weights weights/final.pt --self-ensemble x8 --batch-size 4 \
+      --device cuda --summary-output outputs/robustness/uncertainty_summary.json
+    ;;
+  robustness-figures)
+    run_container python make_robustness_figures.py \
+      --results-dir outputs/robustness --input-dir data/test/NoisyLR \
+      --output-dir figures/robustness
+    ;;
+  robustness-all)
+    "$0" robustness-ood
+    "$0" robustness-candidate
+    "$0" robustness-evaluate
+    "$0" robustness-uncertainty
+    "$0" robustness-figures
+    ;;
   *)
-    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|v4b-v2|split3407|evaluate|all-data}" >&2
+    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|v4b-v2|split3407|evaluate|all-data|robustness-ood|robustness-candidate|robustness-evaluate|robustness-uncertainty|robustness-figures|robustness-all}" >&2
     exit 2
     ;;
 esac

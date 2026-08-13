@@ -1,5 +1,18 @@
 # Measured validation results
 
+## Evidence boundaries
+
+- PSNR/SSIM/LPIPS use the untouched 320-image official paired validation
+  partition, never the blind 400-image test inputs.
+- The appearance-cluster split from `make_ood_split.py` is an OOD proxy, not a
+  claim about undisclosed KLA source identities.
+- `evaluate_defects.py` uses controlled synthetic defect-like probes; it does
+  not substitute for labeled real semiconductor defects.
+- `256→512` is operationally validated, while paired quality metrics currently
+  cover the supplied `128→256` data.
+- Geometric disagreement ranks risk but is not a calibrated failure
+  probability.
+
 All values below use the fixed 320-image validation split (IDs 2880-3199).
 The blind 400-image test archive has no public ground truth and is never used
 to calculate reference metrics.

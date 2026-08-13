@@ -28,6 +28,14 @@ from kla_restore.model import (
     range_aware_input,
 )
 from kla_restore.runtime import choose_device
+from kla_restore.robustness import (
+    choose_holdout_cluster,
+    deterministic_kmeans,
+    image_descriptor,
+    precision_recall,
+    restoration_distribution,
+    standardize_features,
+)
 from compare_paired import compare, exact_sign_pvalue, read_rows
 from train import set_v4b_stage, v4b_parameter_groups, validation_psnr_collapsed
 
@@ -48,6 +56,45 @@ class SplitTests(unittest.TestCase):
         self.assertFalse(set(first_train) & set(first_val))
         self.assertEqual(set(first_train) | set(first_val), set(all_pair_names()))
         self.assertEqual((len(first_train), len(first_val)), (2880, 320))
+
+    def test_appearance_clustering_is_deterministic(self) -> None:
+        images = [
+            np.full((32, 32), value, dtype=np.float32)
+            for value in (0.0, 0.05, 0.45, 0.5, 0.9, 0.95)
+        ]
+        features = np.stack([image_descriptor(image) for image in images])
+        normalized, _, _ = standardize_features(features)
+        first, _ = deterministic_kmeans(normalized, 3, seed=7)
+        second, _ = deterministic_kmeans(normalized, 3, seed=7)
+        self.assertTrue(np.array_equal(first, second))
+        holdout = choose_holdout_cluster(first, target_size=2)
+        self.assertEqual(int((first == holdout).sum()), 2)
+
+
+class RobustnessTests(unittest.TestCase):
+    def test_descriptor_rejects_non_grayscale(self) -> None:
+        with self.assertRaises(ValueError):
+            image_descriptor(np.zeros((2, 8, 8), dtype=np.float32))
+
+    def test_precision_recall(self) -> None:
+        target = torch.tensor([[[[True, True, False, False]]]])
+        predicted = torch.tensor([[[[True, False, True, False]]]])
+        precision, recall, f1 = precision_recall(predicted, target)
+        self.assertAlmostEqual(precision, 0.5)
+        self.assertAlmostEqual(recall, 0.5)
+        self.assertAlmostEqual(f1, 0.5)
+
+    def test_uncertainty_is_zero_for_equivariant_interpolation(self) -> None:
+        class Upsample(torch.nn.Module):
+            def forward(self, image: torch.Tensor) -> torch.Tensor:
+                return torch.nn.functional.interpolate(
+                    image, scale_factor=2, mode="nearest"
+                )
+
+        inputs = torch.rand(2, 1, 9, 7)
+        mean, uncertainty = restoration_distribution([Upsample()], inputs, "x8")
+        self.assertEqual(mean.shape, (2, 1, 18, 14))
+        self.assertLess(float(uncertainty.max()), 1e-7)
 
 
 class TrainingSafetyTests(unittest.TestCase):

@@ -18,11 +18,11 @@ dependencies used by the Docker build and by non-container installations.
 For exact evaluator reproduction, prefer Docker:
 
 ```bash
-docker build -t kla-restorenet .
+docker build -t our-model .
 docker run --rm --gpus all --ipc=host \
   -v "$PWD/data/test/NoisyLR":/inputs:ro \
   -v "$PWD/outputs/rehearsal":/outputs \
-  kla-restorenet python inference.py \
+  our-model python inference.py \
     --input-dir /inputs --output-dir /outputs --device cuda
 ```
 

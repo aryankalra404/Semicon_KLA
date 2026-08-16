@@ -6,7 +6,7 @@ from pathlib import Path
 
 import torch
 
-from .model import KLARestoreNet, build_model
+from .model import RestorationModel, build_model
 
 
 def mps_is_usable() -> bool:
@@ -38,7 +38,7 @@ def choose_device(requested: str = "auto") -> torch.device:
     return torch.device("cpu")
 
 
-def load_model(weights: str | Path, device: torch.device) -> KLARestoreNet:
+def load_model(weights: str | Path, device: torch.device) -> RestorationModel:
     checkpoint = torch.load(weights, map_location="cpu", weights_only=False)
     if "model" not in checkpoint:
         raise KeyError("Checkpoint does not contain a 'model' state dictionary")

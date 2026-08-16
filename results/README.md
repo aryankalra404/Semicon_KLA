@@ -20,9 +20,10 @@ to calculate reference metrics.
 | Method | PSNR (dB) ↑ | SSIM ↑ | RTX A4000 latency ↓ |
 |---|---:|---:|---:|
 | Bicubic | 22.8192 ± 0.3689 | 0.5460 ± 0.0204 | 0.10 ms/image* |
-| KLA-RestoreNet v1 | 24.7893 ± 0.4068 | 0.6914 ± 0.0176 | 11.56 ms/image |
-| KLA-RestoreNet v2, frozen | 26.2962 ± 0.4384 | **0.7004 ± 0.0176** | 11.35 ms/image |
-| KLA-RestoreNet v2, final fine-tune | **26.3273 ± 0.4409** | **0.7004 ± 0.0176** | **11.34 ms/image** |
+| Gaussian denoise (σ=0.8) + bicubic | 25.5339 | 0.6483 | classical diagnostic |
+| Our Model v1 | 24.7893 ± 0.4068 | 0.6914 ± 0.0176 | 11.56 ms/image |
+| Our Model v2, frozen | 26.2962 ± 0.4384 | **0.7004 ± 0.0176** | 11.35 ms/image |
+| Our Model v2, final fine-tune | **26.3273 ± 0.4409** | **0.7004 ± 0.0176** | **11.34 ms/image** |
 
 `±` values are 95% confidence intervals across validation images. Bicubic
 latency was measured locally on CPU and is not directly hardware-comparable;
@@ -32,6 +33,10 @@ The earlier v1 timing used batch size 8 and is included only as historical
 context.
 
 Against bicubic, final mean gains are +3.5082 dB PSNR and +0.1543 SSIM.
+Against the stronger Gaussian-denoise + bicubic baseline, final mean gains are
+**+0.7934 ± 0.0680 dB PSNR** and **+0.0521 ± 0.0051 SSIM** (paired 95%
+confidence intervals). The model wins on **296/320 images by PSNR** and
+**297/320 by SSIM**.
 Against frozen v2, the fine-tune improves PSNR by 0.0311 dB on 237/320 images
 and LPIPS by 0.00209 on 222/320 images. Paired bootstrap intervals exclude zero
 for both gains; the SSIM change is statistically indistinguishable from zero.
@@ -65,10 +70,25 @@ fixed seed, never to replace evaluation on official paired validation data.
 ## Qualitative evidence
 
 - [Training curves](../figures/v2_learning_curves.png)
-- [Best validation case](../figures/v2_best_003119.png)
-- [Median validation case](../figures/v2_median_002994.png)
-- [Worst validation case](../figures/v2_worst_002981.png)
+- [Representative validation improvement](../figures/presentation_representative.png)
+- [Representative result with detail crops](../figures/presentation_representative_detailed.png)
+- [Known over-smoothing limitation](../figures/limitation_oversmoothing_002994.png)
 
-Each comparison shows the degraded input, bicubic baseline, KLA-RestoreNet v2,
-and clean ground truth. The worst case is retained rather than cherry-picking
-only favorable examples.
+The evidence figure is selected deterministically across all 320 validation
+pairs. It excludes visually uninformative low-contrast/low-edge targets,
+requires coherent directional structure, and requires model PSNR and SSIM to
+improve over both bicubic and Gaussian-denoise + bicubic while gradient
+fidelity improves over bicubic, excludes the easiest
+top 5% by model PSNR, and ranks the remainder by quality gains and target edge
+content. It includes full images, an automatically selected detail crop, and
+per-method metrics. The foliage case that visibly over-smooths thin stochastic
+detail is retained as an explicit limitation rather than hidden.
+
+Generate both figures inside the pinned CUDA container:
+
+```bash
+./run_gpu_matrix.sh presentation-figures
+```
+
+The exact selection rule and all per-image measurements are written to
+`figures/presentation_cases.json` and `figures/validation_case_metrics.csv`.

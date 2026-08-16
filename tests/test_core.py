@@ -19,7 +19,7 @@ from kla_restore.losses import RestorationLoss, low_frequency_data_consistency
 from kla_restore.ensemble import restore, transform_indices
 from kla_restore.metrics import psnr, ssim
 from kla_restore.model import (
-    KLARestoreNet,
+    RestorationModel,
     build_model,
     initialize_v3_from_v2,
     initialize_v4a_from_v2,
@@ -37,6 +37,7 @@ from kla_restore.robustness import (
     standardize_features,
 )
 from compare_paired import compare, exact_sign_pvalue, read_rows
+from make_figures import CaseMetrics, aggregate_validation, select_representative_case
 from train import set_v4b_stage, v4b_parameter_groups, validation_psnr_collapsed
 
 
@@ -134,6 +135,91 @@ class PairedComparisonTests(unittest.TestCase):
             self.assertEqual(result["lpips"]["wins"], 2)
 
 
+class PresentationEvidenceTests(unittest.TestCase):
+    @staticmethod
+    def case(
+        name: str,
+        *,
+        model_psnr: float,
+        psnr_gain: float,
+        ssim_gain: float,
+        contrast: float,
+        edge_energy: float,
+        edge_gain: float,
+    ) -> CaseMetrics:
+        bicubic_psnr = model_psnr - psnr_gain
+        bicubic_ssim = 0.60
+        model_ssim = bicubic_ssim + ssim_gain
+        bicubic_edge_error = 0.10
+        return CaseMetrics(
+            filename=name,
+            model_psnr=model_psnr,
+            model_ssim=model_ssim,
+            bicubic_psnr=bicubic_psnr,
+            bicubic_ssim=bicubic_ssim,
+            classical_psnr=bicubic_psnr + 0.1,
+            classical_ssim=bicubic_ssim + 0.005,
+            psnr_gain=psnr_gain,
+            ssim_gain=ssim_gain,
+            gt_std=contrast,
+            gt_edge_energy=edge_energy,
+            gt_coherent_edge_energy=edge_energy,
+            gt_directional_coherence=edge_energy,
+            model_edge_error=bicubic_edge_error - edge_gain,
+            bicubic_edge_error=bicubic_edge_error,
+            edge_error_reduction=edge_gain,
+        )
+
+    def test_selection_rejects_uninformative_easy_case(self) -> None:
+        rows = [
+            self.case(
+                "smooth.npy", model_psnr=45.0, psnr_gain=8.0, ssim_gain=0.20,
+                contrast=0.01, edge_energy=0.005, edge_gain=0.03,
+            ),
+            self.case(
+                "structured.npy", model_psnr=30.0, psnr_gain=3.0, ssim_gain=0.08,
+                contrast=0.25, edge_energy=0.15, edge_gain=0.02,
+            ),
+            self.case(
+                "weak.npy", model_psnr=29.0, psnr_gain=0.5, ssim_gain=0.01,
+                contrast=0.20, edge_energy=0.12, edge_gain=0.005,
+            ),
+        ]
+        selected = select_representative_case(rows)
+        self.assertEqual(selected.filename, "structured.npy")
+        self.assertGreater(selected.selection_score, 0.0)
+
+    def test_selection_requires_model_to_beat_bicubic(self) -> None:
+        rows = [
+            self.case(
+                "a.npy", model_psnr=25.0, psnr_gain=-0.2, ssim_gain=0.02,
+                contrast=0.2, edge_energy=0.1, edge_gain=0.01,
+            ),
+            self.case(
+                "b.npy", model_psnr=25.0, psnr_gain=0.2, ssim_gain=-0.02,
+                contrast=0.2, edge_energy=0.1, edge_gain=0.01,
+            ),
+        ]
+        with self.assertRaises(ValueError):
+            select_representative_case(rows)
+
+    def test_aggregate_validation_uses_every_case_and_counts_paired_wins(self) -> None:
+        rows = [
+            self.case(
+                "a.npy", model_psnr=26.0, psnr_gain=2.0, ssim_gain=0.10,
+                contrast=0.2, edge_energy=0.1, edge_gain=0.01,
+            ),
+            self.case(
+                "b.npy", model_psnr=25.0, psnr_gain=1.0, ssim_gain=0.05,
+                contrast=0.2, edge_energy=0.1, edge_gain=0.01,
+            ),
+        ]
+        summary = aggregate_validation(rows)
+        self.assertEqual(summary["images"], 2)
+        self.assertEqual(summary["model_vs_bicubic"]["psnr"]["wins"], 2)
+        self.assertEqual(summary["model_vs_classical"]["psnr"]["wins"], 2)
+
+
 class DatasetTests(unittest.TestCase):
     def test_pair_loading(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -183,20 +269,20 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertTrue(torch.equal(output, torch.full_like(inputs, 2.0)))
 
     def test_model_doubles_resolution(self) -> None:
-        model = KLARestoreNet(width=8, blocks=1)
+        model = RestorationModel(width=8, blocks=1)
         inputs = torch.rand(2, 1, 12, 10)
         output = model(inputs)
         self.assertEqual(output.shape, (2, 1, 24, 20))
         self.assertTrue(torch.all((0 <= output) & (output <= 1)))
 
     def test_model_supports_second_kla_resolution_pair(self) -> None:
-        model = KLARestoreNet(width=8, blocks=1)
+        model = RestorationModel(width=8, blocks=1)
         inputs = torch.rand(1, 1, 256, 256)
         output = model(inputs)
         self.assertEqual(output.shape, (1, 1, 512, 512))
 
     def test_v3_model_doubles_resolution_and_backpropagates(self) -> None:
-        model = KLARestoreNet(
+        model = RestorationModel(
             width=8, blocks=2, variant="v3", condition_dim=8, hr_width=8, hr_blocks=1
         )
         inputs = torch.rand(2, 1, 12, 10)
@@ -227,23 +313,23 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertEqual(
             model_config(legacy), {"variant": "v2", "width": 8, "blocks": 1}
         )
-        v3 = KLARestoreNet(
+        v3 = RestorationModel(
             8, 1, variant="v3", condition_dim=8, hr_width=8, hr_blocks=1
         )
         self.assertEqual(model_config(build_model(model_config(v3))), model_config(v3))
-        v4a = KLARestoreNet(8, 1, variant="v4a")
+        v4a = RestorationModel(8, 1, variant="v4a")
         self.assertEqual(model_config(build_model(model_config(v4a))), model_config(v4a))
-        v4b = KLARestoreNet(
+        v4b = RestorationModel(
             8, 1, variant="v4b", frequency_width=8, frequency_blocks=1
         )
         self.assertEqual(model_config(build_model(model_config(v4b))), model_config(v4b))
 
     def test_v3_warm_start_exactly_preserves_v2_output(self) -> None:
         torch.manual_seed(3)
-        v2 = KLARestoreNet(width=8, blocks=2)
+        v2 = RestorationModel(width=8, blocks=2)
         torch.nn.init.normal_(v2.upsample[-1].weight, std=0.02)
         torch.nn.init.normal_(v2.upsample[-1].bias, std=0.02)
-        v3 = KLARestoreNet(
+        v3 = RestorationModel(
             width=8,
             blocks=2,
             variant="v3",
@@ -257,10 +343,10 @@ class ModelAndMetricTests(unittest.TestCase):
 
     def test_v4a_warm_start_exactly_preserves_v2_output(self) -> None:
         torch.manual_seed(5)
-        v2 = KLARestoreNet(width=8, blocks=2)
+        v2 = RestorationModel(width=8, blocks=2)
         torch.nn.init.normal_(v2.upsample[-1].weight, std=0.02)
         torch.nn.init.normal_(v2.upsample[-1].bias, std=0.02)
-        v4a = KLARestoreNet(width=8, blocks=2, variant="v4a")
+        v4a = RestorationModel(width=8, blocks=2, variant="v4a")
         copied, parameters = initialize_v4a_from_v2(v4a, v2.state_dict())
         self.assertEqual(copied, len(v2.state_dict()))
         self.assertEqual(parameters, sum(x.numel() for x in v2.state_dict().values()))
@@ -270,10 +356,10 @@ class ModelAndMetricTests(unittest.TestCase):
 
     def test_v4b_warm_start_exactly_preserves_v2_output(self) -> None:
         torch.manual_seed(7)
-        v2 = KLARestoreNet(width=8, blocks=2)
+        v2 = RestorationModel(width=8, blocks=2)
         torch.nn.init.normal_(v2.upsample[-1].weight, std=0.02)
         torch.nn.init.normal_(v2.upsample[-1].bias, std=0.02)
-        v4b = KLARestoreNet(
+        v4b = RestorationModel(
             width=8,
             blocks=2,
             variant="v4b",
@@ -290,7 +376,7 @@ class ModelAndMetricTests(unittest.TestCase):
         )
 
     def test_v4b_branch_learns_after_zero_initialized_projection(self) -> None:
-        model = KLARestoreNet(
+        model = RestorationModel(
             width=8,
             blocks=1,
             variant="v4b",
@@ -308,7 +394,7 @@ class ModelAndMetricTests(unittest.TestCase):
         self.assertGreater(float(gradient.abs().sum()), 0.0)
 
     def test_v4b_staging_freezes_only_the_backbone(self) -> None:
-        model = KLARestoreNet(
+        model = RestorationModel(
             width=8,
             blocks=1,
             variant="v4b",

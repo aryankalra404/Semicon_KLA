@@ -29,7 +29,7 @@ Compared with bicubic interpolation, it improves mean validation quality by
 3.5082 dB PSNR and 0.1543 SSIM. Compared with Gaussian denoising followed by
 bicubic interpolation, it improves PSNR by 0.7934 dB and SSIM by 0.0521.
 
-![Representative validation comparison](figures/presentation_representative.png)
+![Representative validation comparison with detail crops](figures/presentation_representative_detailed.png)
 
 This is a representative validation example selected with a deterministic
 procedure. Aggregate results, confidence intervals, paired tests, stress tests,
@@ -46,6 +46,12 @@ and failure analysis are available in [results/README.md](results/README.md).
 | [`requirements.txt`](requirements.txt) | Complete package freeze from the training container |
 | [`requirements.runtime.txt`](requirements.runtime.txt) | Minimal portable inference dependencies |
 | [`Dockerfile`](Dockerfile) | Reproducible NVIDIA evaluation environment |
+
+`requirements.runtime.txt` is the portable evaluator environment used by the
+setup commands below. `requirements.txt` is the complete package freeze from
+the pinned NVIDIA training container and contains container-local wheel paths;
+reproduce that environment through the Dockerfile rather than installing the
+full freeze on an arbitrary host.
 
 ## Setup and inference
 
@@ -75,7 +81,7 @@ inference runs on CPU.
 git clone https://github.com/aryankalra404/Semicon_KLA.git
 cd Semicon_KLA
 
-docker build -t kla-restoration .
+docker build -t our-model .
 mkdir -p outputs/evaluator
 
 docker run --rm --gpus all \
@@ -84,7 +90,7 @@ docker run --rm --gpus all \
   --ulimit stack=67108864 \
   -v "/absolute/path/to/test/NoisyLR":/inputs:ro \
   -v "$PWD/outputs/evaluator":/outputs \
-  kla-restoration \
+  our-model \
   python inference.py \
     --input-dir /inputs \
     --output-dir /outputs \

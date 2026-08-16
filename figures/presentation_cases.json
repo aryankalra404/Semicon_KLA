@@ -1,0 +1,121 @@
+{
+  "selection_policy": {
+    "eligibility": "GT contrast and raw edge energy >= 35th percentile; coherent edge energy and directional coherence >= 60th percentile; positive PSNR and SSIM gains over bicubic and Gaussian-denoise + bicubic; positive edge-fidelity gain; model PSNR below 95th percentile",
+    "ranking": "20% PSNR-gain rank + 25% SSIM-gain rank + 10% edge-error-reduction rank + 20% coherent-edge-energy rank + 25% directional-coherence rank",
+    "purpose": "representative presentation evidence, not aggregate evaluation"
+  },
+  "representative": {
+    "filename": "003166.npy",
+    "model_psnr": 26.638389587402344,
+    "model_ssim": 0.7878988981246948,
+    "bicubic_psnr": 21.42939567565918,
+    "bicubic_ssim": 0.5470273494720459,
+    "classical_psnr": 26.121994018554688,
+    "classical_ssim": 0.7651541233062744,
+    "psnr_gain": 5.208993911743164,
+    "ssim_gain": 0.24087154865264893,
+    "gt_std": 0.2417367845773697,
+    "gt_edge_energy": 0.028632625937461853,
+    "gt_coherent_edge_energy": 0.019060321152210236,
+    "gt_directional_coherence": 0.9306692481040955,
+    "model_edge_error": 0.02564609795808792,
+    "bicubic_edge_error": 0.05165882408618927,
+    "edge_error_reduction": 0.02601272612810135,
+    "selection_score": 0.8166666666666667
+  },
+  "known_limitation": {
+    "filename": "002994.npy",
+    "model_psnr": 23.147056579589844,
+    "model_ssim": 0.7403734922409058,
+    "bicubic_psnr": 21.96466636657715,
+    "bicubic_ssim": 0.6868422627449036,
+    "classical_psnr": 22.231075286865234,
+    "classical_ssim": 0.6920680999755859,
+    "psnr_gain": 1.1823902130126953,
+    "ssim_gain": 0.0535312294960022,
+    "gt_std": 0.23896029591560364,
+    "gt_edge_energy": 0.04416719824075699,
+    "gt_coherent_edge_energy": 0.019172487780451775,
+    "gt_directional_coherence": 0.7064977884292603,
+    "model_edge_error": 0.03902358561754227,
+    "bicubic_edge_error": 0.049221377819776535,
+    "edge_error_reduction": 0.010197792202234268,
+    "selection_score": 0.0
+  },
+  "classical_baseline": {
+    "method": "5x5 Gaussian denoise (sigma=0.8) followed by bicubic 2x",
+    "selection": "best aggregate PSNR/SSIM among fixed classical pilot variants",
+    "validation_psnr": 25.533856466412544,
+    "validation_ssim": 0.648264973401092
+  },
+  "aggregate_validation": {
+    "images": 320,
+    "bicubic": {
+      "psnr": {
+        "mean": 22.819181162118912,
+        "ci95_half_width": 0.36890595513420904
+      },
+      "ssim": {
+        "mean": 0.5460261789150536,
+        "ci95_half_width": 0.02040656714711244
+      }
+    },
+    "classical": {
+      "psnr": {
+        "mean": 25.533856466412544,
+        "ci95_half_width": 0.4445163713255823
+      },
+      "ssim": {
+        "mean": 0.648264973401092,
+        "ci95_half_width": 0.018055995867071892
+      }
+    },
+    "model": {
+      "psnr": {
+        "mean": 26.327303770184518,
+        "ci95_half_width": 0.44091255767277476
+      },
+      "ssim": {
+        "mean": 0.7003729761112482,
+        "ci95_half_width": 0.017603668235116735
+      }
+    },
+    "model_vs_bicubic": {
+      "psnr": {
+        "delta": {
+          "mean": 3.508122608065605,
+          "ci95_half_width": 0.25363855571357014
+        },
+        "wins": 319,
+        "losses": 1
+      },
+      "ssim": {
+        "delta": {
+          "mean": 0.15434679719619454,
+          "ci95_half_width": 0.016735863429018012
+        },
+        "wins": 273,
+        "losses": 47
+      }
+    },
+    "model_vs_classical": {
+      "psnr": {
+        "delta": {
+          "mean": 0.7934473037719727,
+          "ci95_half_width": 0.06796063468388461
+        },
+        "wins": 296,
+        "losses": 24
+      },
+      "ssim": {
+        "delta": {
+          "mean": 0.05210800271015614,
+          "ci95_half_width": 0.005084113344657471
+        },
+        "wins": 297,
+        "losses": 23
+      }
+    }
+  },
+  "validation_images_scored": 320
+}

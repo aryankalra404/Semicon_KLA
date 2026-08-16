@@ -2,7 +2,7 @@
 # Bounded KLA experiment matrix. Run from ~/Semicon_KLA on the NVIDIA host.
 set -euo pipefail
 
-IMAGE="${KLA_IMAGE:-kla-restorenet:latest}"
+IMAGE="${OUR_MODEL_IMAGE:-our-model:latest}"
 ROOT="$(pwd)"
 
 if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
@@ -23,13 +23,23 @@ run_container() {
     "$IMAGE" "$@"
 }
 
+RUN_LOCK_DIR=""
+
+release_run_lock() {
+  if [[ -n "${RUN_LOCK_DIR:-}" ]]; then
+    rmdir "$RUN_LOCK_DIR" 2>/dev/null || true
+    RUN_LOCK_DIR=""
+  fi
+}
+
 acquire_run_lock() {
-  local lock_dir="$1"
-  if ! mkdir "$lock_dir" 2>/dev/null; then
-    echo "Another run owns lock $lock_dir; refusing duplicate launch." >&2
+  RUN_LOCK_DIR="$1"
+  if ! mkdir "$RUN_LOCK_DIR" 2>/dev/null; then
+    echo "Another run owns lock $RUN_LOCK_DIR; refusing duplicate launch." >&2
+    RUN_LOCK_DIR=""
     exit 3
   fi
-  trap 'rmdir "$lock_dir" 2>/dev/null || true' EXIT INT TERM
+  trap release_run_lock EXIT INT TERM
 }
 
 mkdir -p weights/sweep outputs/experiments logs
@@ -373,6 +383,14 @@ case "${1:-}" in
       --results-dir outputs/robustness --input-dir data/test/NoisyLR \
       --output-dir figures/robustness
     ;;
+  presentation-figures)
+    run_container python make_figures.py \
+      --weights weights/final.pt \
+      --history weights/v2/history.json \
+      --lr-dir data/train/NoisyLR --gt-dir data/train/GT \
+      --batch-size 8 --workers 4 --device cuda \
+      --output-dir figures
+    ;;
   robustness-all)
     "$0" robustness-ood
     "$0" robustness-candidate
@@ -381,7 +399,7 @@ case "${1:-}" in
     "$0" robustness-figures
     ;;
   *)
-    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|v4b-v2|split3407|evaluate|all-data|robustness-ood|robustness-candidate|robustness-evaluate|robustness-uncertainty|robustness-figures|robustness-all}" >&2
+    echo "Usage: $0 {tta|seed3407|seed8119|width64|pixelheavy|v4a-pilot|v4a-evaluate|v4a-ablation|v4b-ablation|v4b-v2|split3407|evaluate|all-data|robustness-ood|robustness-candidate|robustness-evaluate|robustness-uncertainty|robustness-figures|robustness-all|presentation-figures}" >&2
     exit 2
     ;;
 esac

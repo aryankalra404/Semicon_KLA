@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train KLARestoreNet on the leakage-safe training split."""
+"""Train the restoration model on the leakage-safe training split."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ from kla_restore.data import (
 from kla_restore.losses import RestorationLoss
 from kla_restore.metrics import psnr, ssim
 from kla_restore.model import (
-    KLARestoreNet,
+    RestorationModel,
     build_model,
     initialize_v3_from_v2,
     initialize_v4a_from_v2,
@@ -149,7 +149,7 @@ def set_seed(seed: int) -> None:
 
 
 def v4b_parameter_groups(
-    model: KLARestoreNet,
+    model: RestorationModel,
 ) -> tuple[list[torch.nn.Parameter], list[torch.nn.Parameter]]:
     """Return disjoint backbone and frequency-branch parameter lists."""
     if model.variant != "v4b":
@@ -162,7 +162,7 @@ def v4b_parameter_groups(
     return backbone, branch
 
 
-def set_v4b_stage(model: KLARestoreNet, *, branch_only: bool) -> None:
+def set_v4b_stage(model: RestorationModel, *, branch_only: bool) -> None:
     """Freeze or unfreeze v4b's inherited backbone without touching its branch."""
     backbone, branch = v4b_parameter_groups(model)
     for parameter in backbone:
@@ -181,7 +181,7 @@ def validation_psnr_collapsed(
 
 
 @torch.no_grad()
-def validate(model: KLARestoreNet, loader: DataLoader, device: torch.device) -> dict[str, float]:
+def validate(model: RestorationModel, loader: DataLoader, device: torch.device) -> dict[str, float]:
     model.eval()
     psnr_values, ssim_values = [], []
     for lr, gt, _ in loader:
@@ -295,7 +295,7 @@ def main() -> None:
         else None
     )
 
-    model = KLARestoreNet(
+    model = RestorationModel(
         args.width,
         args.blocks,
         variant=args.variant,

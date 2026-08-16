@@ -1,5 +1,2 @@
 numpy>=2.0
 torch>=2.2
-lpips>=0.1.4
-Pillow>=10.0
-

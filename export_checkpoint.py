@@ -26,7 +26,7 @@ def main() -> None:
         "epoch": checkpoint.get("epoch"),
         "metrics": checkpoint.get("metrics"),
         "training_config": checkpoint.get("training_config"),
-        "format": "kla-restorenet-inference-v2",
+        "format": "our-model-inference-v2",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     torch.save(compact, args.output)

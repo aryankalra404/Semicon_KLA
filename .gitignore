@@ -3,6 +3,19 @@ __pycache__/
 *.py[cod]
 .venv/
 
+# Local submission-development workspaces and rendered previews.
+.submission-workspace/
+.codex-tmp/
+tmp/
+*.inspect.ndjson
+
+# Portal documents are uploaded separately, not through the benchmark repo.
+*.pptx
+*.pdf
+*.docx
+report_assets/
+build_project_report.py
+
 # Official data and generated artifacts are kept out of Git.
 data/train/
 data/test/

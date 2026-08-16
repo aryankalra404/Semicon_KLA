@@ -68,7 +68,7 @@ def main() -> None:
         positions + width / 2,
         [model["by_defect"][name]["f1"] for name in defects],
         width,
-        label="KLA-RestoreNet",
+        label="Our Model",
         color="#6d28d9",
     )
     axis.set_xticks(positions, [name.replace("_", " ").title() for name in defects])

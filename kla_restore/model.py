@@ -215,7 +215,7 @@ class FrequencyMultiScaleBranch(nn.Module):
         return self.project(self.body(features))
 
 
-class KLARestoreNet(nn.Module):
+class RestorationModel(nn.Module):
     """Restore a single-channel input to twice its spatial resolution.
 
     ``variant="v2"`` preserves the original architecture and state-dict names.
@@ -335,7 +335,7 @@ class KLARestoreNet(nn.Module):
         return baseline + residual
 
 
-def model_config(model: KLARestoreNet) -> dict[str, int | str | bool]:
+def model_config(model: RestorationModel) -> dict[str, int | str | bool]:
     config: dict[str, int | str | bool] = {
         "variant": model.variant,
         "width": model.width,
@@ -356,11 +356,11 @@ def model_config(model: KLARestoreNet) -> dict[str, int | str | bool]:
     return config
 
 
-def build_model(config: dict[str, object] | None = None) -> KLARestoreNet:
+def build_model(config: dict[str, object] | None = None) -> RestorationModel:
     """Build a model from a legacy v2 or complete experimental config."""
     config = config or {}
     variant = str(config.get("variant", "v2"))
-    return KLARestoreNet(
+    return RestorationModel(
         width=int(config.get("width", 48)),
         blocks=int(config.get("blocks", 12)),
         variant=variant,
@@ -374,7 +374,7 @@ def build_model(config: dict[str, object] | None = None) -> KLARestoreNet:
 
 
 def initialize_v3_from_v2(
-    target: KLARestoreNet, source_state: dict[str, torch.Tensor]
+    target: RestorationModel, source_state: dict[str, torch.Tensor]
 ) -> tuple[int, int]:
     """Warm-start v3 from v2, including its residual upsampler when compatible."""
     if target.variant != "v3":
@@ -399,7 +399,7 @@ def initialize_v3_from_v2(
 
 
 def initialize_v4a_from_v2(
-    target: KLARestoreNet, source_state: dict[str, torch.Tensor]
+    target: RestorationModel, source_state: dict[str, torch.Tensor]
 ) -> tuple[int, int]:
     """Warm-start v4a exactly from v2 while zeroing auxiliary stem channels."""
     if target.variant != "v4a":
@@ -421,7 +421,7 @@ def initialize_v4a_from_v2(
 
 
 def initialize_v4b_from_v2(
-    target: KLARestoreNet, source_state: dict[str, torch.Tensor]
+    target: RestorationModel, source_state: dict[str, torch.Tensor]
 ) -> tuple[int, int]:
     """Warm-start v4b exactly from v2 with a zero-output frequency branch."""
     if target.variant != "v4b":

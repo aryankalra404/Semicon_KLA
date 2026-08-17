@@ -86,8 +86,15 @@ def audit_pairs(lr_dir: Path, gt_dir: Path, names: Iterable[str]) -> None:
 
 def load_npy_tensor(path: Path) -> torch.Tensor:
     array = np.load(path, allow_pickle=False)
+    # Some NumPy exporters retain a singleton channel axis for grayscale data.
+    # Treat (H, W, 1) identically to the required grayscale (H, W) format.
+    if array.ndim == 3 and array.shape[-1] == 1:
+        array = array[..., 0]
     if array.ndim != 2:
-        raise ValueError(f"Expected a 2D grayscale array at {path}, got {array.shape}")
+        raise ValueError(
+            f"Expected a grayscale (H, W) or (H, W, 1) array at {path}, "
+            f"got {array.shape}"
+        )
     if not np.issubdtype(array.dtype, np.number):
         raise TypeError(f"Expected numeric array at {path}, got {array.dtype}")
     return torch.from_numpy(np.asarray(array, dtype=np.float32)).unsqueeze(0)

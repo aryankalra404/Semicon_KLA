@@ -39,19 +39,19 @@ and failure analysis are available in [results/README.md](results/README.md).
 
 | File or directory | Purpose |
 |---|---|
-| [`inference.py`](inference.py) | Standalone evaluation script that accepts input and output directory paths |
+| [`run.py`](run.py) | Required KLA entry script: `python run.py <input-dir> <output-dir>` |
+| [`inference.py`](inference.py) | Optional advanced evaluator interface |
 | [`train.py`](train.py) | Paired training and fine-tuning script |
-| [`weights/final.pt`](weights/final.pt) | Final 2.3 MB inference checkpoint |
+| [`models/final.pt`](models/final.pt) | Final 2.3 MB inference checkpoint required by `run.py` |
+| [`weights/final.pt`](weights/final.pt) | Compatibility path to the same included checkpoint |
 | [`outputs/restored/`](outputs/restored/) | 400 restored test arrays with original filenames |
-| [`requirements.txt`](requirements.txt) | Complete package freeze from the training container |
-| [`requirements.runtime.txt`](requirements.runtime.txt) | Minimal portable inference dependencies |
+| [`requirements.txt`](requirements.txt) | Pinned, minimal inference dependencies |
+| [`requirements.runtime.txt`](requirements.runtime.txt) | Alias of the pinned inference dependencies |
 | [`Dockerfile`](Dockerfile) | Reproducible NVIDIA evaluation environment |
 
-`requirements.runtime.txt` is the portable evaluator environment used by the
-setup commands below. `requirements.txt` is the complete package freeze from
-the pinned NVIDIA training container and contains container-local wheel paths;
-reproduce that environment through the Dockerfile rather than installing the
-full freeze on an arbitrary host.
+`requirements.txt` contains only the two libraries used at runtime, with exact
+versions. Install it while network access is available; evaluation itself is
+fully offline and uses the included `models/final.pt` checkpoint.
 
 ## Setup and inference
 
@@ -64,11 +64,9 @@ cd Semicon_KLA
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.runtime.txt
+python -m pip install -r requirements.txt
 
-python inference.py \
-  --input-dir /path/to/test/NoisyLR \
-  --output-dir /path/to/restored
+python run.py /path/to/test/NoisyLR /path/to/restored
 ```
 
 No source edits are required. The script loads `weights/final.pt` by default.
@@ -91,11 +89,7 @@ docker run --rm --gpus all \
   -v "/absolute/path/to/test/NoisyLR":/inputs:ro \
   -v "$PWD/outputs/evaluator":/outputs \
   our-model \
-  python inference.py \
-    --input-dir /inputs \
-    --output-dir /outputs \
-    --device cuda \
-    --batch-size 8
+  python run.py /inputs /outputs
 ```
 
 The container uses `nvcr.io/nvidia/pytorch:26.07-py3`. The image digest,
@@ -105,20 +99,24 @@ software versions, and hardware details are recorded in
 ### Inference interface
 
 ```text
-python inference.py --input-dir INPUT_DIRECTORY --output-dir OUTPUT_DIRECTORY
+python run.py INPUT_DIRECTORY OUTPUT_DIRECTORY
 ```
 
 The evaluator:
 
-- reads a flat directory of grayscale `.npy` arrays;
+- reads every `.npy` file in a flat input directory;
 - accepts `128x128` and `256x256` inputs, including mixed-size directories;
+- also accepts grayscale arrays stored as `(H, W, 1)`;
 - writes one restored `.npy` array for every input using the same filename;
 - produces an output with twice the input height and width;
 - saves finite `float32` values in the `[0,1]` range;
 - groups inputs by shape for efficient batching;
-- does not require ground-truth images.
+- does not require ground-truth images, internet access, API keys, prompts, or
+  any model downloads.
 
-Run `python inference.py --help` to view all command-line options.
+`run.py` is the submission interface. For local profiling only,
+`python inference.py --help` exposes optional device, batch-size, checkpoint,
+and test-time-ensemble options.
 
 ## Approach
 

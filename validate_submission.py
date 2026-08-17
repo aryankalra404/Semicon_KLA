@@ -21,7 +21,7 @@ EXPECTED_SHA256 = "c1e67ad4400b1c899ef30a2bb6748a086c036661fef41932fbef548e5998b
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--weights", type=Path, default=Path("weights/final.pt"))
+    parser.add_argument("--weights", type=Path, default=Path("models/final.pt"))
     parser.add_argument("--sample-dir", type=Path, default=Path("data/test/NoisyLR"))
     parser.add_argument("--device", default="auto")
     return parser.parse_args()
@@ -60,9 +60,7 @@ def main() -> None:
         expected_shapes[large_name] = (512, 512)
         subprocess.run(
             [
-                sys.executable, "inference.py", "--input-dir", str(inputs),
-                "--output-dir", str(outputs), "--weights", str(args.weights),
-                "--device", str(device), "--batch-size", "2",
+                sys.executable, "run.py", str(inputs), str(outputs),
             ],
             check=True,
         )
